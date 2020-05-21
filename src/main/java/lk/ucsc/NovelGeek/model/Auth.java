@@ -9,7 +9,7 @@ public class Auth {
     private long id;
 
     @Column(nullable = false)
-    private String userId;
+    private String role;
 
     @Column(nullable = false, length = 50)
     private String firstName;
@@ -17,7 +17,7 @@ public class Auth {
     @Column(nullable = false, length = 50)
     private String lastName;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -31,13 +31,6 @@ public class Auth {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -69,5 +62,13 @@ public class Auth {
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.encryptedPassword = encryptedPassword;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

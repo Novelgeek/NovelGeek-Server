@@ -1,19 +1,20 @@
 package lk.ucsc.NovelGeek.dto;
 
 public class UserDto {
-    private String userId;
+    private String id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private String encryptedPassword;
 
-    public String getUserId() {
-        return userId;
+
+    public String getId() {
+        return id;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFirstName() {
