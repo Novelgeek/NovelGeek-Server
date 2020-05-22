@@ -27,7 +27,8 @@ public class AuthController {
         return userResponse;
     }
 
-    @GetMapping("/greeting")
+
+    @GetMapping()
     public String greeting() {
         return "Working";
     }
