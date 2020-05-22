@@ -32,7 +32,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-         try{
+        try{
              UserSignInModel creds = new ObjectMapper().readValue(request.getInputStream(), UserSignInModel.class);
              return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(), new ArrayList<>()));
          } catch (JsonParseException e) {
