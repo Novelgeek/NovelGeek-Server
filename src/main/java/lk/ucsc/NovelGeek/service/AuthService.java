@@ -2,9 +2,16 @@ package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.dto.UserDto;
 import lk.ucsc.NovelGeek.model.Auth;
+import lk.ucsc.NovelGeek.model.request.UserSignInModel;
+import lk.ucsc.NovelGeek.model.response.AuthResponse;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
+import lk.ucsc.NovelGeek.util.JwtTokenUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +29,12 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     public UserDto createUser(UserDto userDto) {
         if(authRepository.findByEmail(userDto.getEmail()) != null) {
@@ -48,5 +61,18 @@ public class AuthService implements UserDetailsService {
             throw new RuntimeException("Username not found");
         }
         return new User(auth.getEmail(), auth.getEncryptedPassword(), new ArrayList<>());
+    }
+
+    public AuthResponse login(UserSignInModel loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtTokenUtil.generateToken(authentication);
+        return new AuthResponse(token, loginRequest.getEmail());
     }
 }

@@ -5,6 +5,8 @@ import lk.ucsc.NovelGeek.service.CustomOidcUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -46,7 +48,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/auth/signup")
+                .antMatchers(HttpMethod.POST,"/auth/**  ")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .anyRequest().authenticated()
@@ -55,7 +57,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .authorizationRequestRepository(customAuthorizationRequestRepository()).
                 and().successHandler(customAuthenticationSuccessHandler);
 
-        http.addFilter(new AuthenticationFilter(authenticationManager()));
+        //http.addFilter(new AuthenticationFilter(authenticationManager()));
     }
 
     @Override
@@ -63,6 +65,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
-
-
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 }
