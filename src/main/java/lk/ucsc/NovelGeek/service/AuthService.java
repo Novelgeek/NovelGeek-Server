@@ -73,7 +73,7 @@ public class AuthService implements UserDetailsService {
                     )
             );
 
-            //SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtTokenUtil.generateToken(authentication);
             return new AuthResponse(token, loginRequest.getEmail());
         }

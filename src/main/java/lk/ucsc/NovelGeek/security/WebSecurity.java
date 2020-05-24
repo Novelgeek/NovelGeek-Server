@@ -57,12 +57,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .anyRequest().authenticated()
-                .and()
+                .and().formLogin().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .oauth2Login().userInfoEndpoint()
                 .oidcUserService(customOidcUserService).and().authorizationEndpoint()
-                .authorizationRequestRepository(customAuthorizationRequestRepository()).
-                and().successHandler(customAuthenticationSuccessHandler);
+                .authorizationRequestRepository(customAuthorizationRequestRepository())
+                .and().successHandler(customAuthenticationSuccessHandler);
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
