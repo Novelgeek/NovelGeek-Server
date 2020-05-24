@@ -58,9 +58,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin().disable()
+                .httpBasic()
+                .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .oauth2Login().userInfoEndpoint()
-                .oidcUserService(customOidcUserService).and().authorizationEndpoint()
+                .oidcUserService(customOidcUserService).and()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorize")
                 .authorizationRequestRepository(customAuthorizationRequestRepository())
                 .and().successHandler(customAuthenticationSuccessHandler);
 
