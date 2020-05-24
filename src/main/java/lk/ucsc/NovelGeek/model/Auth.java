@@ -11,12 +11,21 @@ public class Auth {
     private String role;
 
     @Column(nullable = false, length = 50)
-    private String name;
+    private String username;
 
     @Column(nullable = false, length = 100, unique = true)
     private String email;
 
-    private String encryptedPassword;
+    private String password;
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public long getId() {
         return id;
@@ -26,7 +35,6 @@ public class Auth {
         this.id = id;
     }
 
-
     public String getRole() {
         return role;
     }
@@ -35,12 +43,12 @@ public class Auth {
         this.role = role;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -51,11 +59,11 @@ public class Auth {
         this.email = email;
     }
 
-    public String getEncryptedPassword() {
-        return encryptedPassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setEncryptedPassword(String encryptedPassword) {
-        this.encryptedPassword = encryptedPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

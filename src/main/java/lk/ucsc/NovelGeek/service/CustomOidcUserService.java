@@ -36,9 +36,8 @@ public class CustomOidcUserService extends OidcUserService {
             user = new Auth();
         }
         user.setEmail(userInfo.getEmail());
-        //user.setImageUrl(userInfo.getImageUrl());
-        user.setName(userInfo.getName());
-        //user.setUserType(UserType.google);
+        user.setUsername(userInfo.getName());
+        user.setImageUrl(userInfo.getImageUrl());
         userRepository.save(user);
     }
 }

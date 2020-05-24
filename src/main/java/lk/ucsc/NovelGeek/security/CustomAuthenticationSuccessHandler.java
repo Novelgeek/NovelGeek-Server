@@ -45,8 +45,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Map attributes = oidcUser.getAttributes();
         String email = (String) attributes.get("email");
         Auth user = userRepository.findByEmail(email);
-        //String token = JwtTokenUtil.generateToken(user);
-        String token = "sg";
+        String token = JwtTokenUtil.generateToken(user);
         System.out.println(token);
         String targetUrl = redirectUri.orElse(homeUrl);
         System.out.println(targetUrl);
