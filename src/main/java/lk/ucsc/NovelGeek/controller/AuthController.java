@@ -8,6 +8,7 @@ import lk.ucsc.NovelGeek.model.response.UserResponse;
 import lk.ucsc.NovelGeek.service.AuthService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     @Autowired
     AuthService authService;
-
-
 
 
 
@@ -42,9 +41,9 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody UserSignInModel loginRequest) {
+    public ResponseEntity<?> login(@RequestBody UserSignInModel loginRequest) throws Exception {
         AuthResponse authResponse =  authService.login(loginRequest);
 
-        return authResponse;
+        return ResponseEntity.ok(authResponse);
     }
 }

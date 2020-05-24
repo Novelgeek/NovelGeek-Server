@@ -12,11 +12,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,6 +37,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
+    @Autowired
+    JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public AuthorizationRequestRepository customAuthorizationRequestRepository() {
         return new HttpSessionOAuth2AuthorizationRequestRepository();
@@ -48,16 +53,18 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/auth/**  ")
+                .antMatchers(HttpMethod.POST,"/auth/signup")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .anyRequest().authenticated()
-                .and().oauth2Login().userInfoEndpoint()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .oauth2Login().userInfoEndpoint()
                 .oidcUserService(customOidcUserService).and().authorizationEndpoint()
                 .authorizationRequestRepository(customAuthorizationRequestRepository()).
                 and().successHandler(customAuthenticationSuccessHandler);
 
-        //http.addFilter(new AuthenticationFilter(authenticationManager()));
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

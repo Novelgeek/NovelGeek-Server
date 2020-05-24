@@ -9,6 +9,7 @@ import lk.ucsc.NovelGeek.util.JwtTokenUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -63,16 +64,22 @@ public class AuthService implements UserDetailsService {
         return new User(auth.getEmail(), auth.getEncryptedPassword(), new ArrayList<>());
     }
 
-    public AuthResponse login(UserSignInModel loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+    public AuthResponse login(UserSignInModel loginRequest) throws Exception {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtTokenUtil.generateToken(authentication);
-        return new AuthResponse(token, loginRequest.getEmail());
+            //SecurityContextHolder.getContext().setAuthentication(authentication);
+            String token = jwtTokenUtil.generateToken(authentication);
+            return new AuthResponse(token, loginRequest.getEmail());
+        }
+        catch (BadCredentialsException e){
+            throw new Exception("Incorrect username or password", e);
+        }
+
     }
 }

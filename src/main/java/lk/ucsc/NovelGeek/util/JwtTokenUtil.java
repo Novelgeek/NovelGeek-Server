@@ -31,4 +31,18 @@ public class JwtTokenUtil implements Serializable {
                 .compact();
     }
 
+    public boolean validateToken(String jwt) {
+        byte[] keyBytes = Decoders.BASE64.decode(SIGNING_KEY);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+        return true;
+    }
+
+    public String getUserNameFromJwt(String jwt) {
+        byte[] keyBytes = Decoders.BASE64.decode(SIGNING_KEY);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+
+        return claims.getSubject();
+    }
 }
