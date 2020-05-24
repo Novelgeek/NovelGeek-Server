@@ -38,11 +38,19 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Autowired
+    CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
+    @Autowired
     JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public AuthorizationRequestRepository customAuthorizationRequestRepository() {
         return new HttpSessionOAuth2AuthorizationRequestRepository();
+    }
+
+    @Bean
+    public lk.ucsc.NovelGeek.security.HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new lk.ucsc.NovelGeek.security.HttpCookieOAuth2AuthorizationRequestRepository();
     }
 
     public WebSecurity(AuthService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
@@ -68,8 +76,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .oidcUserService(customOidcUserService).and()
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorize")
-                .authorizationRequestRepository(customAuthorizationRequestRepository())
-                .and().successHandler(customAuthenticationSuccessHandler);
+                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                .and()
+                .successHandler(customAuthenticationSuccessHandler)
+                .failureHandler(customAuthenticationFailureHandler);
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
