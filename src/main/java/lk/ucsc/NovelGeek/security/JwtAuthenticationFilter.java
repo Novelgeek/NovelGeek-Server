@@ -1,15 +1,12 @@
 package lk.ucsc.NovelGeek.security;
 
 
-import lk.ucsc.NovelGeek.model.Auth;
 import lk.ucsc.NovelGeek.service.AuthService;
 import lk.ucsc.NovelGeek.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -38,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             //username is the email
             String username = jwtTokenUtil.getUserNameFromJwt(jwt);
-            System.out.println(username);
             UserDetails userDetails = authService.loadUserByUsername(username);
 
             UsernamePasswordAuthenticationToken authentication =

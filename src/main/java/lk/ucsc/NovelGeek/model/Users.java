@@ -2,8 +2,8 @@ package lk.ucsc.NovelGeek.model;
 
 import javax.persistence.*;
 
-@Entity(name="auths")
-public class Auth {
+@Entity(name="Users")
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -18,6 +18,24 @@ public class Auth {
 
     private String password;
     private String imageUrl;
+    private String provider;
+    private String providerId;
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
 
     public String getImageUrl() {
         return imageUrl;

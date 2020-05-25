@@ -1,8 +1,7 @@
 package lk.ucsc.NovelGeek.security;
 
 
-import lk.ucsc.NovelGeek.model.Auth;
-import lk.ucsc.NovelGeek.model.User;
+import lk.ucsc.NovelGeek.model.Users;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +27,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     }
 
 
-    public static UserPrincipal create(Auth user) {
+    public static UserPrincipal create(Users user) {
         List<GrantedAuthority> authorities = Collections.
                 singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
@@ -40,7 +39,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         );
     }
 
-    public static UserPrincipal create(Auth user, Map<String, Object> attributes) {
+    public static UserPrincipal create(Users user, Map<String, Object> attributes) {
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         userPrincipal.setAttributes(attributes);
         return userPrincipal;

@@ -1,6 +1,6 @@
 package lk.ucsc.NovelGeek.service;
 
-import lk.ucsc.NovelGeek.model.Auth;
+import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.UserSignInModel;
 import lk.ucsc.NovelGeek.model.request.UserSignUpModel;
 import lk.ucsc.NovelGeek.model.response.AuthResponse;
@@ -10,6 +10,8 @@ import lk.ucsc.NovelGeek.security.UserPrincipal;
 import lk.ucsc.NovelGeek.util.JwtTokenUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,30 +39,31 @@ public class AuthService implements UserDetailsService {
 
     public UserResponse createUser(UserSignUpModel userDto) {
         if(authRepository.findByEmail(userDto.getEmail()) != null) {
-            throw new RuntimeException("Record already exists");
+            throw new RuntimeException("Email already exists, Please try a different email");
         }
-        Auth auth = new Auth();
-        BeanUtils.copyProperties(userDto, auth);
+        Users users = new Users();
 
-        auth.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
-        auth.setRole("USER");
-
-        Auth storedAuth = authRepository.save(auth);
+        BeanUtils.copyProperties(userDto, users);
+        users.setUsername(userDto.getUsername().toLowerCase());
+        users.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+        users.setRole("USER");
+        users.setProvider("local");
+        Users storedUsers = authRepository.save(users);
         UserResponse returnUser = new UserResponse();
-        BeanUtils.copyProperties(storedAuth, returnUser);
+        BeanUtils.copyProperties(storedUsers, returnUser);
 
         return returnUser;
     }
 
     @Override
     public UserPrincipal loadUserByUsername(String email) throws UsernameNotFoundException {
-        Auth auth = authRepository.findByEmail(email);
-        System.out.println(auth.getEmail());
-        if(auth == null) {
+        Users users = authRepository.findByEmail(email);
+        System.out.println(users.getEmail());
+        if(users == null) {
             throw new RuntimeException("Username not found");
         }
         //return new User(auth.getEmail(), auth.getPassword(), new ArrayList<>());
-        return UserPrincipal.create(auth);
+        return UserPrincipal.create(users);
     }
 
     public AuthResponse login(UserSignInModel loginRequest) throws Exception {
@@ -71,14 +74,13 @@ public class AuthService implements UserDetailsService {
                             loginRequest.getPassword()
                     )
             );
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            Auth user = authRepository.findByEmail(loginRequest.getEmail());
+            Users user = authRepository.findByEmail(loginRequest.getEmail());
             String token = jwtTokenUtil.generateToken(user);
             return new AuthResponse(token, loginRequest.getEmail());
         }
         catch (BadCredentialsException e){
-            throw new Exception("Incorrect username or password", e);
+            throw new BadCredentialsException("Incorrect username or password", e);
         }
 
     }

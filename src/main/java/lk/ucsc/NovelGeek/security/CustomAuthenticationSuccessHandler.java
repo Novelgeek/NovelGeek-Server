@@ -1,6 +1,6 @@
 package lk.ucsc.NovelGeek.security;
 
-import lk.ucsc.NovelGeek.model.Auth;
+import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.util.CookieUtils;
 import lk.ucsc.NovelGeek.util.JwtTokenUtil;
@@ -27,7 +27,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Autowired
     private AuthRepository userRepository;
 
-    private String homeUrl = "http://localhost:4200/";
+    private String homeUrl = "http://localhost:4200/login";
 
     @Autowired
     private lk.ucsc.NovelGeek.security.HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
@@ -39,20 +39,25 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
         Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
-        System.out.println("lsjgj" + request.toString());
+
+        clearAuthenticationAttributes(request, response);
 
         DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
         Map attributes = oidcUser.getAttributes();
         String email = (String) attributes.get("email");
-        Auth user = userRepository.findByEmail(email);
+        Users user = userRepository.findByEmail(email);
         String token = JwtTokenUtil.generateToken(user);
-        System.out.println(token);
         String targetUrl = redirectUri.orElse(homeUrl);
-        System.out.println(targetUrl);
         String redirectionUrl = UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("auth_token", token)
                 .build().toUriString();
+
         getRedirectStrategy().sendRedirect(request, response, redirectionUrl);
+    }
+
+    protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
+        super.clearAuthenticationAttributes(request);
+        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
     }
 
 }
