@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -55,6 +56,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
