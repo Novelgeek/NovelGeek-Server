@@ -24,8 +24,10 @@ public class JwtTokenUtil implements Serializable {
         Key key = Keys.hmacShaKeyFor(keyBytes);
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + ACCESS_TOKEN_VALIDITY_SECONDS);
-
         return Jwts.builder()
+                .claim("username", principal.getUsername())
+                .claim("id", principal.getId())
+                .claim("image", principal.getImageUrl())
                 .setSubject(principal.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
