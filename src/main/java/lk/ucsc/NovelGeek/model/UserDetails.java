@@ -5,8 +5,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+//use this model to store userdetails such as phone no,fname,lname bla bla bla modify it accordingly
+//and make a foreign key to the Users entity
+
 @Entity
-public class User {
+public class UserDetails {
     @Id //this will make userId the private key of your table
     @GeneratedValue(strategy = GenerationType.AUTO) //will generate ids automatically if you need it
     private long userId;
@@ -15,10 +18,10 @@ public class User {
 
     //this contructor is necessary for every model
     //a constructor without parameters
-    public User() {
+    public UserDetails() {
     }
 
-    public User(long userId, String name) {
+    public UserDetails(long userId, String name) {
         this.userId = userId;
         this.name = name;
     }
