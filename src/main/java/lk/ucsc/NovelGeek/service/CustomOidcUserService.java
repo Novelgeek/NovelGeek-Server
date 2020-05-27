@@ -1,23 +1,17 @@
 package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.exception.OAuth2AuthenticationProcessingException;
-import lk.ucsc.NovelGeek.model.User;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.GoogleOAuth2UserInfo;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class CustomOidcUserService extends OidcUserService {
