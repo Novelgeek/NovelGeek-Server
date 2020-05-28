@@ -29,7 +29,6 @@ public class AuthController {
 
     @GetMapping()
     public String greeting() {
-
         return "Working";
     }
 

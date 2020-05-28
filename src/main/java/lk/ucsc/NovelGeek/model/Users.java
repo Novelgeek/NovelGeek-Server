@@ -1,11 +1,12 @@
 package lk.ucsc.NovelGeek.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name="Users")
 public class Users {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String role;
@@ -20,6 +21,9 @@ public class Users {
     private String imageUrl;
     private String provider;
     private String providerId;
+
+    @OneToMany(targetEntity = Members.class, mappedBy = "users")
+    Set<Members> members;
 
     public String getProvider() {
         return provider;
@@ -83,5 +87,13 @@ public class Users {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Members> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<Members> members) {
+        this.members = members;
     }
 }
