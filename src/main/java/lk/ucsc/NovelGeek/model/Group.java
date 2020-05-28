@@ -1,11 +1,14 @@
 package lk.ucsc.NovelGeek.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
 @Entity(name = "Groups")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members"})
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

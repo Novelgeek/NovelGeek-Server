@@ -7,16 +7,14 @@ import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.GroupRepository;
 import lk.ucsc.NovelGeek.repository.MemberRepository;
-import lk.ucsc.NovelGeek.security.UserPrincipal;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Member;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -66,7 +64,14 @@ public class GroupService {
 
     }
 
-    public void getMembers(Long groupId) {
-        System.out.println(memberRepository.findByUsers(groupId));
+    public List<Members> getMembers(Long groupId) {
+        List<Members> members = memberRepository.findByGroup(groupRepository.findById(groupId));
+        return members;
+    }
+
+    public List<Members> getGroups(Long userId) {
+        List<Members> groups = memberRepository.findByUsers(authRepository.findById(userId));
+
+        return groups;
     }
 }
