@@ -10,9 +10,13 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long notificationId;
 
-    private long targetUser;
+    @ManyToOne
+    @JoinColumn(name = "targetUserId")
+    Users targetUser;
 
-    private long firedUser;
+    @ManyToOne
+    @JoinColumn(name = "firedUserId")
+    Users firedUser;
 
     private boolean seen;
 
@@ -28,19 +32,19 @@ public class Notification {
         this.notificationId = notificationId;
     }
 
-    public long getTargetUser() {
+    public Users getTargetUser() {
         return targetUser;
     }
 
-    public void setTargetUser(long targetUser) {
+    public void setTargetUser(Users targetUser) {
         this.targetUser = targetUser;
     }
 
-    public long getFiredUser() {
+    public Users getFiredUser() {
         return firedUser;
     }
 
-    public void setFiredUser(long firedUser) {
+    public void setFiredUser(Users firedUser) {
         this.firedUser = firedUser;
     }
 

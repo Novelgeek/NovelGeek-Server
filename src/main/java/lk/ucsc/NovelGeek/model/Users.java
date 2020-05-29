@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name="Users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,28 @@ public class Users {
 
     @OneToMany(targetEntity = Members.class, mappedBy = "users")
     Set<Members> members;
+
+    @OneToMany(targetEntity = Notification.class, mappedBy = "targetUser")
+    Set<Members> myNotifications;
+
+    @OneToMany(targetEntity = Notification.class, mappedBy = "firedUser")
+    Set<Members> notiFiredByMe;
+
+    public Set<Members> getMyNotifications() {
+        return myNotifications;
+    }
+
+    public void setMyNotifications(Set<Members> myNotifications) {
+        this.myNotifications = myNotifications;
+    }
+
+    public Set<Members> getNotiFiredByMe() {
+        return notiFiredByMe;
+    }
+
+    public void setNotiFiredByMe(Set<Members> notiFiredByMe) {
+        this.notiFiredByMe = notiFiredByMe;
+    }
 
     public String getProvider() {
         return provider;

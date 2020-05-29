@@ -21,9 +21,8 @@ public class GroupController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllGroups(){
-        SuccessResponse groups = new SuccessResponse();
-        groups.setData("Working");
-        return ResponseEntity.ok(groups);
+
+        return ResponseEntity.ok(groupService.getAllGroups());
     }
 
     @PostMapping("new")
@@ -52,9 +51,24 @@ public class GroupController {
         }
     }
 
+    @PostMapping("{groupId}/requestMembership")
+    public ResponseEntity<?> requestMembership(@PathVariable(value="groupId") Long groupId){
+        boolean success = groupService.requestMembership(groupId);
+        if(success){
+            return ResponseEntity.ok("Membership requestedd");
+        } else {
+            return ResponseEntity.ok("Membership couldnt be requested");
+        }
+    }
+
     @GetMapping("getMembers/{groupId}")
     public ResponseEntity<?> getGroupMembers(@PathVariable(value="groupId") Long groupId) {
         return ResponseEntity.ok(groupService.getMembers(groupId));
+    }
+
+    @GetMapping("{groupId}")
+    public ResponseEntity<?> getSingleGroup(@PathVariable(value="groupId") Long groupId) {
+        return ResponseEntity.ok(groupService.getSingleGroup(groupId));
     }
 
     @GetMapping("getGroups/{userId}")
@@ -67,6 +81,13 @@ public class GroupController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal)auth.getPrincipal();
         return ResponseEntity.ok(groupService.getGroups(Long.valueOf(user.getId())));
+    }
+
+    @GetMapping("invites")
+    public ResponseEntity<?> getGroupInvites() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal user = (UserPrincipal)auth.getPrincipal();
+        return ResponseEntity.ok(groupService.getGroupInvites(Long.valueOf(user.getId())));
     }
 
 }

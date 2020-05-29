@@ -1,6 +1,7 @@
 package lk.ucsc.NovelGeek.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lk.ucsc.NovelGeek.enums.MemberStatus;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,7 +20,9 @@ public class Members {
     @JoinColumn(name = "groupId")
     Group group;
 
-    private int membershipType;
+    @Enumerated(EnumType.STRING)
+    private MemberStatus memberStatus;
+
 
     private Date joinedDate;
 
@@ -47,19 +50,19 @@ public class Members {
         this.group = group;
     }
 
-    public int getMembershipType() {
-        return membershipType;
-    }
-
-    public void setMembershipType(int membershipType) {
-        this.membershipType = membershipType;
-    }
-
     public Date getJoinedDate() {
         return joinedDate;
     }
 
     public void setJoinedDate(Date joinedDate) {
         this.joinedDate = joinedDate;
+    }
+
+    public MemberStatus getMemberStatus() {
+        return memberStatus;
+    }
+
+    public void setMemberStatus(MemberStatus memberStatus) {
+        this.memberStatus = memberStatus;
     }
 }
