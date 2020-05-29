@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("group")
 public class GroupController {
+
     @Autowired
     GroupService groupService;
 
@@ -28,7 +29,6 @@ public class GroupController {
     @PostMapping("new")
     public ResponseEntity<?> createGroup(@RequestBody NewGroupRequest newGroupRequest) {
         Group createdGroup = groupService.createGroup(newGroupRequest);
-
         return ResponseEntity.ok(createdGroup);
     }
 
@@ -39,6 +39,16 @@ public class GroupController {
             return ResponseEntity.ok("Member Added");
         } else {
             return ResponseEntity.ok("Member Could be Added");
+        }
+    }
+
+    @PostMapping("{groupId}/inviteUser/{userId}")
+    public ResponseEntity<?> inviteUser(@PathVariable(value="userId") Long userId, @PathVariable(value="groupId") Long groupId){
+        boolean success = groupService.inviteUser(groupId, userId);
+        if(success){
+            return ResponseEntity.ok("Member Invited");
+        } else {
+            return ResponseEntity.ok("Member Could not be invited");
         }
     }
 

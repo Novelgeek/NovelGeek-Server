@@ -19,7 +19,7 @@ public class Members {
     @JoinColumn(name = "groupId")
     Group group;
 
-    private String membershipType;
+    private int membershipType;
 
     private Date joinedDate;
 
@@ -47,11 +47,11 @@ public class Members {
         this.group = group;
     }
 
-    public String getMembershipType() {
+    public int getMembershipType() {
         return membershipType;
     }
 
-    public void setMembershipType(String membershipType) {
+    public void setMembershipType(int membershipType) {
         this.membershipType = membershipType;
     }
 
