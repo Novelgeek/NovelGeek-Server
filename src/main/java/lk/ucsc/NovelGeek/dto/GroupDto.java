@@ -1,23 +1,14 @@
-package lk.ucsc.NovelGeek.model;
+package lk.ucsc.NovelGeek.dto;
 
+import lk.ucsc.NovelGeek.model.Members;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
-import javax.persistence.*;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-@Entity(name = "Groups")
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members"})
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "groupId")
-public class Group {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class GroupDto implements Serializable {
     private long groupId;
 
     private String groupName;
@@ -30,16 +21,8 @@ public class Group {
 
     private int memberCount;
 
-    //@JsonManagedReference
-    @OneToMany(targetEntity = Members.class, mappedBy = "group", fetch=FetchType.EAGER)
-    Set<Members> members;
 
-    public int getMemberCount() {
-        return memberCount;
-    }
-
-    public void setMemberCount(int memberCount) {
-        this.memberCount = memberCount;
+    public GroupDto() {
     }
 
     public long getGroupId() {
@@ -82,11 +65,13 @@ public class Group {
         this.groupAvatar = groupAvatar;
     }
 
-    public Set<Members> getMembers() {
-        return members;
+    public int getMemberCount() {
+        return memberCount;
     }
 
-    public void setMembers(Set<Members> members) {
-        this.members = members;
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
     }
+
+
 }

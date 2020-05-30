@@ -1,5 +1,6 @@
 package lk.ucsc.NovelGeek.service;
 
+import lk.ucsc.NovelGeek.dto.GroupDto;
 import lk.ucsc.NovelGeek.enums.MemberStatus;
 import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Members;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -119,6 +121,10 @@ public class GroupService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Users currentUser = authRepository.findByEmail(auth.getName());
         Optional<Group> group = groupRepository.findById(groupId);
+        List<Members> memberCheck = memberRepository.findByUsersAndGroup(Optional.ofNullable(currentUser), group);
+        if (memberCheck.size() != 0) {
+            return false;
+        }
         if(group.isPresent()){
             Members member = new Members();
             member.setUsers(currentUser);
@@ -134,8 +140,15 @@ public class GroupService {
 
     }
 
-    public List<Group> getAllGroups() {
-        return groupRepository.findAll();
+    public List<GroupDto> getAllGroups() {
+
+        List<Group> group = groupRepository.findAll();
+        List<GroupDto> groupDto = new ArrayList<GroupDto>(group.size());
+        for (int i = 0; i < group.size(); i++) {
+            groupDto.add(new GroupDto());
+            BeanUtils.copyProperties(group.get(i), groupDto.get(i));
+        }
+        return groupDto;
     }
 
     public List<?> getGroupInvites(Long userId) {
@@ -144,6 +157,9 @@ public class GroupService {
     }
 
     public Optional<Group> getSingleGroup(Long groupId) {
+//        Optional<Group> group = groupRepository.findById(groupId);
+//        GroupDto groupDto = new GroupDto();
+//        BeanUtils.copyProperties(group.get(), groupDto);
         return groupRepository.findById(groupId);
     }
 
@@ -153,5 +169,34 @@ public class GroupService {
         members.get(0).setMemberStatus(MemberStatus.MEMBER);
         memberRepository.save(members.get(0));
         return members;
+    }
+
+    public List<Members> getRequests(Long groupId) {
+        return  memberRepository.findByGroupAndMemberStatus(groupRepository.findById(groupId), MemberStatus.REQUESTED);
+    }
+
+    public Object acceptRequest(Long userId, Long groupId) {
+        List<Members> members = memberRepository.findByUsersAndGroup(authRepository.findById(userId), groupRepository.findById(groupId));
+        members.get(0).setMemberStatus(MemberStatus.MEMBER);
+        return memberRepository.save(members.get(0));
+    }
+
+    public Object leaveGroup(Long groupId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Users currentUser = authRepository.findByEmail(auth.getName());
+        List<Members> member = memberRepository.findByUsersAndGroup(Optional.ofNullable(currentUser), groupRepository.findById(groupId));
+        memberRepository.delete(member.get(0));
+        return null;
+    }
+
+    public Object removeUser(Long groupId, Long userId) {
+        memberRepository.deleteAll( memberRepository.findByUsersAndGroup(authRepository.findById(userId), groupRepository.findById(groupId)));
+        return null;
+    }
+
+    public Group updateGroup(NewGroupRequest newGroupRequest, Long groupId) {
+        Optional<Group> group = groupRepository.findById(groupId);
+        BeanUtils.copyProperties(newGroupRequest, group.get());
+        return groupRepository.save(group.get());
     }
 }

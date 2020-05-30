@@ -1,12 +1,16 @@
 package lk.ucsc.NovelGeek.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lk.ucsc.NovelGeek.enums.MemberStatus;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity(name = "GroupMembers")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "memberId")
 public class Members {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +20,7 @@ public class Members {
     @JoinColumn(name = "id")
     Users users;
 
+    //@JsonBackReference
     @ManyToOne
     @JoinColumn(name = "groupId")
     Group group;

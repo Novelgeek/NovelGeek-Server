@@ -22,13 +22,18 @@ public class GroupController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllGroups(){
-
         return ResponseEntity.ok(groupService.getAllGroups());
     }
 
     @PostMapping("new")
     public ResponseEntity<?> createGroup(@RequestBody NewGroupRequest newGroupRequest) {
         Group createdGroup = groupService.createGroup(newGroupRequest);
+        return ResponseEntity.ok(createdGroup);
+    }
+
+    @PostMapping("{groupId}/update")
+    public ResponseEntity<?> updateGroup(@RequestBody NewGroupRequest newGroupRequest, @PathVariable(value="groupId") Long groupId) {
+        Group createdGroup = groupService.updateGroup(newGroupRequest, groupId);
         return ResponseEntity.ok(createdGroup);
     }
 
@@ -61,10 +66,20 @@ public class GroupController {
     public ResponseEntity<?> requestMembership(@PathVariable(value="groupId") Long groupId){
         boolean success = groupService.requestMembership(groupId);
         if(success){
-            return ResponseEntity.ok("Membership requestedd");
+            return ResponseEntity.ok(null);
         } else {
             return ResponseEntity.ok("Membership couldnt be requested");
         }
+    }
+
+    @GetMapping("{groupId}/getRequests")
+    public ResponseEntity<?> getRequests(@PathVariable(value="groupId") Long groupId){
+        return ResponseEntity.ok(groupService.getRequests(groupId));
+    }
+
+    @GetMapping("{groupId}/acceptRequest/{userId}")
+    public ResponseEntity<?> acceptRequest(@PathVariable(value="userId") Long userId, @PathVariable(value="groupId") Long groupId){
+        return ResponseEntity.ok(groupService.acceptRequest(userId, groupId));
     }
 
     @GetMapping("getMembers/{groupId}")
@@ -94,6 +109,16 @@ public class GroupController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal)auth.getPrincipal();
         return ResponseEntity.ok(groupService.getGroupInvites(Long.valueOf(user.getId())));
+    }
+
+    @GetMapping("{groupId}/leaveGroup")
+    public ResponseEntity<?> leaveGroup(@PathVariable(value="groupId") Long groupId){
+        return ResponseEntity.ok(groupService.leaveGroup(groupId));
+    }
+
+    @GetMapping("{groupId}/removeUser/{userId}")
+    public ResponseEntity<?> leaveGroup(@PathVariable(value="groupId") Long groupId, @PathVariable(value="userId") Long userId){
+        return ResponseEntity.ok(groupService.removeUser(groupId, userId));
     }
 
 }
