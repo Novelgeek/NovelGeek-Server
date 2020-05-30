@@ -22,6 +22,16 @@ public class Group {
 
     private String groupAvatar;
 
+    private int memberCount;
+
+    public int getMemberCount() {
+        return memberCount;
+    }
+
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
+    }
+
     @OneToMany(targetEntity = Members.class, mappedBy = "group")
     Set<Members> members;
 

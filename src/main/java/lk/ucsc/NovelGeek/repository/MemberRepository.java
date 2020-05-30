@@ -16,5 +16,9 @@ public interface MemberRepository extends JpaRepository<Members, Long> {
 
     List<Members> findByUsers(Optional<Users> userId);
 
+    List<Members> findByUsersAndGroup(Optional<Users> userId, Optional<Group> group);
+
     List<Members> findByUsersAndMemberStatus(Optional<Users> userId, MemberStatus memberStatus);
+
+    List<Members> findByGroupAndUsersAndMemberStatus(Optional<Group> group, Users user, MemberStatus memberStatus);
 }

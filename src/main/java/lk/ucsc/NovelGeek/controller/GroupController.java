@@ -6,6 +6,7 @@ import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
 import lk.ucsc.NovelGeek.model.response.SuccessResponse;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import lk.ucsc.NovelGeek.service.GroupService;
+import net.minidev.json.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -45,10 +46,15 @@ public class GroupController {
     public ResponseEntity<?> inviteUser(@PathVariable(value="userId") Long userId, @PathVariable(value="groupId") Long groupId){
         boolean success = groupService.inviteUser(groupId, userId);
         if(success){
-            return ResponseEntity.ok("Member Invited");
+            return ResponseEntity.ok(null);
         } else {
             return ResponseEntity.ok("Member Could not be invited");
         }
+    }
+
+    @PostMapping("{groupId}/acceptInvite")
+    public ResponseEntity<?> acceptInvite(@PathVariable(value="groupId") Long groupId){
+        return  ResponseEntity.ok(groupService.acceptInvite(groupId));
     }
 
     @PostMapping("{groupId}/requestMembership")

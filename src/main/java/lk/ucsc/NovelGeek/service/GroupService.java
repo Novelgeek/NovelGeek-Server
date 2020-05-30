@@ -3,7 +3,6 @@ package lk.ucsc.NovelGeek.service;
 import lk.ucsc.NovelGeek.enums.MemberStatus;
 import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Members;
-import lk.ucsc.NovelGeek.model.Notification;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
 import lk.ucsc.NovelGeek.repository.*;
@@ -38,20 +37,22 @@ public class GroupService {
 
 
     public Group createGroup(NewGroupRequest newGroupRequest){
+        //creating a new group
         Group newGroup = new Group();
         BeanUtils.copyProperties(newGroupRequest,newGroup);
         newGroup.setCreatedOn(new Date());
-
+        newGroup.setMemberCount(1);
         Group createdGroup = groupRepository.save(newGroup);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        //UserPrincipal user = (UserPrincipal)auth.getPrincipal();
-        Members newMember = new Members();
 
+        // adding the current user as the owner of the group
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Members newMember = new Members();
         newMember.setGroup(createdGroup);
         newMember.setJoinedDate(new Date());
         newMember.setMemberStatus(MemberStatus.CREATOR);
         newMember.setUsers(authRepository.findByEmail(auth.getName()));
         memberRepository.save(newMember);
+
         return createdGroup;
     }
 
@@ -79,8 +80,9 @@ public class GroupService {
     }
 
     public List<Members> getGroups(Long userId) {
-        List<Members> groups = memberRepository.findByUsers(authRepository.findById(userId));
-
+        List<Members> groups = memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.MEMBER);
+        groups.addAll(memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.CREATOR));
+        groups.addAll(memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.ADMIN));
         return groups;
     }
 
@@ -89,6 +91,10 @@ public class GroupService {
         Optional<Group> group = groupRepository.findById(groupId);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Users currentUser = authRepository.findByEmail(auth.getName());
+        List<Members> memberCheck = memberRepository.findByUsersAndGroup(user, group);
+        if (memberCheck.size() != 0) {
+            return false;
+        }
         if(user.isPresent() && group.isPresent()){
             Members member = new Members();
             member.setUsers(user.get());
@@ -96,12 +102,12 @@ public class GroupService {
             member.setMemberStatus(MemberStatus.INVITED);
             memberRepository.save(member);
 
-            Notification notification = new Notification();
-            notification.setTargetUser(user.get());
-            notification.setFiredUser(currentUser);
-            notification.setSeen(false);
-            notification.setEventId(notiEventRepository.findById((long) 1).get());
-            notificationRepository.save(notification);
+//            Notification notification = new Notification();
+//            notification.setTargetUser(user.get());
+//            notification.setFiredUser(currentUser);
+//            notification.setSeen(false);
+//            notification.setEventId(notiEventRepository.findById((long) 1).get());
+//            notificationRepository.save(notification);
             return true;
         }
         else {
@@ -139,5 +145,13 @@ public class GroupService {
 
     public Optional<Group> getSingleGroup(Long groupId) {
         return groupRepository.findById(groupId);
+    }
+
+    public List<Members> acceptInvite(Long groupId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<Members> members = memberRepository.findByGroupAndUsersAndMemberStatus(groupRepository.findById(groupId), authRepository.findByEmail(auth.getName()), MemberStatus.INVITED);
+        members.get(0).setMemberStatus(MemberStatus.MEMBER);
+        memberRepository.save(members.get(0));
+        return members;
     }
 }
