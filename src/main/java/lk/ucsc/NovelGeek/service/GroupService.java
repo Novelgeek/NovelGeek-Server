@@ -88,7 +88,7 @@ public class GroupService {
         return groups;
     }
 
-    public boolean inviteUser(Long groupId, Long userId) {
+    public Object inviteUser(Long groupId, Long userId) {
         Optional<Users> user = authRepository.findById(userId);
         Optional<Group> group = groupRepository.findById(groupId);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -110,7 +110,7 @@ public class GroupService {
 //            notification.setSeen(false);
 //            notification.setEventId(notiEventRepository.findById((long) 1).get());
 //            notificationRepository.save(notification);
-            return true;
+            return group;
         }
         else {
             return false;
@@ -198,5 +198,12 @@ public class GroupService {
         Optional<Group> group = groupRepository.findById(groupId);
         BeanUtils.copyProperties(newGroupRequest, group.get());
         return groupRepository.save(group.get());
+    }
+
+    public Object getRole(Long groupId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Users currentUser = authRepository.findByEmail(auth.getName());
+        List<Members> member = memberRepository.findByUsersAndGroup(Optional.ofNullable(currentUser), groupRepository.findById(groupId));
+        return member.get(0);
     }
 }

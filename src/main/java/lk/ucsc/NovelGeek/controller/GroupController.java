@@ -49,12 +49,8 @@ public class GroupController {
 
     @PostMapping("{groupId}/inviteUser/{userId}")
     public ResponseEntity<?> inviteUser(@PathVariable(value="userId") Long userId, @PathVariable(value="groupId") Long groupId){
-        boolean success = groupService.inviteUser(groupId, userId);
-        if(success){
-            return ResponseEntity.ok(null);
-        } else {
-            return ResponseEntity.ok("Member Could not be invited");
-        }
+        return ResponseEntity.ok(groupService.inviteUser(groupId, userId));
+
     }
 
     @PostMapping("{groupId}/acceptInvite")
@@ -120,5 +116,12 @@ public class GroupController {
     public ResponseEntity<?> leaveGroup(@PathVariable(value="groupId") Long groupId, @PathVariable(value="userId") Long userId){
         return ResponseEntity.ok(groupService.removeUser(groupId, userId));
     }
+
+    @GetMapping("{groupId}/getRole")
+    public ResponseEntity<?> getRole(@PathVariable(value="groupId") Long groupId){
+        return ResponseEntity.ok(groupService.getRole(groupId));
+    }
+
+
 
 }
