@@ -1,5 +1,6 @@
 package lk.ucsc.NovelGeek.dto;
 
+import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Members;
 
 import javax.persistence.FetchType;
@@ -22,7 +23,13 @@ public class GroupDto implements Serializable {
     private int memberCount;
 
 
-    public GroupDto() {
+    public GroupDto(Group group) {
+        this.groupId = group.getGroupId();
+        this.groupName = group.getGroupName();
+        this.createdOn = group.getCreatedOn();
+        this.description = group.getDescription();
+        this.groupAvatar = group.getGroupAvatar();
+        this.memberCount = group.getMembers().size();
     }
 
     public long getGroupId() {

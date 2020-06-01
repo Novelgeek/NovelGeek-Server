@@ -31,7 +31,7 @@ public class Group {
     private int memberCount;
 
     //@JsonManagedReference
-    @OneToMany(targetEntity = Members.class, mappedBy = "group", fetch=FetchType.EAGER)
+    @OneToMany(targetEntity = Members.class, mappedBy = "group")
     Set<Members> members;
 
     public int getMemberCount() {

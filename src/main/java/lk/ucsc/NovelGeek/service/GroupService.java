@@ -13,11 +13,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -81,11 +80,12 @@ public class GroupService {
         return members;
     }
 
-    public List<Members> getGroups(Long userId) {
+    public List<GroupDto> getGroups(Long userId) {
         List<Members> groups = memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.MEMBER);
         groups.addAll(memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.CREATOR));
         groups.addAll(memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.ADMIN));
-        return groups;
+        List<GroupDto> groupDtos = groups.stream().map(member -> new GroupDto(member.getGroup())).collect(Collectors.toList());
+        return groupDtos;
     }
 
     public Object inviteUser(Long groupId, Long userId) {
@@ -142,12 +142,13 @@ public class GroupService {
 
     public List<GroupDto> getAllGroups() {
 
-        List<Group> group = groupRepository.findAll();
-        List<GroupDto> groupDto = new ArrayList<GroupDto>(group.size());
-        for (int i = 0; i < group.size(); i++) {
-            groupDto.add(new GroupDto());
-            BeanUtils.copyProperties(group.get(i), groupDto.get(i));
-        }
+//        List<Group> group = groupRepository.findAll();
+//        List<GroupDto> groupDto = new ArrayList<GroupDto>(group.size());
+//        for (int i = 0; i < group.size(); i++) {
+//            groupDto.add(new GroupDto());
+//            BeanUtils.copyProperties(group.get(i), groupDto.get(i));
+//        }
+        List<GroupDto> groupDto = groupRepository.findAll().stream().map( group -> new GroupDto(group)).collect(Collectors.toList());
         return groupDto;
     }
 
@@ -160,6 +161,7 @@ public class GroupService {
 //        Optional<Group> group = groupRepository.findById(groupId);
 //        GroupDto groupDto = new GroupDto();
 //        BeanUtils.copyProperties(group.get(), groupDto);
+//        System.out.print(groupRepository.findById(groupId).get().getMembers().contains());
         return groupRepository.findById(groupId);
     }
 

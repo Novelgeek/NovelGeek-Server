@@ -21,15 +21,24 @@ public class Members {
     Users users;
 
     //@JsonBackReference
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "groupId")
     Group group;
 
     @Enumerated(EnumType.STRING)
     private MemberStatus memberStatus;
 
-
     private Date joinedDate;
+
+    private boolean isMember;
+
+    public boolean isMember() {
+        return isMember;
+    }
+
+    public void setMember(boolean member) {
+        isMember = member;
+    }
 
     public long getMemberId() {
         return memberId;
