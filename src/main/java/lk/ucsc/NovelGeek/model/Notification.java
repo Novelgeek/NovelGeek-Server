@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity(name = "Notifications")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "Notification_Type")
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +21,6 @@ public class Notification {
     Users firedUser;
 
     private boolean seen;
-
-    @ManyToOne
-    @JoinColumn(name = "eventId")
-    NotificationEvent eventId;
 
     public long getNotificationId() {
         return notificationId;
@@ -56,11 +54,4 @@ public class Notification {
         this.seen = seen;
     }
 
-    public NotificationEvent getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(NotificationEvent eventId) {
-        this.eventId = eventId;
-    }
 }

@@ -2,6 +2,7 @@ package lk.ucsc.NovelGeek.controller;
 
 import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Users;
+import lk.ucsc.NovelGeek.model.notification.GroupNotification;
 import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
 import lk.ucsc.NovelGeek.model.response.SuccessResponse;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
@@ -25,6 +26,11 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getAllGroups());
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok(groupService.test());
+    }
+
     @PostMapping("new")
     public ResponseEntity<?> createGroup(@RequestBody NewGroupRequest newGroupRequest) {
         Group createdGroup = groupService.createGroup(newGroupRequest);
@@ -39,12 +45,7 @@ public class GroupController {
 
     @PostMapping("{groupId}/addMember/{userId}")
     public ResponseEntity<?> addSingleMember(@PathVariable(value="userId") Long userId, @PathVariable(value="groupId") Long groupId){
-        boolean success = groupService.addMember(groupId, userId);
-        if(success){
-            return ResponseEntity.ok("Member Added");
-        } else {
-            return ResponseEntity.ok("Member Could be Added");
-        }
+        return ResponseEntity.ok(groupService.addMember(groupId, userId));
     }
 
     @PostMapping("{groupId}/inviteUser/{userId}")

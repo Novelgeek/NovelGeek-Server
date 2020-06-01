@@ -31,8 +31,6 @@ public class Users {
     @OneToMany(targetEntity = Notification.class, mappedBy = "targetUser")
     Set<Members> myNotifications;
 
-    @OneToMany(targetEntity = Notification.class, mappedBy = "firedUser")
-    Set<Members> notiFiredByMe;
 
     public Set<Members> getMyNotifications() {
         return myNotifications;
@@ -40,14 +38,6 @@ public class Users {
 
     public void setMyNotifications(Set<Members> myNotifications) {
         this.myNotifications = myNotifications;
-    }
-
-    public Set<Members> getNotiFiredByMe() {
-        return notiFiredByMe;
-    }
-
-    public void setNotiFiredByMe(Set<Members> notiFiredByMe) {
-        this.notiFiredByMe = notiFiredByMe;
     }
 
     public String getProvider() {

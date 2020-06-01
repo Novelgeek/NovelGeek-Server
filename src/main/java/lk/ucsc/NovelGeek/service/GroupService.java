@@ -5,6 +5,7 @@ import lk.ucsc.NovelGeek.enums.MemberStatus;
 import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Members;
 import lk.ucsc.NovelGeek.model.Users;
+import lk.ucsc.NovelGeek.model.notification.GroupNotification;
 import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
 import lk.ucsc.NovelGeek.repository.*;
 import org.springframework.beans.BeanUtils;
@@ -34,8 +35,11 @@ public class GroupService {
     NotificationRepository notificationRepository;
 
     @Autowired
-    NotiEventRepository notiEventRepository;
+    GroupNotificatioRepository groupNotificatioRepository;
 
+    public Object test(){
+        return notificationRepository.findAll();
+    }
 
     public Group createGroup(NewGroupRequest newGroupRequest){
         //creating a new group
@@ -57,7 +61,7 @@ public class GroupService {
         return createdGroup;
     }
 
-    public boolean addMember(Long groupId, Long userId){
+    public Members addMember(Long groupId, Long userId){
         Optional<Users> user = authRepository.findById(userId);
         Optional<Group> group = groupRepository.findById(groupId);
         if(user.isPresent() && group.isPresent()){
@@ -67,10 +71,10 @@ public class GroupService {
             member.setMemberStatus(MemberStatus.MEMBER);
             member.setJoinedDate(new Date());
             memberRepository.save(member);
-            return true;
+            return member;
         }
         else {
-            return false;
+            return null;
         }
 
     }
@@ -93,23 +97,16 @@ public class GroupService {
         Optional<Group> group = groupRepository.findById(groupId);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Users currentUser = authRepository.findByEmail(auth.getName());
-        List<Members> memberCheck = memberRepository.findByUsersAndGroup(user, group);
-        if (memberCheck.size() != 0) {
-            return false;
-        }
         if(user.isPresent() && group.isPresent()){
-            Members member = new Members();
-            member.setUsers(user.get());
-            member.setGroup(group.get());
-            member.setMemberStatus(MemberStatus.INVITED);
-            memberRepository.save(member);
 
-//            Notification notification = new Notification();
-//            notification.setTargetUser(user.get());
-//            notification.setFiredUser(currentUser);
-//            notification.setSeen(false);
-//            notification.setEventId(notiEventRepository.findById((long) 1).get());
-//            notificationRepository.save(notification);
+            GroupNotification groupNotification = new GroupNotification();
+            groupNotification.setGroup(group.get());
+            groupNotification.setFiredUser(currentUser);
+            groupNotification.setTargetUser(user.get());
+            groupNotification.setNotiType("INVITED");
+            groupNotification.setSeen(false);
+            notificationRepository.save(groupNotification);
+
             return group;
         }
         else {
@@ -154,7 +151,8 @@ public class GroupService {
 
     public List<?> getGroupInvites(Long userId) {
         List<Members> members = memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.INVITED);
-        return members;
+        List<GroupNotification> groupNotifications = groupNotificatioRepository.findByNotiType("INVITED");
+        return groupNotifications;
     }
 
     public Optional<Group> getSingleGroup(Long groupId) {
@@ -165,12 +163,15 @@ public class GroupService {
         return groupRepository.findById(groupId);
     }
 
-    public List<Members> acceptInvite(Long groupId) {
+    public Members acceptInvite(Long groupId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<Members> members = memberRepository.findByGroupAndUsersAndMemberStatus(groupRepository.findById(groupId), authRepository.findByEmail(auth.getName()), MemberStatus.INVITED);
-        members.get(0).setMemberStatus(MemberStatus.MEMBER);
-        memberRepository.save(members.get(0));
-        return members;
+//        List<Members> members = memberRepository.findByGroupAndUsersAndMemberStatus(groupRepository.findById(groupId), authRepository.findByEmail(auth.getName()), MemberStatus.INVITED);
+//        members.get(0).setMemberStatus(MemberStatus.MEMBER);
+//        memberRepository.save(members.get(0));
+        groupNotificatioRepository.deleteAll(groupNotificatioRepository.findByTargetUserAndGroup( authRepository.findByEmail(auth.getName()), groupRepository.findById(groupId).get()));
+        Users currentUser = authRepository.findByEmail(auth.getName());
+
+        return this.addMember(groupId, currentUser.getId());
     }
 
     public List<Members> getRequests(Long groupId) {
