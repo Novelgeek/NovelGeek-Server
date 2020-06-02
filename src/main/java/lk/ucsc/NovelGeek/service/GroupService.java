@@ -1,5 +1,6 @@
 package lk.ucsc.NovelGeek.service;
 
+import lk.ucsc.NovelGeek.dto.GroupDetailedDto;
 import lk.ucsc.NovelGeek.dto.GroupDto;
 import lk.ucsc.NovelGeek.enums.MemberStatus;
 import lk.ucsc.NovelGeek.model.Group;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -37,16 +39,43 @@ public class GroupService {
     @Autowired
     GroupNotificatioRepository groupNotificatioRepository;
 
+    // helpers
+
     public Object test(){
         return notificationRepository.findAll();
     }
 
-    public Group createGroup(NewGroupRequest newGroupRequest){
+    public Users getCurrentUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Users currentUser = authRepository.findByEmail(auth.getName());
+        return currentUser;
+    }
+
+    public GroupDto addMember(Long groupId, Long userId){
+        Optional<Users> user = authRepository.findById(userId);
+        Optional<Group> group = groupRepository.findById(groupId);
+        if(user.isPresent() && group.isPresent()){
+            Members member = new Members();
+            member.setUsers(user.get());
+            member.setGroup(group.get());
+            member.setMemberStatus(MemberStatus.MEMBER);
+            member.setJoinedDate(new Date());
+            Members createdMember = memberRepository.save(member);
+            GroupDto groupDto = new GroupDto(createdMember.getGroup(), user.get());
+            return groupDto;
+        } else {
+            return null;
+        }
+    }
+
+
+
+
+    public GroupDto createGroup(NewGroupRequest newGroupRequest){
         //creating a new group
         Group newGroup = new Group();
         BeanUtils.copyProperties(newGroupRequest,newGroup);
         newGroup.setCreatedOn(new Date());
-        newGroup.setMemberCount(1);
         Group createdGroup = groupRepository.save(newGroup);
 
         // adding the current user as the owner of the group
@@ -58,47 +87,57 @@ public class GroupService {
         newMember.setUsers(authRepository.findByEmail(auth.getName()));
         memberRepository.save(newMember);
 
-        return createdGroup;
+        GroupDto returnGroup = new GroupDto();
+        BeanUtils.copyProperties(createdGroup, returnGroup);
+        returnGroup.setMember(true);
+        returnGroup.setMemberCount(1);
+        return returnGroup;
     }
 
-    public Members addMember(Long groupId, Long userId){
-        Optional<Users> user = authRepository.findById(userId);
+    public Group updateGroup(NewGroupRequest newGroupRequest, Long groupId) {
         Optional<Group> group = groupRepository.findById(groupId);
-        if(user.isPresent() && group.isPresent()){
-            Members member = new Members();
-            member.setUsers(user.get());
-            member.setGroup(group.get());
-            member.setMemberStatus(MemberStatus.MEMBER);
-            member.setJoinedDate(new Date());
-            memberRepository.save(member);
-            return member;
-        }
-        else {
-            return null;
-        }
-
+        BeanUtils.copyProperties(newGroupRequest, group.get());
+        return groupRepository.save(group.get());
     }
 
-    public List<Members> getMembers(Long groupId) {
-        List<Members> members = memberRepository.findByGroup(groupRepository.findById(groupId));
-        return members;
+    public List<GroupDto> getAllGroups() {
+        List<GroupDto> groupDto = groupRepository.findAll().stream().map( group -> new GroupDto(group, this.getCurrentUser())).collect(Collectors.toList());
+        return groupDto;
     }
 
-    public List<GroupDto> getGroups(Long userId) {
-        List<Members> groups = memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.MEMBER);
-        groups.addAll(memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.CREATOR));
-        groups.addAll(memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.ADMIN));
-        List<GroupDto> groupDtos = groups.stream().map(member -> new GroupDto(member.getGroup())).collect(Collectors.toList());
+    public List<GroupDto> getUserGroups(Long userId) {
+        List<Members> groups = memberRepository.findByUsers(authRepository.findById(userId));
+        List<GroupDto> groupDtos = groups.stream().map(member -> new GroupDto(member.getGroup(), authRepository.findById(userId).get())).collect(Collectors.toList());
         return groupDtos;
     }
+
+    public Set<Members> getMembers(Long groupId) {
+        return groupRepository.findById(groupId).get().getMembers();
+    }
+
+    public GroupDetailedDto getSingleGroup(Long groupId) {
+        Optional<Group> group = groupRepository.findById(groupId);
+        Users currentUser = this.getCurrentUser();
+        GroupDetailedDto groupDetailedDto = new GroupDetailedDto();
+        BeanUtils.copyProperties(group.get(), groupDetailedDto);
+        group.get().getMembers().forEach(member -> {
+            if(member.getUsers().getId() == currentUser.getId()) {
+                groupDetailedDto.setMember(true);
+                if(member.getMemberStatus() != MemberStatus.MEMBER) {
+                    groupDetailedDto.setAdmin(true);
+                }
+            }
+        });
+        return groupDetailedDto;
+    }
+
+    // invites
 
     public Object inviteUser(Long groupId, Long userId) {
         Optional<Users> user = authRepository.findById(userId);
         Optional<Group> group = groupRepository.findById(groupId);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Users currentUser = authRepository.findByEmail(auth.getName());
+        Users currentUser = this.getCurrentUser();
         if(user.isPresent() && group.isPresent()){
-
             GroupNotification groupNotification = new GroupNotification();
             groupNotification.setGroup(group.get());
             groupNotification.setFiredUser(currentUser);
@@ -107,45 +146,18 @@ public class GroupService {
             groupNotification.setSeen(false);
             notificationRepository.save(groupNotification);
 
-            return group;
+            return groupNotification;
         }
         else {
             return false;
         }
     }
 
-    public boolean requestMembership(Long groupId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Users currentUser = authRepository.findByEmail(auth.getName());
-        Optional<Group> group = groupRepository.findById(groupId);
-        List<Members> memberCheck = memberRepository.findByUsersAndGroup(Optional.ofNullable(currentUser), group);
-        if (memberCheck.size() != 0) {
-            return false;
-        }
-        if(group.isPresent()){
-            Members member = new Members();
-            member.setUsers(currentUser);
-            member.setGroup(group.get());
-            member.setMemberStatus(MemberStatus.REQUESTED);
-            member.setJoinedDate(new Date());
-            memberRepository.save(member);
-            return true;
-        }
-        else {
-            return false;
-        }
+    public GroupDto acceptInvite(Long inviteId) {
 
-    }
-
-    public List<GroupDto> getAllGroups() {
-
-//        List<Group> group = groupRepository.findAll();
-//        List<GroupDto> groupDto = new ArrayList<GroupDto>(group.size());
-//        for (int i = 0; i < group.size(); i++) {
-//            groupDto.add(new GroupDto());
-//            BeanUtils.copyProperties(group.get(i), groupDto.get(i));
-//        }
-        List<GroupDto> groupDto = groupRepository.findAll().stream().map( group -> new GroupDto(group)).collect(Collectors.toList());
+        Optional<GroupNotification> invite = groupNotificatioRepository.findById(inviteId);
+        GroupDto groupDto = this.addMember(invite.get().getGroup().getGroupId(), invite.get().getTargetUser().getId());
+        groupNotificatioRepository.deleteAll(groupNotificatioRepository.findByTargetUserAndGroup( invite.get().getTargetUser(), invite.get().getGroup()));
         return groupDto;
     }
 
@@ -155,38 +167,50 @@ public class GroupService {
         return groupNotifications;
     }
 
-    public Optional<Group> getSingleGroup(Long groupId) {
-//        Optional<Group> group = groupRepository.findById(groupId);
-//        GroupDto groupDto = new GroupDto();
-//        BeanUtils.copyProperties(group.get(), groupDto);
-//        System.out.print(groupRepository.findById(groupId).get().getMembers().contains());
-        return groupRepository.findById(groupId);
+
+
+    // requests
+
+
+
+    public boolean requestMembership(Long groupId) {
+        Users currentUser = this.getCurrentUser();
+        Optional<Group> group = groupRepository.findById(groupId);
+
+        if(group.isPresent()){
+            GroupNotification groupNotification = new GroupNotification();
+            groupNotification.setGroup(group.get());
+            groupNotification.setFiredUser(currentUser);
+            groupNotification.setTargetUser(currentUser);
+            groupNotification.setNotiType("REQUESTED");
+            groupNotification.setSeen(false);
+            notificationRepository.save(groupNotification);
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 
-    public Members acceptInvite(Long groupId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        List<Members> members = memberRepository.findByGroupAndUsersAndMemberStatus(groupRepository.findById(groupId), authRepository.findByEmail(auth.getName()), MemberStatus.INVITED);
-//        members.get(0).setMemberStatus(MemberStatus.MEMBER);
-//        memberRepository.save(members.get(0));
-        groupNotificatioRepository.deleteAll(groupNotificatioRepository.findByTargetUserAndGroup( authRepository.findByEmail(auth.getName()), groupRepository.findById(groupId).get()));
-        Users currentUser = authRepository.findByEmail(auth.getName());
-
-        return this.addMember(groupId, currentUser.getId());
+    public List<GroupNotification> getRequests(Long groupId) {
+        List<GroupNotification> groupNotifications = groupNotificatioRepository.findByNotiType("REQUESTED");
+        return groupNotifications;
     }
 
-    public List<Members> getRequests(Long groupId) {
-        return  memberRepository.findByGroupAndMemberStatus(groupRepository.findById(groupId), MemberStatus.REQUESTED);
+    public GroupDto acceptRequest(Long requestId) {
+        Optional<GroupNotification> request = groupNotificatioRepository.findById(requestId);
+        GroupDto groupDto = this.addMember(request.get().getGroup().getGroupId(), request.get().getTargetUser().getId());
+        groupNotificatioRepository.deleteAll(groupNotificatioRepository.findByTargetUserAndGroup( request.get().getTargetUser(), request.get().getGroup()));
+
+        return groupDto;
     }
 
-    public Object acceptRequest(Long userId, Long groupId) {
-        List<Members> members = memberRepository.findByUsersAndGroup(authRepository.findById(userId), groupRepository.findById(groupId));
-        members.get(0).setMemberStatus(MemberStatus.MEMBER);
-        return memberRepository.save(members.get(0));
-    }
+
+
 
     public Object leaveGroup(Long groupId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Users currentUser = authRepository.findByEmail(auth.getName());
+        Users currentUser = this.getCurrentUser();
         List<Members> member = memberRepository.findByUsersAndGroup(Optional.ofNullable(currentUser), groupRepository.findById(groupId));
         memberRepository.delete(member.get(0));
         return null;
@@ -197,16 +221,8 @@ public class GroupService {
         return null;
     }
 
-    public Group updateGroup(NewGroupRequest newGroupRequest, Long groupId) {
-        Optional<Group> group = groupRepository.findById(groupId);
-        BeanUtils.copyProperties(newGroupRequest, group.get());
-        return groupRepository.save(group.get());
-    }
-
-    public Object getRole(Long groupId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Users currentUser = authRepository.findByEmail(auth.getName());
-        List<Members> member = memberRepository.findByUsersAndGroup(Optional.ofNullable(currentUser), groupRepository.findById(groupId));
-        return member.get(0);
+    public Object deleteGroup(Long groupId) {
+        groupRepository.deleteById(groupId);
+        return null;
     }
 }

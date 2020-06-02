@@ -2,11 +2,13 @@ package lk.ucsc.NovelGeek.dto;
 
 import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Members;
+import lk.ucsc.NovelGeek.model.Users;
 
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Set;
 
 public class GroupDto implements Serializable {
@@ -22,6 +24,10 @@ public class GroupDto implements Serializable {
 
     private int memberCount;
 
+    private boolean isMember;
+
+    public GroupDto() {
+    }
 
     public GroupDto(Group group) {
         this.groupId = group.getGroupId();
@@ -30,6 +36,31 @@ public class GroupDto implements Serializable {
         this.description = group.getDescription();
         this.groupAvatar = group.getGroupAvatar();
         this.memberCount = group.getMembers().size();
+    }
+
+    public GroupDto(Group group, Users user) {
+        this.groupId = group.getGroupId();
+        this.groupName = group.getGroupName();
+        this.createdOn = group.getCreatedOn();
+        this.description = group.getDescription();
+        this.groupAvatar = group.getGroupAvatar();
+        this.memberCount = group.getMembers().size();
+        this.isMember = false;
+        group.getMembers().forEach(members -> {
+            if(members.getUsers() == user){
+                this.isMember = true;
+            }
+        });
+
+
+    }
+
+    public boolean isMember() {
+        return isMember;
+    }
+
+    public void setMember(boolean member) {
+        isMember = member;
     }
 
     public long getGroupId() {

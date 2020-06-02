@@ -1,23 +1,11 @@
-package lk.ucsc.NovelGeek.model;
+package lk.ucsc.NovelGeek.dto;
 
+import lk.ucsc.NovelGeek.model.Members;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
-import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
-@Entity(name = "Groups")
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members"})
-//@JsonIdentityInfo(
-//        generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "groupId")
-public class Group {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class GroupDetailedDto {
     private long groupId;
 
     private String groupName;
@@ -28,9 +16,14 @@ public class Group {
 
     private String groupAvatar;
 
-    @JsonManagedReference
-    @OneToMany(targetEntity = Members.class, mappedBy = "group", cascade = CascadeType.ALL)
     Set<Members> members;
+
+    private boolean isMember;
+
+    private boolean isAdmin;
+
+    public GroupDetailedDto() {
+    }
 
     public long getGroupId() {
         return groupId;
@@ -78,5 +71,21 @@ public class Group {
 
     public void setMembers(Set<Members> members) {
         this.members = members;
+    }
+
+    public boolean isMember() {
+        return isMember;
+    }
+
+    public void setMember(boolean member) {
+        isMember = member;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 }

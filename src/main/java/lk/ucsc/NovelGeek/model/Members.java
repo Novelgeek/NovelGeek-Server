@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity(name = "GroupMembers")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "memberId")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "memberId")
 public class Members {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class Members {
     @JoinColumn(name = "id")
     Users users;
 
-    //@JsonBackReference
+    @JsonBackReference
     @ManyToOne()
     @JoinColumn(name = "groupId")
     Group group;
@@ -30,15 +30,6 @@ public class Members {
 
     private Date joinedDate;
 
-    private boolean isMember;
-
-    public boolean isMember() {
-        return isMember;
-    }
-
-    public void setMember(boolean member) {
-        isMember = member;
-    }
 
     public long getMemberId() {
         return memberId;

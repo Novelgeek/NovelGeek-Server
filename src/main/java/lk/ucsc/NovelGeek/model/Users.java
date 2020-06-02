@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name="Users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe", "password", "provider", "providerId", "role"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
