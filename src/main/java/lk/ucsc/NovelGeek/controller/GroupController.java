@@ -1,5 +1,6 @@
 package lk.ucsc.NovelGeek.controller;
 
+import javassist.NotFoundException;
 import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.notification.GroupNotification;

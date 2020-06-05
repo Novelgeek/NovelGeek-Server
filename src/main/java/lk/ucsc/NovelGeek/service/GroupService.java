@@ -1,5 +1,6 @@
 package lk.ucsc.NovelGeek.service;
 
+import javassist.NotFoundException;
 import lk.ucsc.NovelGeek.dto.GroupDetailedDto;
 import lk.ucsc.NovelGeek.dto.GroupDto;
 import lk.ucsc.NovelGeek.enums.MemberStatus;
@@ -11,9 +12,11 @@ import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
 import lk.ucsc.NovelGeek.repository.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -94,8 +97,12 @@ public class GroupService {
         return returnGroup;
     }
 
-    public Group updateGroup(NewGroupRequest newGroupRequest, Long groupId) {
+    public Group updateGroup(NewGroupRequest newGroupRequest, Long groupId)  {
         Optional<Group> group = groupRepository.findById(groupId);
+        if (group.get() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource Not Found");
+        }
+
         BeanUtils.copyProperties(newGroupRequest, group.get());
         return groupRepository.save(group.get());
     }
