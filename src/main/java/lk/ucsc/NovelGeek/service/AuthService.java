@@ -124,4 +124,46 @@ public class AuthService implements UserDetailsService {
         }
 
     }
+
+    public Object forgotPassword(String email) {
+        Users existingUser = authRepository.findByEmail(email);
+        if (existingUser != null) {
+            // Create token
+            ConfirmationToken confirmationToken = new ConfirmationToken(existingUser);
+
+            // Save it
+            confirmationTokenRepository.save(confirmationToken);
+
+            // Create the email
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setTo(existingUser.getEmail());
+            mailMessage.setSubject("Complete Password Reset!");
+            mailMessage.setFrom("test-email@gmail.com");
+            mailMessage.setText("To complete the password reset process, please click here: "
+                    + "http://localhost:4200/reset-password?token="+confirmationToken.getConfirmationToken());
+
+            // Send the email
+            emailSenderService.sendEmail(mailMessage);
+
+
+        } else {
+
+        }
+
+        return null;
+    }
+
+    public void resetPassword(String password, String confirmationToken) {
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+        if (token != null) {
+            Users user = authRepository.findByEmail(token.getUser().getEmail());
+            System.out.println(token.getUser().getEmail());
+            user.setVerified(true);
+            user.setPassword(bCryptPasswordEncoder.encode(password));
+            authRepository.save(user);
+        } else {
+
+        }
+
+    }
 }

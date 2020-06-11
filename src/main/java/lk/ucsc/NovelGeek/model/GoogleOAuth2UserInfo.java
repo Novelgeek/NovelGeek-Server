@@ -7,6 +7,15 @@ public class GoogleOAuth2UserInfo{
     private String name;
     private String provider;
     private String providerId;
+    private boolean isVerified;
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
 
     public String getProvider() {
         return provider;

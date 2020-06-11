@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 public class AuthController {
     @Autowired
@@ -49,4 +51,19 @@ public class AuthController {
         authService.confirmUser(confirmationToken);
         return ResponseEntity.ok("Confirmed user");
     }
+
+    @PostMapping("auth/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> payload) {
+        authService.forgotPassword(payload.get("email"));
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("auth/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> payload) {
+        authService.resetPassword(payload.get("password"), payload.get("token"));
+        return ResponseEntity.ok(null);
+    }
+
+
+
 }
