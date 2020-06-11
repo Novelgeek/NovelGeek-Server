@@ -24,6 +24,8 @@ public class Users {
     private String imageUrl;
     private String provider;
     private String providerId;
+    private boolean isVerified;
+
 
     @OneToMany(targetEntity = Members.class, mappedBy = "users")
     Set<Members> members;
@@ -110,5 +112,13 @@ public class Users {
 
     public void setMembers(Set<Members> members) {
         this.members = members;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 }

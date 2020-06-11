@@ -77,6 +77,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/auth/signup")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/confirm-account").permitAll()
+                .antMatchers(HttpMethod.GET, "/confirm-account").permitAll()
 //                .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().formLogin().disable()

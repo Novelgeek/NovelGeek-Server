@@ -1,17 +1,20 @@
 package lk.ucsc.NovelGeek.service;
 
+import lk.ucsc.NovelGeek.model.ConfirmationToken;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.UserSignInModel;
 import lk.ucsc.NovelGeek.model.request.UserSignUpModel;
 import lk.ucsc.NovelGeek.model.response.AuthResponse;
 import lk.ucsc.NovelGeek.model.response.UserResponse;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
+import lk.ucsc.NovelGeek.repository.ConfirmationTokenRepository;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import lk.ucsc.NovelGeek.util.JwtTokenUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +30,12 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     AuthRepository authRepository;
+
+    @Autowired
+    ConfirmationTokenRepository confirmationTokenRepository;
+
+    @Autowired
+    EmailSenderService emailSenderService;
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -51,6 +60,20 @@ public class AuthService implements UserDetailsService {
         Users storedUsers = authRepository.save(users);
         UserResponse returnUser = new UserResponse();
         BeanUtils.copyProperties(storedUsers, returnUser);
+
+
+        ConfirmationToken confirmationToken = new ConfirmationToken(storedUsers);
+
+        confirmationTokenRepository.save(confirmationToken);
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(storedUsers.getEmail());
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setFrom("chand312902@gmail.com");
+        mailMessage.setText("To confirm your account, please click here : "
+                +"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+
+        emailSenderService.sendEmail(mailMessage);
 
         return returnUser;
     }
@@ -81,6 +104,23 @@ public class AuthService implements UserDetailsService {
         }
         catch (BadCredentialsException e){
             throw new BadCredentialsException("Incorrect username or password", e);
+        }
+
+    }
+
+    public void confirmUser(String confirmationToken) {
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+
+        if(token != null)
+        {
+            Users user = authRepository.findByEmail(token.getUser().getEmail());
+            user.setVerified(true);
+            authRepository.save(user);
+        }
+        else
+        {
+//            modelAndView.addObject("message","The link is invalid or broken!");
+//            modelAndView.setViewName("error");
         }
 
     }
