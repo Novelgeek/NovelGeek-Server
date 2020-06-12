@@ -170,7 +170,7 @@ public class GroupService {
 
     public List<?> getGroupInvites(Long userId) {
         List<Members> members = memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.INVITED);
-        List<GroupNotification> groupNotifications = groupNotificatioRepository.findByNotiType("INVITED");
+        List<GroupNotification> groupNotifications = groupNotificatioRepository.findByNotiTypeAndTargetUser("INVITED", authRepository.findById(userId).get());
         return groupNotifications;
     }
 
