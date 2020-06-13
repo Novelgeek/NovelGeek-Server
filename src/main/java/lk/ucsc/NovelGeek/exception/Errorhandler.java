@@ -1,6 +1,7 @@
 package lk.ucsc.NovelGeek.exception;
 
 
+import lk.ucsc.NovelGeek.model.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -29,9 +30,12 @@ public class Errorhandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> elementNotFund(NoSuchElementException e) {
-        ResponseEntity<String> response = new ResponseEntity<String>("The requested resource could not be found", HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorResponse> elementNotFund(NoSuchElementException e) {
+        System.out.println(e.getMessage());
+        ResponseEntity<ErrorResponse> response = new ResponseEntity<ErrorResponse>(new ErrorResponse(), HttpStatus.INTERNAL_SERVER_ERROR);
         return response;
     }
+
+
 
 }

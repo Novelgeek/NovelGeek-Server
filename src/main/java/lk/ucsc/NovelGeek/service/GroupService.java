@@ -18,10 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -43,10 +40,6 @@ public class GroupService {
     GroupNotificatioRepository groupNotificatioRepository;
 
     // helpers
-
-    public Object test(){
-        return notificationRepository.findAll();
-    }
 
     public Users getCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -124,6 +117,8 @@ public class GroupService {
 
     public GroupDetailedDto getSingleGroup(Long groupId) {
         Optional<Group> group = groupRepository.findById(groupId);
+        if(group.get() == null)
+            throw new NoSuchElementException("Cant find group");
         Users currentUser = this.getCurrentUser();
         GroupDetailedDto groupDetailedDto = new GroupDetailedDto();
         BeanUtils.copyProperties(group.get(), groupDetailedDto);
@@ -183,7 +178,10 @@ public class GroupService {
     public boolean requestMembership(Long groupId) {
         Users currentUser = this.getCurrentUser();
         Optional<Group> group = groupRepository.findById(groupId);
+        List<Members> member = memberRepository.findByUsersAndGroup(Optional.ofNullable(currentUser), group);
+        if(member.size() != 0){
 
+        }
         if(group.isPresent()){
             GroupNotification groupNotification = new GroupNotification();
             groupNotification.setGroup(group.get());

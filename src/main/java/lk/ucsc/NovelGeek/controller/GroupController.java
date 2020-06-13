@@ -40,10 +40,6 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getAllGroups());
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test(){
-        return ResponseEntity.ok(groupService.test());
-    }
 
     @GetMapping("getMembers/{groupId}")
     public ResponseEntity<?> getGroupMembers(@PathVariable(value="groupId") Long groupId) {
