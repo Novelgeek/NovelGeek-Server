@@ -29,6 +29,7 @@ public class CustomOidcUserService extends OidcUserService {
         userInfo.setProviderId((String) attributes.get("sub"));
         userInfo.setImageUrl((String) attributes.get("picture"));
         userInfo.setName((String) attributes.get("given_name"));
+        userInfo.setVerified(true);
         userInfo.setProvider(userRequest.getClientRegistration().getRegistrationId());
 
         updateUser(userInfo);
@@ -45,6 +46,7 @@ public class CustomOidcUserService extends OidcUserService {
             user.setImageUrl(userInfo.getImageUrl());
             user.setProvider(userInfo.getProvider());
             user.setProviderId(userInfo.getProviderId());
+            user.setVerified(true);
             user.setRole("USER");
             userRepository.save(user);
         }else {
