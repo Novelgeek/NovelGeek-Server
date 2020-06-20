@@ -22,6 +22,7 @@ public class GroupController {
     @Autowired
     GroupService groupService;
 
+
     // basic group functions
 
     @PostMapping("new")
@@ -113,11 +114,6 @@ public class GroupController {
     public ResponseEntity<?> acceptRequest(@PathVariable(value="requestId") Long requestId){
         return ResponseEntity.ok(groupService.acceptRequest(requestId));
     }
-
-
-
-
-
 
 
     @GetMapping("{groupId}/leaveGroup")
