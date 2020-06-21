@@ -1,6 +1,7 @@
 package lk.ucsc.NovelGeek.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -33,6 +34,13 @@ public class Users {
     @OneToMany(targetEntity = Notification.class, mappedBy = "targetUser")
     Set<Members> myNotifications;
 
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = Posts.class, mappedBy = "users",cascade = CascadeType.ALL)
+    Set<Posts> posts;
+
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users")
+    Set<PostsLikes> postslikes;
 
     public Set<Members> getMyNotifications() {
         return myNotifications;
@@ -121,4 +129,12 @@ public class Users {
     public void setVerified(boolean verified) {
         isVerified = verified;
     }
+
+    public void setPosts(Set<Posts> posts) { this.posts = posts; }
+
+    public Set<Posts> getPosts() { return posts; }
+
+    public void setPostslikes(Set<PostsLikes> postslikes) { this.postslikes = postslikes; }
+
+    public Set<PostsLikes> getPostslikes() { return postslikes; }
 }
