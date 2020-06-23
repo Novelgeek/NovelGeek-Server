@@ -13,6 +13,11 @@ public class PostController {
     @Autowired //inject the service instance that created already
     private PostService postService;
 
+    @PostMapping("/newpost")
+    public ResponseEntity<?> createPost(@RequestBody NewPost newpost){
+        return ResponseEntity.ok(postService.createPost(newpost));
+    }
+
     @GetMapping("/allposts")
     public ResponseEntity<?> getAllPosts(){
         return ResponseEntity.ok(postService.getAllPosts());
@@ -23,16 +28,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getMyPosts());
     }
 
-    @PostMapping("/newpost")
-    public ResponseEntity<?> createPost(@RequestBody NewPost newpost){
-        return ResponseEntity.ok(postService.createPost(newpost));
-    }
-
-    @DeleteMapping("/delete/{postid}")
-    public ResponseEntity<?> deletePost(@PathVariable(value="postid") long postid ){
-        return ResponseEntity.ok(postService.deletePost(postid));
-    }
-
     @GetMapping("/likepost/{postid}")
     public ResponseEntity<?> likePost(@PathVariable(value = "postid") long postid){
         return ResponseEntity.ok(postService.likePost(postid));
@@ -41,6 +36,11 @@ public class PostController {
     @DeleteMapping("/unlikepost/{postid}")
     public ResponseEntity<?> unLikePost(@PathVariable(value = "postid") long postid){
         return ResponseEntity.ok(postService.unLikePost(postid));
+    }
+
+    @DeleteMapping("/delete/{postid}")
+    public ResponseEntity<?> deletePost(@PathVariable(value="postid") long postid ){
+        return ResponseEntity.ok(postService.deletePost(postid));
     }
 
     //@GetMapping()

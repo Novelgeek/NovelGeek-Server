@@ -165,9 +165,7 @@ public class PostService {
             //find post
             Posts post = postRepository.findById(id);
             //find entry in posts_likes
-            PostsLikes unlike = postLikeRepository.findByPosts(post);
-            long idx = unlike.getColumnid();
-
+             long idx = postLikeRepository.getEntry(post.getPostid(), this.getCurrentUser().getId());
             //delete it
             postLikeRepository.deleteById(idx);
             response.setLiked(false);

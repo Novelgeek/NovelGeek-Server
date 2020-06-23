@@ -14,4 +14,7 @@ public interface PostLikeRepository extends CrudRepository<PostsLikes, Long> {
 
     @Query(value="SELECT COUNT(l.columnid) FROM posts_likes l WHERE l.postid =?1 AND l.id =?2",nativeQuery = true)
     public long checkIsLiked(long postid, long id);
+
+    @Query(value="SELECT l.columnid FROM posts_likes l WHERE l.postid =?1 AND l.id =?2",nativeQuery = true)
+    public long getEntry(long postid, long id);
 }
