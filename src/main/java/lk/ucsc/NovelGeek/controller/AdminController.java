@@ -1,7 +1,38 @@
 package lk.ucsc.NovelGeek.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import lk.ucsc.NovelGeek.model.Users;
+import lk.ucsc.NovelGeek.model.request.UserSignInModel;
+import lk.ucsc.NovelGeek.model.request.UserSignUpModel;
+import lk.ucsc.NovelGeek.model.response.AuthResponse;
+import lk.ucsc.NovelGeek.service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("admin")
 public class AdminController {
+
+    @Autowired
+    AdminService adminService;
+
+    @PostMapping("auth/signup")
+    public Users createAdmin(@RequestBody UserSignUpModel userSignUpModel) {
+        Users admin = adminService.createAdmin(userSignUpModel);
+        return admin;
+    }
+
+    @PostMapping("auth/login")
+    public ResponseEntity<?> loginAdmin(@RequestBody UserSignInModel loginRequest) {
+        AuthResponse authResponse = adminService.login(loginRequest);
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @GetMapping("test")
+    public String adminTest() {
+       return  "Admin working";
+    }
+
+
+
 }
