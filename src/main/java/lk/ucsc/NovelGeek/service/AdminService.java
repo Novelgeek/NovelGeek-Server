@@ -4,6 +4,7 @@ import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.UserSignInModel;
 import lk.ucsc.NovelGeek.model.request.UserSignUpModel;
 import lk.ucsc.NovelGeek.model.response.AuthResponse;
+import lk.ucsc.NovelGeek.model.response.BasicStat;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.util.JwtTokenUtil;
 import org.springframework.beans.BeanUtils;
@@ -65,5 +66,6 @@ public class AdminService {
             throw new BadCredentialsException("Incorrect username or password", e);
         }
     }
+
 
 }
