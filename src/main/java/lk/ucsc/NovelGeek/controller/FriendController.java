@@ -13,19 +13,25 @@ public class FriendController {
 
     @GetMapping("my-friends")
     public Object getMyFriends(){
-        friendService.getMyFriends();
-        return null;
+
+        return friendService.getMyFriends();
     }
 
-    @GetMapping("not-friends")
+    @GetMapping("all-users")
     public Object getNonFriends(){
-        friendService.getNonFriends();
-        return null;
+
+        return friendService.getAllUsers();
     }
 
-    @PostMapping("{userId}")
+    @PostMapping("send-request/{userId}")
     public Object sendFriendRequest( @PathVariable(value="userId") Long userId) {
         friendService.sendFriendRequest(userId);
+        return null;
+    }
+
+    @PostMapping("accept-request/{userId}")
+    public Object acceptFriendRequest( @PathVariable(value="userId") Long userId) {
+        friendService.acceptFriendRequest(userId);
         return null;
     }
 

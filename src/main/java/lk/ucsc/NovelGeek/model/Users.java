@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name="Users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe", "password", "provider", "providerId", "role"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe", "password", "provider", "providerId", "role", "friends", "verified"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +36,13 @@ public class Users {
     @OneToMany(targetEntity = Friends.class, mappedBy = "user1")
     Set<Friends> friends;
 
+    public Set<Friends> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Set<Friends> friends) {
+        this.friends = friends;
+    }
 
     public Set<Members> getMyNotifications() {
         return myNotifications;
