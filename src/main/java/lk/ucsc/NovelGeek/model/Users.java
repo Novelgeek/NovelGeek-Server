@@ -33,6 +33,9 @@ public class Users {
     @OneToMany(targetEntity = Notification.class, mappedBy = "targetUser")
     Set<Members> myNotifications;
 
+    @OneToMany(targetEntity = Friends.class, mappedBy = "user1")
+    Set<Friends> friends;
+
 
     public Set<Members> getMyNotifications() {
         return myNotifications;

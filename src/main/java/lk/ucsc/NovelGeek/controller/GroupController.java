@@ -29,10 +29,6 @@ public class GroupController {
 
     // basic group functions
 
-//    @PostMapping("new")
-//    public ResponseEntity<?> createGroup(@RequestBody NewGroupRequest newGroupRequest) {
-//        return ResponseEntity.ok(groupService.createGroup(newGroupRequest));
-//    }
 
     @PostMapping("new")
     public ResponseEntity<?> createGroup(@RequestParam("groupName") String groupName,
