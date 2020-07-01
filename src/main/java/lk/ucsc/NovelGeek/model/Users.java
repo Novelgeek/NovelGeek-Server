@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name="Users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe", "password", "provider", "providerId", "role"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe", "password", "provider", "providerId", "role", "friends", "verified"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +34,12 @@ public class Users {
     @OneToMany(targetEntity = Notification.class, mappedBy = "targetUser")
     Set<Members> myNotifications;
 
+
+    @OneToMany(targetEntity = Friends.class, mappedBy = "user1")
+    Set<Friends> friends;
+
+
+
     @JsonIgnoreProperties
     @OneToMany(targetEntity = Posts.class, mappedBy = "users",cascade = CascadeType.ALL)
     Set<Posts> posts;
@@ -46,6 +52,14 @@ public class Users {
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
     Set<PostsComments> postscomments;
 
+    public Set<Friends> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Set<Friends> friends) {
+        this.friends = friends;
+    }
+  
     public Set<Members> getMyNotifications() {
         return myNotifications;
     }
