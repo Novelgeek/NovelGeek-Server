@@ -19,7 +19,6 @@ public class FriendController {
 
     @GetMapping("all-users")
     public Object getNonFriends(){
-
         return friendService.getAllUsers();
     }
 
@@ -35,9 +34,26 @@ public class FriendController {
         return null;
     }
 
-    @PostMapping("requests")
+    @PostMapping("decline-request/{userId}")
+    public Object declineFriendRequest( @PathVariable(value="userId") Long userId) {
+        friendService.declineFriendRequest(userId);
+        return null;
+    }
+
+    @GetMapping("requests")
     public Object getFriendRequests() {
-        friendService.getFriendRequests();
+        return friendService.getFriendRequests();
+    }
+
+    @PostMapping("unfriend/{userId}")
+    public Object unfriendUser( @PathVariable(value="userId") Long userId) {
+        friendService.unFriendUser(userId);
+        return null;
+    }
+
+    @PostMapping("cancel-friend-request/{userId}")
+    public Object cancelFriendRequest( @PathVariable(value="userId") Long userId) {
+        friendService.cancelFriendRequest(userId);
         return null;
     }
 

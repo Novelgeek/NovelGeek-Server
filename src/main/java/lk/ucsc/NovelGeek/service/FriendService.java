@@ -66,8 +66,11 @@ public class FriendService {
     }
 
     public Object getFriendRequests() {
+        Users currentUser = this.getCurrentUser();
+        List<Users> users = friendRepository.findByUser1AndStatus(currentUser, "PENDING")
+                .stream().map(friend -> friend.getUser2()).collect(Collectors.toList());
 
-        return this.getCurrentUser().getFriends();
+        return users;
     }
 
     public Object acceptFriendRequest(Long userId) {
@@ -85,6 +88,45 @@ public class FriendService {
 
         friendRepository.save(friend);
         friendRepository.save(friendMirror);
+
+        return null;
+    }
+
+    public Object unFriendUser(Long userId) {
+        Optional<Users> targetUser = authRepository.findById(userId);
+        Users currentUser = this.getCurrentUser();
+
+        Friends friend = friendRepository.findByUser1AndUser2(targetUser.get(), currentUser);
+        Friends friendMirror = friendRepository.findByUser1AndUser2(currentUser, targetUser.get());
+
+        friendRepository.delete(friend);
+        friendRepository.delete(friendMirror);
+
+        return null;
+    }
+
+    public Object cancelFriendRequest(Long userId) {
+        Optional<Users> targetUser = authRepository.findById(userId);
+        Users currentUser = this.getCurrentUser();
+
+        Friends friend = friendRepository.findByUser1AndUser2(targetUser.get(), currentUser);
+        Friends friendMirror = friendRepository.findByUser1AndUser2(currentUser, targetUser.get());
+
+        friendRepository.delete(friend);
+        friendRepository.delete(friendMirror);
+
+        return null;
+    }
+
+    public Object declineFriendRequest(Long userId) {
+        Optional<Users> targetUser = authRepository.findById(userId);
+        Users currentUser = this.getCurrentUser();
+
+        Friends friend = friendRepository.findByUser1AndUser2(targetUser.get(), currentUser);
+        Friends friendMirror = friendRepository.findByUser1AndUser2(currentUser, targetUser.get());
+
+        friendRepository.delete(friend);
+        friendRepository.delete(friendMirror);
 
         return null;
     }
