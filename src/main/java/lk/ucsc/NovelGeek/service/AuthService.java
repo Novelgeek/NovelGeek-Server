@@ -1,5 +1,7 @@
 package lk.ucsc.NovelGeek.service;
 
+
+import lk.ucsc.NovelGeek.model.UserDetails;
 import lk.ucsc.NovelGeek.model.ConfirmationToken;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.UserSignInModel;
@@ -7,6 +9,7 @@ import lk.ucsc.NovelGeek.model.request.UserSignUpModel;
 import lk.ucsc.NovelGeek.model.response.AuthResponse;
 import lk.ucsc.NovelGeek.model.response.UserResponse;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
+import lk.ucsc.NovelGeek.repository.UserRepository;
 import lk.ucsc.NovelGeek.repository.ConfirmationTokenRepository;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import lk.ucsc.NovelGeek.util.JwtTokenUtil;
@@ -45,6 +48,8 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    UserRepository userRepository;
 
     public UserResponse createUser(UserSignUpModel userDto) {
         if(authRepository.findByEmail(userDto.getEmail()) != null) {
@@ -58,6 +63,12 @@ public class AuthService implements UserDetailsService {
         users.setRole("USER");
         users.setProvider("local");
         Users storedUsers = authRepository.save(users);
+
+        UserDetails userDetails = new UserDetails();
+        userDetails.setName(storedUsers.getUsername());
+        userDetails.setUser(storedUsers);
+        userRepository.save(userDetails);
+
         UserResponse returnUser = new UserResponse();
         BeanUtils.copyProperties(storedUsers, returnUser);
 
