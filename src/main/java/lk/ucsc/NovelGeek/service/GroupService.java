@@ -1,8 +1,8 @@
 package lk.ucsc.NovelGeek.service;
 
-import javassist.NotFoundException;
 import lk.ucsc.NovelGeek.dto.GroupDetailedDto;
 import lk.ucsc.NovelGeek.dto.GroupDto;
+import lk.ucsc.NovelGeek.dto.GroupUsersDto;
 import lk.ucsc.NovelGeek.enums.MemberStatus;
 import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Members;
@@ -13,6 +13,7 @@ import lk.ucsc.NovelGeek.repository.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -111,8 +112,12 @@ public class GroupService {
         return groupDtos;
     }
 
-    public Set<Members> getMembers(Long groupId) {
-        return groupRepository.findById(groupId).get().getMembers();
+    public List<GroupUsersDto> getAllUsers(Long groupId) {
+        Set<Members> members = groupRepository.findById(groupId).get().getMembers();
+        List<GroupUsersDto> groupUsersDtos =
+                authRepository.findByEmailNotAndRole(this.getCurrentUser().getEmail(), "USER")
+                .stream().map(user -> new GroupUsersDto(user, members)).collect(Collectors.toList());
+        return groupUsersDtos;
     }
 
     public GroupDetailedDto getSingleGroup(Long groupId) {

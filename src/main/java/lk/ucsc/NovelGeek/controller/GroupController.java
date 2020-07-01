@@ -60,9 +60,9 @@ public class GroupController {
     }
 
 
-    @GetMapping("getMembers/{groupId}")
-    public ResponseEntity<?> getGroupMembers(@PathVariable(value="groupId") Long groupId) {
-        return ResponseEntity.ok(groupService.getMembers(groupId));
+    @GetMapping("getAllUsers/{groupId}")
+    public ResponseEntity<?> getAllUsers(@PathVariable(value="groupId") Long groupId) {
+        return ResponseEntity.ok(groupService.getAllUsers(groupId));
     }
 
     @GetMapping("{groupId}")

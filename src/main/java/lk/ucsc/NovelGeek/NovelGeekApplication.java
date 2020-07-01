@@ -11,7 +11,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class NovelGeekApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(NovelGeekApplication.class, args);
+		try{
+			SpringApplication.run(NovelGeekApplication.class, args);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
 	}
 
 	@Bean

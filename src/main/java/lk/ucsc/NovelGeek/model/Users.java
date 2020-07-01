@@ -1,6 +1,7 @@
 package lk.ucsc.NovelGeek.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -33,8 +34,23 @@ public class Users {
     @OneToMany(targetEntity = Notification.class, mappedBy = "targetUser")
     Set<Members> myNotifications;
 
+
     @OneToMany(targetEntity = Friends.class, mappedBy = "user1")
     Set<Friends> friends;
+
+
+
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = Posts.class, mappedBy = "users",cascade = CascadeType.ALL)
+    Set<Posts> posts;
+
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users")
+    Set<PostsLikes> postslikes;
+
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
+    Set<PostsComments> postscomments;
 
     public Set<Friends> getFriends() {
         return friends;
@@ -43,7 +59,7 @@ public class Users {
     public void setFriends(Set<Friends> friends) {
         this.friends = friends;
     }
-
+  
     public Set<Members> getMyNotifications() {
         return myNotifications;
     }
@@ -131,4 +147,16 @@ public class Users {
     public void setVerified(boolean verified) {
         isVerified = verified;
     }
+
+    public void setPosts(Set<Posts> posts) { this.posts = posts; }
+
+    public Set<Posts> getPosts() { return posts; }
+
+    public void setPostslikes(Set<PostsLikes> postslikes) { this.postslikes = postslikes; }
+
+    public Set<PostsLikes> getPostslikes() { return postslikes; }
+
+    public Set<PostsComments> getPostscomments() { return postscomments; }
+
+    public void setPostscomments(Set<PostsComments> postscomments) { this.postscomments = postscomments; }
 }
