@@ -1,13 +1,13 @@
 package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.model.Posts;
+import lk.ucsc.NovelGeek.model.PostsComments;
 import lk.ucsc.NovelGeek.model.PostsLikes;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.NewPost;
-import lk.ucsc.NovelGeek.model.response.DeletePostResponse;
-import lk.ucsc.NovelGeek.model.response.LikePostResponse;
-import lk.ucsc.NovelGeek.model.response.PostResponse;
+import lk.ucsc.NovelGeek.model.response.*;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
+import lk.ucsc.NovelGeek.repository.PostCommentRepository;
 import lk.ucsc.NovelGeek.repository.PostLikeRepository;
 import lk.ucsc.NovelGeek.repository.PostRepository;
 import org.springframework.beans.BeanUtils;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.springframework.web.bind.annotation.GetMapping;
 //
 @Service
 public class PostService {
@@ -30,7 +29,13 @@ public class PostService {
     private PostLikeRepository postLikeRepository;
 
     @Autowired
+    private PostCommentRepository postCommentRepository;
+
+    @Autowired
     private AuthRepository authRepository;
+
+    @Autowired
+    private AWSS3Service awsService;
 
     //to get current user
     public Users getCurrentUser(){
@@ -45,12 +50,16 @@ public class PostService {
            PostResponse response = new PostResponse();
            BeanUtils.copyProperties(post, response);
 
+           //set owner
+            response.setUsername(post.getUsers().getUsername());
+
            //check whether the request is send by owner or not
            if(post.getUsers().getId()==this.getCurrentUser().getId()){
                response.setOwned(true);
            }else{
                response.setOwned(false);
            }
+
            //check whether already liked or not
             if(postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==1){
                 response.setLiked(true);
@@ -61,8 +70,13 @@ public class PostService {
            //setlikes counts of post
            long count = postLikeRepository.countLikes(post.getPostid());
            response.setLikecount(count);
+
+           //setcomment count of post
+            count = postCommentRepository.countComments(post.getPostid());
+            response.setCommentcount(count);
            return response;
         }).collect(Collectors.toList());
+
         return posts;
     }
 
@@ -72,6 +86,9 @@ public class PostService {
         List<PostResponse> myPosts = currentUser.getPosts().stream().map(post ->{
             PostResponse response = new PostResponse();
             BeanUtils.copyProperties(post, response);
+
+            //set owner
+            response.setUsername(this.getCurrentUser().getUsername());
 
             //set owner
             response.setOwned(true);
@@ -87,6 +104,10 @@ public class PostService {
             long count = postLikeRepository.countLikes(post.getPostid());
             response.setLikecount(count);
 
+            //setcomment count of post
+            count = postCommentRepository.countComments(post.getPostid());
+            response.setCommentcount(count);
+
             return response;
         }).collect(Collectors.toList());
 
@@ -99,7 +120,6 @@ public class PostService {
         BeanUtils.copyProperties(newpostrequest,newpost);
 
         newpost.setPublishedDate(new Date());
-        newpost.setImagePath("path");
 
         Users currentUser = this.getCurrentUser();
         newpost.setUsers(currentUser);
@@ -109,12 +129,16 @@ public class PostService {
         PostResponse response = new PostResponse();
         BeanUtils.copyProperties(returnpost, response);
 
+        //set ownername
+        response.setUsername(this.getCurrentUser().getUsername());
         //set owner
         response.setOwned(true);
         //set is liked
         response.setLiked(false);
         //set like count
         response.setLikecount(0);
+        //set comment count
+        response.setCommentcount(0);
 
         return response;
     }
@@ -176,6 +200,47 @@ public class PostService {
         return response;
     }
 
+    public List<LikedUsersResponse> getLikedUsers(long id){
+        Posts post = postRepository.findById(id);
+        List <LikedUsersResponse> likedUsers = postLikeRepository.findByPosts(post).stream().map(entry ->{
+            LikedUsersResponse response = new LikedUsersResponse();
+            response.setLikedUser(entry.getUsers().getUsername());
+            response.setImagePath(entry.getUsers().getImageUrl());
+            return response;
+        }).collect(Collectors.toList());
+        return likedUsers;
+    }
 
+    public CommentResponse addComment(String comment, long id){
 
+        PostsComments newComment = new PostsComments();
+        newComment.setComment(comment);
+        newComment.setPosts(postRepository.findById(id));
+        newComment.setUsers(this.getCurrentUser());
+
+        PostsComments returncomment = postCommentRepository.save(newComment);
+
+        CommentResponse response = new CommentResponse();
+        response.setComment(returncomment.getComment());
+        response.setUsername(this.getCurrentUser().getUsername());
+        response.setImagePath(this.getCurrentUser().getImageUrl());
+
+        return response;
+
+    }
+
+    public List<CommentResponse> getComments(long id){
+        Posts post = postRepository.findById(id);
+
+        List<CommentResponse> comments = postCommentRepository.findByPosts(post).stream().map(entry ->{
+            CommentResponse response = new CommentResponse();
+            response.setComment(entry.getComment());
+            response.setUsername(entry.getUsers().getUsername());
+            response.setImagePath(entry.getUsers().getImageUrl());
+
+            return response;
+        }).collect(Collectors.toList());
+
+        return comments;
+    }
 }

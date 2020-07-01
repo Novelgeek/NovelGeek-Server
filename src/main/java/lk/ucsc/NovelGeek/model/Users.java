@@ -42,6 +42,10 @@ public class Users {
     @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users")
     Set<PostsLikes> postslikes;
 
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
+    Set<PostsComments> postscomments;
+
     public Set<Members> getMyNotifications() {
         return myNotifications;
     }
@@ -137,4 +141,8 @@ public class Users {
     public void setPostslikes(Set<PostsLikes> postslikes) { this.postslikes = postslikes; }
 
     public Set<PostsLikes> getPostslikes() { return postslikes; }
+
+    public Set<PostsComments> getPostscomments() { return postscomments; }
+
+    public void setPostscomments(Set<PostsComments> postscomments) { this.postscomments = postscomments; }
 }

@@ -28,6 +28,10 @@ public class Posts {
     @OneToMany(targetEntity = PostsLikes.class, mappedBy = "posts", cascade = CascadeType.ALL)
     Set<PostsLikes> postslikes;
 
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = PostsComments.class, mappedBy = "posts", cascade = CascadeType.ALL)
+    Set<PostsComments> postscomments;
+
     public long getPostid() { return postid; }
 
     public String getTitle() { return title; }
@@ -59,4 +63,8 @@ public class Posts {
     public void setUsers(Users users) { this.users = users; }
 
     public void setPostslikes(Set<PostsLikes> postslikes) { this.postslikes = postslikes; }
+
+    public Set<PostsComments> getPostscomments() { return postscomments; }
+
+    public void setPostscomments(Set<PostsComments> postscomments) { this.postscomments = postscomments; }
 }
