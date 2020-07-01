@@ -10,4 +10,5 @@ import java.util.List;
 public interface AuthRepository extends CrudRepository<Users, Long> {
     Users findByEmail(String email);
     List<Users> findByRole(String role);
+    List<Users> findByEmailNotAndRole(String email, String role);
 }
