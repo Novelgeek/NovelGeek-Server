@@ -1,5 +1,6 @@
 package lk.ucsc.NovelGeek.service;
 
+
 import lk.ucsc.NovelGeek.model.UserDetails;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.response.UserDetailsResponse;
@@ -13,12 +14,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
+
+import com.fasterxml.jackson.databind.util.BeanUtil;
+import lk.ucsc.NovelGeek.model.response.UserResponse;
+import lk.ucsc.NovelGeek.repository.AuthRepository;
+import lk.ucsc.NovelGeek.repository.UserRepository;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 
 //for getting details of all users, updating users and stuff
+@Service
 public class UserService {
     @Autowired
     AuthRepository authRepository;
+
     @Autowired
     UserRepository userRepository;
     public Object getUserDetails(Long id) {
@@ -56,5 +67,15 @@ public class UserService {
         userRepository.save(userDetails);
 
         return null;
+
+
+    public Object getAllUsers() {
+//        UserResponse userResponse = new UserResponse();
+//        authRepository.findAll().forEach((user) -> {
+//            BeanUtils.copyProperties(userResponse, user);
+//        });
+
+        return authRepository.findAll();
+
     }
 }

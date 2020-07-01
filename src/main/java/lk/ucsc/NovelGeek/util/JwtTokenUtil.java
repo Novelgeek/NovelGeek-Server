@@ -28,6 +28,7 @@ public class JwtTokenUtil implements Serializable {
                 .claim("username", principal.getUsername())
                 .claim("id", principal.getId())
                 .claim("image", principal.getImageUrl())
+                .claim("role", principal.getRole())
                 .setSubject(principal.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
