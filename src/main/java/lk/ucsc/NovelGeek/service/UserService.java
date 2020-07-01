@@ -51,7 +51,7 @@ public class UserService {
 
     public Object saveUserDetails(UserDetailsResponse userDetailsResponse) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal user = (UserPrincipal)auth.getPrincipal();
+        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
 
         Optional<Users> users = authRepository.findById(user.getId());
         UserDetails userDetails = userRepository.findByUser(users.get());
@@ -67,15 +67,15 @@ public class UserService {
         userRepository.save(userDetails);
 
         return null;
+    }
 
 
-    public Object getAllUsers() {
+        public Object getAllUsers () {
 //        UserResponse userResponse = new UserResponse();
 //        authRepository.findAll().forEach((user) -> {
 //            BeanUtils.copyProperties(userResponse, user);
 //        });
 
-        return authRepository.findAll();
-
-    }
+            return authRepository.findAll();
+        }
 }
