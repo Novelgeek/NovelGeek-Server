@@ -144,6 +144,12 @@ public class GroupService {
         Optional<Users> user = authRepository.findById(userId);
         Optional<Group> group = groupRepository.findById(groupId);
         Users currentUser = this.getCurrentUser();
+        GroupNotification groupNotificationExists =
+                groupNotificatioRepository.findByFiredUserAndTargetUserAndNotiType(currentUser, user.get(), "INVITED");
+        // if already invited by the fired user send this
+        if (groupNotificationExists != null) {
+            return groupNotificationExists;
+        }
         if(user.isPresent() && group.isPresent()){
             GroupNotification groupNotification = new GroupNotification();
             groupNotification.setGroup(group.get());
@@ -168,6 +174,11 @@ public class GroupService {
         return groupDto;
     }
 
+    public Object declineInvite(Long inviteId) {
+        groupNotificatioRepository.deleteById(inviteId);
+        return null;
+    }
+
     public List<?> getGroupInvites(Long userId) {
         List<Members> members = memberRepository.findByUsersAndMemberStatus(authRepository.findById(userId), MemberStatus.INVITED);
         List<GroupNotification> groupNotifications = groupNotificatioRepository.findByNotiTypeAndTargetUser("INVITED", authRepository.findById(userId).get());
@@ -187,6 +198,14 @@ public class GroupService {
         if(member.size() != 0){
 
         }
+
+        GroupNotification groupNotificationExists =
+                groupNotificatioRepository.findByFiredUserAndTargetUserAndNotiType(currentUser, currentUser, "REQUESTED");
+        // if already invited by the fired user send this
+        if (groupNotificationExists != null) {
+            return true;
+        }
+
         if(group.isPresent()){
             GroupNotification groupNotification = new GroupNotification();
             groupNotification.setGroup(group.get());

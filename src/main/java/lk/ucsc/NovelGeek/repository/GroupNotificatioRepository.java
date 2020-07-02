@@ -15,4 +15,5 @@ public interface GroupNotificatioRepository extends JpaRepository<GroupNotificat
     List<GroupNotification> findByNotiType(String invited);
     List<GroupNotification> findByNotiTypeAndTargetUser(String invited, Users user);
     List<GroupNotification> findByTargetUserAndGroup(Users user, Group group);
+    GroupNotification findByFiredUserAndTargetUserAndNotiType(Users firedUser, Users targetUser, String notiType);
 }
