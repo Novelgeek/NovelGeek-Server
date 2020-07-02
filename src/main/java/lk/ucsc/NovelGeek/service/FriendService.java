@@ -48,6 +48,11 @@ public class FriendService {
         Optional<Users> targetUser = authRepository.findById(userId);
         Users currentUser = this.getCurrentUser();
 
+        Friends friendTest = friendRepository.findByUser1AndUser2(targetUser.get(), currentUser);
+        if (friendTest != null) {
+            return null;
+        }
+
         Friends friend = new Friends();
         Friends friendMirror = new Friends();
         
@@ -78,6 +83,9 @@ public class FriendService {
         Users currentUser = this.getCurrentUser();
 
         Friends friend = friendRepository.findByUser1AndUser2(targetUser.get(), currentUser);
+        if (friend.getStatus() == "FRIEND"){
+            return null;
+        }
         Friends friendMirror = friendRepository.findByUser1AndUser2(currentUser, targetUser.get());
 
         friend.setStatus("FRIEND");
@@ -89,7 +97,14 @@ public class FriendService {
         friendRepository.save(friend);
         friendRepository.save(friendMirror);
 
-        return null;
+        FriendDto friendDto = new FriendDto();
+        friendDto.setFriend(true);
+        friendDto.setEmail(targetUser.get().getEmail());
+        friendDto.setId(targetUser.get().getId());
+        friendDto.setImageUrl(targetUser.get().getImageUrl());
+        friendDto.setStatus("FRIEND");
+        friendDto.setUsername(targetUser.get().getUsername());
+        return friendDto;
     }
 
     public Object unFriendUser(Long userId) {
@@ -98,6 +113,10 @@ public class FriendService {
 
         Friends friend = friendRepository.findByUser1AndUser2(targetUser.get(), currentUser);
         Friends friendMirror = friendRepository.findByUser1AndUser2(currentUser, targetUser.get());
+
+        if (friend == null) {
+            return null;
+        }
 
         friendRepository.delete(friend);
         friendRepository.delete(friendMirror);
@@ -111,7 +130,9 @@ public class FriendService {
 
         Friends friend = friendRepository.findByUser1AndUser2(targetUser.get(), currentUser);
         Friends friendMirror = friendRepository.findByUser1AndUser2(currentUser, targetUser.get());
-
+        if (friend == null) {
+            return null;
+        }
         friendRepository.delete(friend);
         friendRepository.delete(friendMirror);
 
@@ -124,7 +145,9 @@ public class FriendService {
 
         Friends friend = friendRepository.findByUser1AndUser2(targetUser.get(), currentUser);
         Friends friendMirror = friendRepository.findByUser1AndUser2(currentUser, targetUser.get());
-
+        if (friend == null) {
+            return null;
+        }
         friendRepository.delete(friend);
         friendRepository.delete(friendMirror);
 
