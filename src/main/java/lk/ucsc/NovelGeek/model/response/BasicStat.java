@@ -4,12 +4,21 @@ public class BasicStat {
     private int noOfUsers;
     private int noOfGroups;
     private int noOfPosts;
+    private int noOfAdmins;
 
     public BasicStat() {
     }
 
     public int getNoOfUsers() {
         return noOfUsers;
+    }
+
+    public int getNoOfAdmins() {
+        return noOfAdmins;
+    }
+
+    public void setNoOfAdmins(int noOfAdmins) {
+        this.noOfAdmins = noOfAdmins;
     }
 
     public void setNoOfUsers(int noOfUsers) {

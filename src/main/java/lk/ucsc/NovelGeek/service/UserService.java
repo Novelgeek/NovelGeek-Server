@@ -69,11 +69,6 @@ public class UserService {
         return null;
     }
 
-
-    }
-
-
-
         public Object getAllUsers () {
 
 //        UserResponse userResponse = new UserResponse();
