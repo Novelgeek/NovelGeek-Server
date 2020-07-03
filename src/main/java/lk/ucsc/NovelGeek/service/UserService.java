@@ -67,15 +67,20 @@ public class UserService {
         userRepository.save(userDetails);
 
         return null;
+    }
+
 
     }
-    public Object getAllUsers(){
+
+
+
+        public Object getAllUsers () {
+
 //        UserResponse userResponse = new UserResponse();
 //        authRepository.findAll().forEach((user) -> {
 //            BeanUtils.copyProperties(userResponse, user);
 //        });
 
-        return authRepository.findAll();
-
-    }
+            return authRepository.findAll();
+        }
 }

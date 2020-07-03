@@ -83,7 +83,7 @@ public class GroupController {
     }
 
 
-
+    //not in use
     @PostMapping("{groupId}/addMember/{userId}")
     public ResponseEntity<?> addSingleMember(@PathVariable(value="userId") Long userId, @PathVariable(value="groupId") Long groupId){
         return ResponseEntity.ok(groupService.addMember(groupId, userId));
@@ -101,6 +101,11 @@ public class GroupController {
     @PostMapping("acceptInvite/{inviteId}")
     public ResponseEntity<?> acceptInvite(@PathVariable(value="inviteId") Long inviteId){
         return  ResponseEntity.ok(groupService.acceptInvite(inviteId));
+    }
+
+    @PostMapping("declineInvite/{inviteId}")
+    public ResponseEntity<?> declineInvite(@PathVariable(value="inviteId") Long inviteId){
+        return  ResponseEntity.ok(groupService.declineInvite(inviteId));
     }
 
     @GetMapping("invites")
