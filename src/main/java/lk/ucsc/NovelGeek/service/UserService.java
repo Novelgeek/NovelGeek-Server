@@ -70,7 +70,12 @@ public class UserService {
     }
 
 
+    }
+
+
+
         public Object getAllUsers () {
+
 //        UserResponse userResponse = new UserResponse();
 //        authRepository.findAll().forEach((user) -> {
 //            BeanUtils.copyProperties(userResponse, user);
