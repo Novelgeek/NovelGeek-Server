@@ -16,6 +16,16 @@ public class BookRating {
     @JoinColumn(name = "book")
     Books book;
 
+    private int rating;
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
     public long getRatingId() {
         return ratingId;
     }

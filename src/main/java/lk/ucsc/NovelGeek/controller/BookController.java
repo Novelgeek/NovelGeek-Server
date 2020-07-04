@@ -54,8 +54,8 @@ public class BookController {
 
     @PostMapping("/addRating")
     public Object addRating(@RequestBody RatingRequest ratingRequest){
-        bookService.addRating(ratingRequest);
-        return null;
+
+        return bookService.addRating(ratingRequest);
     }
 
 }

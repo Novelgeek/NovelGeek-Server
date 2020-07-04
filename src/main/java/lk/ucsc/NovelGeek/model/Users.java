@@ -55,7 +55,13 @@ public class Users {
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
     Set<PostsComments> postscomments;
 
-    
+    public Set<BookRating> getBookRatings() {
+        return bookRatings;
+    }
+
+    public void setBookRatings(Set<BookRating> bookRatings) {
+        this.bookRatings = bookRatings;
+    }
 
     public Set<Friends> getFriends() {
         return friends;
