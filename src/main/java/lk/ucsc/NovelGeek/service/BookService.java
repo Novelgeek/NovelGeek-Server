@@ -5,6 +5,7 @@ import lk.ucsc.NovelGeek.dto.ReviewDTO;
 import lk.ucsc.NovelGeek.model.Comment;
 import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Users;
+import lk.ucsc.NovelGeek.model.request.RatingRequest;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,5 +87,10 @@ public class BookService {
             return diff2==1 ? diff2+ " hour ago":diff2+" hours ago";
         }
         return diff==1 ? diff+ " day ago":diff+" days ago";
+    }
+
+    public Object addRating(RatingRequest ratingRequest) {
+
+        return null;
     }
 }

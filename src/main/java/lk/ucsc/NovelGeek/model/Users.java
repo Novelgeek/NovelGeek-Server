@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.awt.print.Book;
 import java.util.Set;
 
 @Entity(name="Users")
@@ -38,6 +39,8 @@ public class Users {
     @OneToMany(targetEntity = Friends.class, mappedBy = "user1")
     Set<Friends> friends;
 
+    @OneToMany(targetEntity = BookRating.class, mappedBy = "user")
+    Set<BookRating> bookRatings;
 
 
     @JsonIgnoreProperties
@@ -51,6 +54,8 @@ public class Users {
     @JsonIgnoreProperties
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
     Set<PostsComments> postscomments;
+
+    
 
     public Set<Friends> getFriends() {
         return friends;

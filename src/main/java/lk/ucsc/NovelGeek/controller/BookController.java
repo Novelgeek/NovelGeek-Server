@@ -5,6 +5,7 @@ import lk.ucsc.NovelGeek.dto.ReviewDTO;
 import lk.ucsc.NovelGeek.model.Comment;
 import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Test;
+import lk.ucsc.NovelGeek.model.request.RatingRequest;
 import lk.ucsc.NovelGeek.service.BookService;
 import org.hibernate.annotations.common.reflection.XMethod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,12 @@ public class BookController {
     public Review addComment(@RequestBody CommentDTO commentDTO){
         return bookService.addComment(commentDTO);
 
+    }
+
+    @PostMapping("/addRating")
+    public Object addRating(@RequestBody RatingRequest ratingRequest){
+        bookService.addRating(ratingRequest);
+        return null;
     }
 
 }
