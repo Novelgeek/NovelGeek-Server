@@ -1,9 +1,8 @@
 package lk.ucsc.NovelGeek.service.recommendation;
 
-import lk.ucsc.NovelGeek.model.Books;
+import lk.ucsc.NovelGeek.model.book.Books;
 import lk.ucsc.NovelGeek.model.Users;
-import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.BookRepository;
+import lk.ucsc.NovelGeek.repository.book.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +54,7 @@ public class CollaborativeFilter {
         return returnData;
     }
 
-    private void getRecommendations (){
+    public List<Books> getRecommendations (){
         for (User user : outputData.keySet()) {
             if (user.getUsername().equals(users.getEmail())){
                 for (Book j : outputData.get(user).keySet()) {
@@ -65,6 +64,8 @@ public class CollaborativeFilter {
                 }
             }
         }
+
+        return returnData;
     }
 
 

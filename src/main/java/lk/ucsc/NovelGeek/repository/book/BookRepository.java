@@ -1,9 +1,7 @@
-package lk.ucsc.NovelGeek.repository;
+package lk.ucsc.NovelGeek.repository.book;
 
-import lk.ucsc.NovelGeek.model.Books;
+import lk.ucsc.NovelGeek.model.book.Books;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Books, Long> {
     Books findByBookId(String bookId);

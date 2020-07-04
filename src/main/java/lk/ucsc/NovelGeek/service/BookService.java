@@ -3,11 +3,15 @@ package lk.ucsc.NovelGeek.service;
 import lk.ucsc.NovelGeek.dto.CommentDTO;
 import lk.ucsc.NovelGeek.dto.ReviewDTO;
 import lk.ucsc.NovelGeek.model.*;
+import lk.ucsc.NovelGeek.model.book.BookRating;
+import lk.ucsc.NovelGeek.model.book.Books;
+import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.BookRatingRepository;
-import lk.ucsc.NovelGeek.repository.BookRepository;
+import lk.ucsc.NovelGeek.repository.book.BookRatingRepository;
+import lk.ucsc.NovelGeek.repository.book.BookRepository;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
+import lk.ucsc.NovelGeek.repository.book.RecentlyViewedRepository;
 import lk.ucsc.NovelGeek.service.recommendation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -32,11 +36,10 @@ public class BookService {
     private BookRatingRepository bookRatingRepository;
 
     @Autowired
-    private PreProcessData preProcessData;
-
-    @Autowired
     private CollaborativeFilter collaborativeFilter;
 
+    @Autowired
+    private RecentlyViewedRepository recentlyViewedRepository;
 
 
     //get current user
@@ -112,49 +115,64 @@ public class BookService {
     }
 
     public Object addRating(RatingRequest ratingRequest) {
-//        Books findBook = bookRepository.findByBookId(ratingRequest.getBookId());
-//        Books currentBook;
-//        if(findBook == null) {
-//            Books book = new Books();
-//            book.setBookId(ratingRequest.getBookId());
-//            book.setTitle(ratingRequest.title);
-//
-//            currentBook = bookRepository.save(book);
-//        } else {
-//            currentBook = findBook;
-//        }
-//
-//        Users currentUser = this.getCurrentUser();
-//        BookRating bookRating = bookRatingRepository.findByBookAndUser(currentBook, currentUser);
-//        if(bookRating == null){
-//            BookRating newBookRating = new BookRating();
-//            newBookRating.setBook(currentBook);
-//            newBookRating.setUser(currentUser);
-//            newBookRating.setRating(ratingRequest.getMyRating());
-//            return bookRatingRepository.save(newBookRating);
-//        } else {
-//            bookRating.setRating(ratingRequest.getMyRating());
-//            bookRatingRepository.save(bookRating);
-//            return null;
-//        }
+        Books findBook = bookRepository.findByBookId(ratingRequest.getBookId());
+        Books currentBook;
+        if(findBook == null) {
+            Books book = new Books();
+            book.setBookId(ratingRequest.getBookId());
+            book.setTitle(ratingRequest.getTitle());
+            book.setImg(ratingRequest.getImg());
+            currentBook = bookRepository.save(book);
+        } else {
+            currentBook = findBook;
+        }
 
-
-        Users users = this.getCurrentUser();
-        List<Books> recommendedBooks = collaborativeFilter.slopeOne(users);
-
-//        users.getBookRatings().forEach(bookRating -> {
-//
-//            if (recommendedBooks.contains(bookRating.getBook())){
-//                recommendedBooks.remove(bookRating.getBook());
-//            }
-//        });
-
-        return recommendedBooks;
+        Users currentUser = this.getCurrentUser();
+        BookRating bookRating = bookRatingRepository.findByBookAndUser(currentBook, currentUser);
+        if(bookRating == null){
+            BookRating newBookRating = new BookRating();
+            newBookRating.setBook(currentBook);
+            newBookRating.setUser(currentUser);
+            newBookRating.setRating(ratingRequest.getMyRating());
+            return bookRatingRepository.save(newBookRating);
+        } else {
+            bookRating.setRating(ratingRequest.getMyRating());
+            bookRatingRepository.save(bookRating);
+            return null;
+        }
 
     }
 
     public Object getRecommendedBooks() {
+        Users users = this.getCurrentUser();
+        List<Books> recommendedBooks = collaborativeFilter.slopeOne(users);
 
-        return null;
+        users.getBookRatings().forEach(bookRating -> {
+            if (recommendedBooks.contains(bookRating.getBook())){
+                recommendedBooks.remove(bookRating.getBook());
+            }
+        });
+        return recommendedBooks;
+    }
+
+    public Object updateView(RatingRequest ratingRequest) {
+        RecentlyViewed check = recentlyViewedRepository.findByBookId(ratingRequest.getBookId());
+        if ( check != null){
+            return check;
+        }
+
+
+        RecentlyViewed recentlyViewed = new RecentlyViewed();
+        recentlyViewed.setBookId(ratingRequest.getBookId());
+        recentlyViewed.setImg(ratingRequest.getImg());
+        recentlyViewed.setTitle(ratingRequest.getTitle());
+        recentlyViewed.setUser(this.getCurrentUser());
+        recentlyViewed.setDate(new Date());
+
+        return recentlyViewedRepository.save(recentlyViewed);
+    }
+
+    public Object getRecentlyViewed() {
+        return recentlyViewedRepository.findAll();
     }
 }

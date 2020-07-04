@@ -1,9 +1,9 @@
 package lk.ucsc.NovelGeek.service.recommendation;
 
-import lk.ucsc.NovelGeek.model.Books;
+import lk.ucsc.NovelGeek.model.book.Books;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.BookRepository;
+import lk.ucsc.NovelGeek.repository.book.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +29,11 @@ public class PreProcessData {
 
 
         books.forEach(book -> {
-            if(!PreProcessData.books.contains(new Book(book.getTitle()))){
-                PreProcessData.books.add(new Book(book.getTitle()));
+            if (book.getBookRatings().size() > 0){
+                if(!PreProcessData.books.contains(new Book(book.getTitle()))){
+                    PreProcessData.books.add(new Book(book.getTitle()));
+                }
             }
-
         });
 
         users.forEach(user -> {

@@ -1,7 +1,7 @@
-package lk.ucsc.NovelGeek.repository;
+package lk.ucsc.NovelGeek.repository.book;
 
-import lk.ucsc.NovelGeek.model.BookRating;
-import lk.ucsc.NovelGeek.model.Books;
+import lk.ucsc.NovelGeek.model.book.BookRating;
+import lk.ucsc.NovelGeek.model.book.Books;
 import lk.ucsc.NovelGeek.model.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -58,4 +58,20 @@ public class BookController {
         return bookService.addRating(ratingRequest);
     }
 
+    @PostMapping("/updateView")
+    public Object updateView(@RequestBody RatingRequest ratingRequest){
+
+        return bookService.updateView(ratingRequest);
+    }
+
+    @GetMapping("/getRecommendations")
+    public Object getRecommendations(){
+        return bookService.getRecommendedBooks();
+    }
+
+    @GetMapping("/recentlyViewed")
+    public Object getRecentlyViewed(){
+        return bookService.getRecentlyViewed();
+    }
+
 }

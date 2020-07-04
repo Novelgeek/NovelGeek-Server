@@ -3,7 +3,7 @@ package lk.ucsc.NovelGeek.model.request;
 public class RatingRequest {
     private String bookId;
     public String title;
-    public String author;
+    public String img;
     public int myRating;
 
     public String getBookId() {
@@ -22,12 +22,12 @@ public class RatingRequest {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getImg() {
+        return img;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public int getMyRating() {

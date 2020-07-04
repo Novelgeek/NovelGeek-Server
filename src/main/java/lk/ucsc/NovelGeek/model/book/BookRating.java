@@ -1,4 +1,6 @@
-package lk.ucsc.NovelGeek.model;
+package lk.ucsc.NovelGeek.model.book;
+
+import lk.ucsc.NovelGeek.model.Users;
 
 import javax.persistence.*;
 
