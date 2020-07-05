@@ -14,6 +14,7 @@ import lk.ucsc.NovelGeek.repository.ReviewRepository;
 import lk.ucsc.NovelGeek.repository.book.RecentlyViewedRepository;
 import lk.ucsc.NovelGeek.service.recommendation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -158,11 +159,19 @@ public class BookService {
     }
 
     public Object updateView(RatingRequest ratingRequest) {
-        RecentlyViewed check = recentlyViewedRepository.findByBookId(ratingRequest.getBookId());
+        Users users = this.getCurrentUser();
+
+        RecentlyViewed check = recentlyViewedRepository.findByBookIdAndUser(ratingRequest.getBookId(), users);
         if ( check != null){
+            check.setDate(new Date());
+            recentlyViewedRepository.save(check);
+
             return check;
         }
 
+        if (users.getRecentlyViewed().size() == 6) {
+            recentlyViewedRepository.delete(recentlyViewedRepository.findByUser(users, Sort.by(Sort.Direction.DESC, "date")).get(0));
+        }
 
         RecentlyViewed recentlyViewed = new RecentlyViewed();
         recentlyViewed.setBookId(ratingRequest.getBookId());
@@ -175,7 +184,7 @@ public class BookService {
     }
 
     public Object getRecentlyViewed() {
-        return recentlyViewedRepository.findAll();
+        return recentlyViewedRepository.findByUser(this.getCurrentUser(), Sort.by(Sort.Direction.DESC, "date"));
     }
 
     public Object getUserRating(String bookId) {

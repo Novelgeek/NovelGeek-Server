@@ -53,6 +53,7 @@ public class CollaborativeFilter {
     }
 
     public List<Books> getRecommendations (){
+        returnData.clear();
         for (User user : outputData.keySet()) {
             if (user.getUsername().equals(users.getEmail())){
                 for (Book j : outputData.get(user).keySet()) {
@@ -68,7 +69,7 @@ public class CollaborativeFilter {
 
     public List<Books> getMyRecommendations (Users currentUser){
         if (isCalulated){
-            return returnData;
+            return getRecommendations();
         } else {
 
             return slopeOne(currentUser);
@@ -135,7 +136,12 @@ public class CollaborativeFilter {
             HashMap<Book, Double> clean = new HashMap<Book, Double>();
             for (Book j : uPred.keySet()) {
                 if (uFreq.get(j) > 0) {
-                    clean.put(j, uPred.get(j).doubleValue() / uFreq.get(j).intValue());
+                    if (uPred.get(j).doubleValue() / uFreq.get(j).intValue() > 5){
+                        clean.put(j, 5.0);
+                    } else {
+                        clean.put(j, uPred.get(j).doubleValue() / uFreq.get(j).intValue());
+                    }
+
                 }
             }
             for (Book j : PreProcessData.books) {
@@ -147,7 +153,7 @@ public class CollaborativeFilter {
             }
             outputData.put(e.getKey(), clean);
         }
-        printData(outputData);
+        printMatrix(outputData);
     }
 
     private void printData(Map<User, HashMap<Book, Double>> data) {
@@ -169,9 +175,10 @@ public class CollaborativeFilter {
     private void printMatrix(Map<User, HashMap<Book, Double>> data) {
         NumberFormat formatter = new DecimalFormat("#0.000");
         for( User user: data.keySet()){
-            System.out.print(user.getUsername());
+            System.out.print(user.getUsername()+ "  ");
+
             for (Book book: data.get(user).keySet()){
-                System.out.print(" " + book.getItemName() + " --> " + formatter.format(data.get(user).get(book).doubleValue()));
+                System.out.print(formatter.format(data.get(user).get(book).doubleValue())+ " ");
             }
             System.out.println();
         }

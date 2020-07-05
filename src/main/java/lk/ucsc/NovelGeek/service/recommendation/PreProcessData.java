@@ -37,7 +37,7 @@ public class PreProcessData {
         });
 
         users.forEach(user -> {
-
+            if(user.getBookRatings().size() > 0) {
                 HashMap<Book, Double> newUser = new HashMap<Book, Double>();
                 user.getBookRatings().forEach(rating -> {
                     PreProcessData.books.forEach(book -> {
@@ -48,6 +48,8 @@ public class PreProcessData {
                 });
 
                 data.put(new User(user.getEmail()), newUser);
+            }
+
 
         });
 
