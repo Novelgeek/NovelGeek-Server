@@ -66,18 +66,8 @@ public class BookService {
     }
 
     public Review addReview(ReviewDTO reviewDTO) {
-        Optional<Users> option=userRepository.findById(reviewDTO.getUserId());
-
-        if(!option.isEmpty()){
-            Users user=option.get();
-            Review review = new Review(reviewDTO.getReviewDescription(),user,reviewDTO.getBookId(), 0);
-
-            return reviewRepository.save(review);
-
-        }else{
-            return null;
-        }
-
+        Review review = new Review(reviewDTO.getReviewDescription(),this.getCurrentUser(),reviewDTO.getBookId(), 0);
+        return reviewRepository.save(review);
     }
 
     public Review addComment(CommentDTO commentDTO) {
@@ -170,7 +160,7 @@ public class BookService {
         }
 
         if (users.getRecentlyViewed().size() == 6) {
-            recentlyViewedRepository.delete(recentlyViewedRepository.findByUser(users, Sort.by(Sort.Direction.DESC, "date")).get(0));
+            recentlyViewedRepository.delete(recentlyViewedRepository.findByUser(users, Sort.by(Sort.Direction.ASC, "date")).get(0));
         }
 
         RecentlyViewed recentlyViewed = new RecentlyViewed();

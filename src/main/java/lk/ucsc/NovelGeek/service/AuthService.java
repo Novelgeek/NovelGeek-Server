@@ -27,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 @Service
 public class AuthService implements UserDetailsService {
@@ -175,5 +176,17 @@ public class AuthService implements UserDetailsService {
 
         }
 
+    }
+
+    public Object changePassword(String password, String oldPassword) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Users currentUser = authRepository.findByEmail(auth.getName());
+        if (bCryptPasswordEncoder.matches(oldPassword, currentUser.getPassword())) {
+            currentUser.setPassword(bCryptPasswordEncoder.encode(password));
+            authRepository.save(currentUser);
+        } else {
+            throw new RuntimeException("Password is invalid");
+        }
+        return null;
     }
 }
