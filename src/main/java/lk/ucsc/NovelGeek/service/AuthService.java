@@ -92,7 +92,6 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserPrincipal loadUserByUsername(String email)  {
         Users users = authRepository.findByEmail(email);
-        System.out.println(users.getEmail());
         if(users == null) {
             throw new RuntimeException("Username not found");
         }

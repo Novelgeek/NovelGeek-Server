@@ -134,10 +134,12 @@ public class BookService {
             newBookRating.setBook(currentBook);
             newBookRating.setUser(currentUser);
             newBookRating.setRating(ratingRequest.getMyRating());
+            collaborativeFilter.slopeOne(currentUser);
             return bookRatingRepository.save(newBookRating);
         } else {
             bookRating.setRating(ratingRequest.getMyRating());
             bookRatingRepository.save(bookRating);
+            collaborativeFilter.slopeOne(currentUser);
             return null;
         }
 
@@ -145,7 +147,7 @@ public class BookService {
 
     public Object getRecommendedBooks() {
         Users users = this.getCurrentUser();
-        List<Books> recommendedBooks = collaborativeFilter.slopeOne(users);
+        List<Books> recommendedBooks = collaborativeFilter.getMyRecommendations(users);
 
         users.getBookRatings().forEach(bookRating -> {
             if (recommendedBooks.contains(bookRating.getBook())){
@@ -174,5 +176,17 @@ public class BookService {
 
     public Object getRecentlyViewed() {
         return recentlyViewedRepository.findAll();
+    }
+
+    public Object getUserRating(String bookId) {
+        BookRating bookRating = bookRatingRepository.findByBookAndUser(bookRepository.findByBookId(bookId), this.getCurrentUser());
+        if (bookRating == null) {
+            return null;
+        }
+        return bookRating.getRating();
+    }
+
+    public Object getUserBookRatings(){
+        return this.getCurrentUser().getBookRatings();
     }
 }

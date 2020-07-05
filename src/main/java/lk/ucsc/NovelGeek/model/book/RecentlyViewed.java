@@ -17,6 +17,7 @@ public class RecentlyViewed {
 
     private String title;
 
+    @Column(length = 3000)
     private String img;
 
     private Date date;

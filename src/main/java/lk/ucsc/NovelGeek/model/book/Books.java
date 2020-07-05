@@ -16,6 +16,7 @@ public class Books {
 
     private String title;
 
+    @Column(length = 3000)
     private String img;
 
     @OneToMany(targetEntity = BookRating.class, mappedBy = "book")

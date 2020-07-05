@@ -38,7 +38,6 @@ public class PreProcessData {
 
         users.forEach(user -> {
 
-                System.out.println(user.getEmail());
                 HashMap<Book, Double> newUser = new HashMap<Book, Double>();
                 user.getBookRatings().forEach(rating -> {
                     PreProcessData.books.forEach(book -> {

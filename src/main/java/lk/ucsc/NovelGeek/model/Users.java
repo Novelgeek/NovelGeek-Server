@@ -10,7 +10,7 @@ import java.util.Set;
 @Entity(name="Users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members",
                         "myNotifications", "notiFiredByMe", "password", "provider", "providerId",
-                        "role", "friends", "verified", "recentlyViewed"})
+                        "role", "friends", "verified", "recentlyViewed", "bookRatings"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -29,6 +29,7 @@ public class CollaborativeFilter {
     private  Map<User, HashMap<Book, Double>> inputData;
     private  Map<User, HashMap<Book, Double>> outputData = new HashMap<>();
     private  List<Books> returnData = new ArrayList<Books>();
+    private boolean isCalulated = false;
 
     private Users users;
 
@@ -39,12 +40,9 @@ public class CollaborativeFilter {
         returnData.clear();
 
         users = user;
+        isCalulated = true;
 
         inputData = preProcessDataService.initializeData();
-        System.out.println("####################### input data" + inputData.size());
-        System.out.println("####################### output data" + outputData.size());
-        System.out.println("####################### diff" + diff.size());
-        System.out.println("####################### frw" + freq.size());
         System.out.println("Slope One - Before the Prediction\n");
         buildDifferencesMatrix(inputData);
         System.out.println("\nSlope One - With Predictions\n");
@@ -58,7 +56,7 @@ public class CollaborativeFilter {
         for (User user : outputData.keySet()) {
             if (user.getUsername().equals(users.getEmail())){
                 for (Book j : outputData.get(user).keySet()) {
-                    if (outputData.get(user).get(j) > 4){
+                    if (outputData.get(user).get(j) > 3){
                         returnData.add(bookRepository.findByTitle(j.getItemName()));
                     }
                 }
@@ -66,6 +64,16 @@ public class CollaborativeFilter {
         }
 
         return returnData;
+    }
+
+    public List<Books> getMyRecommendations (Users currentUser){
+        if (isCalulated){
+            return returnData;
+        } else {
+
+            return slopeOne(currentUser);
+        }
+
     }
 
 
@@ -155,6 +163,17 @@ public class CollaborativeFilter {
         NumberFormat formatter = new DecimalFormat("#0.000");
         for (Book j : hashMap.keySet()) {
             System.out.println(" " + j.getItemName() + " --> " + formatter.format(hashMap.get(j).doubleValue()));
+        }
+    }
+
+    private void printMatrix(Map<User, HashMap<Book, Double>> data) {
+        NumberFormat formatter = new DecimalFormat("#0.000");
+        for( User user: data.keySet()){
+            System.out.print(user.getUsername());
+            for (Book book: data.get(user).keySet()){
+                System.out.print(" " + book.getItemName() + " --> " + formatter.format(data.get(user).get(book).doubleValue()));
+            }
+            System.out.println();
         }
     }
 

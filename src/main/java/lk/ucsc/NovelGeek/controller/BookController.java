@@ -74,4 +74,15 @@ public class BookController {
         return bookService.getRecentlyViewed();
     }
 
+    @GetMapping("/userRating/{bookId}")
+    public Object getUserRating(@PathVariable("bookId") String bookId){
+        return bookService.getUserRating(bookId);
+    }
+
+    @GetMapping("/bookRatings")
+    public Object getUserBookRatings(){
+
+        return bookService.getUserBookRatings();
+    }
+
 }
