@@ -30,8 +30,8 @@ public class FriendController {
 
     @PostMapping("accept-request/{userId}")
     public Object acceptFriendRequest( @PathVariable(value="userId") Long userId) {
-        friendService.acceptFriendRequest(userId);
-        return null;
+
+        return friendService.acceptFriendRequest(userId);
     }
 
     @PostMapping("decline-request/{userId}")
