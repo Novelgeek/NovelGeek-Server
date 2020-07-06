@@ -8,8 +8,12 @@ import lk.ucsc.NovelGeek.model.Auction;
 import lk.ucsc.NovelGeek.model.Comment;
 import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Test;
+
 import lk.ucsc.NovelGeek.repository.AuctionRepository;
 import lk.ucsc.NovelGeek.service.AuctionService;
+
+import lk.ucsc.NovelGeek.model.request.RatingRequest;
+
 import lk.ucsc.NovelGeek.service.BookService;
 import org.hibernate.annotations.common.reflection.XMethod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +66,7 @@ public class BookController {
 
     }
 
+
     @PostMapping(path="/addauction")
     @ResponseBody
     public ResponseEntity<Auction> addAuction(
@@ -94,6 +99,40 @@ public class BookController {
 
     }
 
+
+
+    @PostMapping("/addRating")
+    public Object addRating(@RequestBody RatingRequest ratingRequest){
+
+        return bookService.addRating(ratingRequest);
+    }
+
+    @PostMapping("/updateView")
+    public Object updateView(@RequestBody RatingRequest ratingRequest){
+
+        return bookService.updateView(ratingRequest);
+    }
+
+    @GetMapping("/getRecommendations")
+    public Object getRecommendations(){
+        return bookService.getRecommendedBooks();
+    }
+
+    @GetMapping("/recentlyViewed")
+    public Object getRecentlyViewed(){
+        return bookService.getRecentlyViewed();
+    }
+
+    @GetMapping("/userRating/{bookId}")
+    public Object getUserRating(@PathVariable("bookId") String bookId){
+        return bookService.getUserRating(bookId);
+    }
+
+    @GetMapping("/bookRatings")
+    public Object getUserBookRatings(){
+
+        return bookService.getUserBookRatings();
+    }
 
 
 }

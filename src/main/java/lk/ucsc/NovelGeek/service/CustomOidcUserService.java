@@ -1,9 +1,11 @@
 package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.exception.OAuth2AuthenticationProcessingException;
+import lk.ucsc.NovelGeek.model.UserDetails;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.GoogleOAuth2UserInfo;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
+import lk.ucsc.NovelGeek.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
@@ -18,6 +20,9 @@ public class CustomOidcUserService extends OidcUserService {
 
     @Autowired
     private AuthRepository userRepository;
+
+    @Autowired
+    private UserRepository userDetailsRepository;
 
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
@@ -48,7 +53,13 @@ public class CustomOidcUserService extends OidcUserService {
             user.setProviderId(userInfo.getProviderId());
             user.setVerified(true);
             user.setRole("USER");
-            userRepository.save(user);
+            Users storedUsers = userRepository.save(user);
+
+            UserDetails userDetails = new UserDetails();
+            userDetails.setName(userInfo.getName());
+            userDetails.setUser(storedUsers);
+            userDetailsRepository.save(userDetails);
+
         }else {
             if(!user.getProvider().equals(userInfo.getProvider())){
                 throw new OAuth2AuthenticationProcessingException("Looks like you're trying to sign with your "+ user.getProvider() + " account. Please use your " + user.getProvider() +  " account to login.");
