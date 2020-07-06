@@ -2,18 +2,25 @@ package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.dto.CommentDTO;
 import lk.ucsc.NovelGeek.dto.ReviewDTO;
-import lk.ucsc.NovelGeek.model.Comment;
-import lk.ucsc.NovelGeek.model.Review;
-import lk.ucsc.NovelGeek.model.Users;
+import lk.ucsc.NovelGeek.model.*;
+import lk.ucsc.NovelGeek.model.book.BookRating;
+import lk.ucsc.NovelGeek.model.book.Books;
+import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
+import lk.ucsc.NovelGeek.model.request.RatingRequest;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
+import lk.ucsc.NovelGeek.repository.book.BookRatingRepository;
+import lk.ucsc.NovelGeek.repository.book.BookRepository;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
+import lk.ucsc.NovelGeek.repository.book.RecentlyViewedRepository;
+import lk.ucsc.NovelGeek.service.recommendation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -22,6 +29,26 @@ public class BookService {
     private ReviewRepository reviewRepository;
     @Autowired
     private AuthRepository userRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @Autowired
+    private BookRatingRepository bookRatingRepository;
+
+    @Autowired
+    private CollaborativeFilter collaborativeFilter;
+
+    @Autowired
+    private RecentlyViewedRepository recentlyViewedRepository;
+
+
+    //get current user
+    private Users getCurrentUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Users currentUser = userRepository.findByEmail(auth.getName());
+        return currentUser;
+    }
 
 
     public List<Review> getReviews(String bookId) {
@@ -39,18 +66,8 @@ public class BookService {
     }
 
     public Review addReview(ReviewDTO reviewDTO) {
-        Optional<Users> option=userRepository.findById(reviewDTO.getUserId());
-
-        if(!option.isEmpty()){
-            Users user=option.get();
-            Review review = new Review(reviewDTO.getReviewDescription(),user,reviewDTO.getBookId(), 0);
-
-            return reviewRepository.save(review);
-
-        }else{
-            return null;
-        }
-
+        Review review = new Review(reviewDTO.getReviewDescription(),this.getCurrentUser(),reviewDTO.getBookId(), 0);
+        return reviewRepository.save(review);
     }
 
     public Review addComment(CommentDTO commentDTO) {
@@ -86,5 +103,92 @@ public class BookService {
             return diff2==1 ? diff2+ " hour ago":diff2+" hours ago";
         }
         return diff==1 ? diff+ " day ago":diff+" days ago";
+    }
+
+    public Object addRating(RatingRequest ratingRequest) {
+        Books findBook = bookRepository.findByBookId(ratingRequest.getBookId());
+        Books currentBook;
+        if(findBook == null) {
+            Books book = new Books();
+            book.setBookId(ratingRequest.getBookId());
+            book.setTitle(ratingRequest.getTitle());
+            book.setImg(ratingRequest.getImg());
+            currentBook = bookRepository.save(book);
+        } else {
+            currentBook = findBook;
+        }
+
+        Users currentUser = this.getCurrentUser();
+        BookRating bookRating = bookRatingRepository.findByBookAndUser(currentBook, currentUser);
+        if(bookRating == null){
+            BookRating newBookRating = new BookRating();
+            newBookRating.setBook(currentBook);
+            newBookRating.setUser(currentUser);
+            newBookRating.setRating(ratingRequest.getMyRating());
+            collaborativeFilter.slopeOne(currentUser);
+            return bookRatingRepository.save(newBookRating);
+        } else {
+            bookRating.setRating(ratingRequest.getMyRating());
+            bookRatingRepository.save(bookRating);
+            collaborativeFilter.slopeOne(currentUser);
+            return null;
+        }
+
+    }
+
+    public Object getRecommendedBooks() {
+        Users users = this.getCurrentUser();
+        List<Books> recommendedBooks = collaborativeFilter.getMyRecommendations(users);
+        if(recommendedBooks.size() == 0) {
+            recommendedBooks = collaborativeFilter.slopeOne(users);
+        }
+        List<Books> finalRecommendedBooks = recommendedBooks;
+        users.getBookRatings().forEach(bookRating -> {
+            if (finalRecommendedBooks.contains(bookRating.getBook())){
+                finalRecommendedBooks.remove(bookRating.getBook());
+            }
+        });
+        return recommendedBooks;
+    }
+
+    public Object updateView(RatingRequest ratingRequest) {
+        Users users = this.getCurrentUser();
+
+        RecentlyViewed check = recentlyViewedRepository.findByBookIdAndUser(ratingRequest.getBookId(), users);
+        if ( check != null){
+            check.setDate(new Date());
+            recentlyViewedRepository.save(check);
+
+            return check;
+        }
+
+        if (users.getRecentlyViewed().size() == 6) {
+            recentlyViewedRepository.delete(recentlyViewedRepository.findByUser(users, Sort.by(Sort.Direction.ASC, "date")).get(0));
+        }
+
+        RecentlyViewed recentlyViewed = new RecentlyViewed();
+        recentlyViewed.setBookId(ratingRequest.getBookId());
+        recentlyViewed.setImg(ratingRequest.getImg());
+        recentlyViewed.setTitle(ratingRequest.getTitle());
+        recentlyViewed.setUser(this.getCurrentUser());
+        recentlyViewed.setDate(new Date());
+
+        return recentlyViewedRepository.save(recentlyViewed);
+    }
+
+    public Object getRecentlyViewed() {
+        return recentlyViewedRepository.findByUser(this.getCurrentUser(), Sort.by(Sort.Direction.DESC, "date"));
+    }
+
+    public Object getUserRating(String bookId) {
+        BookRating bookRating = bookRatingRepository.findByBookAndUser(bookRepository.findByBookId(bookId), this.getCurrentUser());
+        if (bookRating == null) {
+            return null;
+        }
+        return bookRating.getRating();
+    }
+
+    public Object getUserBookRatings(){
+        return this.getCurrentUser().getBookRatings();
     }
 }

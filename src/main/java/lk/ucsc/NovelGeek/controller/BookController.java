@@ -5,6 +5,7 @@ import lk.ucsc.NovelGeek.dto.ReviewDTO;
 import lk.ucsc.NovelGeek.model.Comment;
 import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Test;
+import lk.ucsc.NovelGeek.model.request.RatingRequest;
 import lk.ucsc.NovelGeek.service.BookService;
 import org.hibernate.annotations.common.reflection.XMethod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,39 @@ public class BookController {
     public Review addComment(@RequestBody CommentDTO commentDTO){
         return bookService.addComment(commentDTO);
 
+    }
+
+    @PostMapping("/addRating")
+    public Object addRating(@RequestBody RatingRequest ratingRequest){
+
+        return bookService.addRating(ratingRequest);
+    }
+
+    @PostMapping("/updateView")
+    public Object updateView(@RequestBody RatingRequest ratingRequest){
+
+        return bookService.updateView(ratingRequest);
+    }
+
+    @GetMapping("/getRecommendations")
+    public Object getRecommendations(){
+        return bookService.getRecommendedBooks();
+    }
+
+    @GetMapping("/recentlyViewed")
+    public Object getRecentlyViewed(){
+        return bookService.getRecentlyViewed();
+    }
+
+    @GetMapping("/userRating/{bookId}")
+    public Object getUserRating(@PathVariable("bookId") String bookId){
+        return bookService.getUserRating(bookId);
+    }
+
+    @GetMapping("/bookRatings")
+    public Object getUserBookRatings(){
+
+        return bookService.getUserBookRatings();
     }
 
 }

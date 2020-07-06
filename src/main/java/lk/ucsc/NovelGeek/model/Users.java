@@ -1,13 +1,16 @@
 package lk.ucsc.NovelGeek.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lk.ucsc.NovelGeek.model.book.BookRating;
+import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name="Users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe", "password", "provider", "providerId", "role", "friends", "verified"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members",
+                        "myNotifications", "notiFiredByMe", "password", "provider", "providerId",
+                        "role", "friends", "verified", "recentlyViewed", "bookRatings"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +41,12 @@ public class Users {
     @OneToMany(targetEntity = Friends.class, mappedBy = "user1")
     Set<Friends> friends;
 
+    @OneToMany(targetEntity = BookRating.class, mappedBy = "user")
+    Set<BookRating> bookRatings;
+
+
+    @OneToMany(targetEntity = RecentlyViewed.class, mappedBy = "user")
+    Set<BookRating> recentlyViewed;
 
 
     @JsonIgnoreProperties
@@ -51,6 +60,22 @@ public class Users {
     @JsonIgnoreProperties
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
     Set<PostsComments> postscomments;
+
+    public Set<BookRating> getRecentlyViewed() {
+        return recentlyViewed;
+    }
+
+    public void setRecentlyViewed(Set<BookRating> recentlyViewed) {
+        this.recentlyViewed = recentlyViewed;
+    }
+
+    public Set<BookRating> getBookRatings() {
+        return bookRatings;
+    }
+
+    public void setBookRatings(Set<BookRating> bookRatings) {
+        this.bookRatings = bookRatings;
+    }
 
     public Set<Friends> getFriends() {
         return friends;
