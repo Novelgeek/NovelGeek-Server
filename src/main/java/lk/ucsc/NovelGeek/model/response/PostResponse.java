@@ -15,6 +15,7 @@ public class PostResponse {
     private long commentcount;
     private boolean isOwned;
     private boolean isLiked;
+    private boolean isReported;
 
     public long getPostid() { return postid; }
 
@@ -59,4 +60,8 @@ public class PostResponse {
     public void setCommentcount(long commentcount) { this.commentcount = commentcount; }
 
     public void setUsername(String username) { this.username = username; }
+
+    public boolean isReported() { return isReported; }
+
+    public void setReported(boolean reported) { isReported = reported; }
 }

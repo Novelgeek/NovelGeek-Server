@@ -73,6 +73,16 @@ public class PostController {
         return ResponseEntity.ok(postService.deletePost(postid));
     }
 
+    @PostMapping("report/{postid}")
+    public ResponseEntity<?> reportPost(@RequestBody String reason , @PathVariable(value="postid") long postid){
+        return  ResponseEntity.ok(postService.reportPost(postid, reason));
+    }
+
+    @DeleteMapping("unreport/{postid}")
+    public ResponseEntity<?> unReportPost(@PathVariable(value="postid") long postid){
+        return ResponseEntity.ok(postService.unReportPost(postid));
+    }
+
     @GetMapping("/likes/{postid}")
     public ResponseEntity<?> getLikes(@PathVariable(value="postid") long postid){
         return ResponseEntity.ok(postService.getLikedUsers(postid));
