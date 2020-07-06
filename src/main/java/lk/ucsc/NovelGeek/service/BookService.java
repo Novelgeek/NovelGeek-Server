@@ -2,11 +2,18 @@ package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.dto.CommentDTO;
 import lk.ucsc.NovelGeek.dto.ReviewDTO;
+
+import lk.ucsc.NovelGeek.model.Auction;
+import lk.ucsc.NovelGeek.model.Comment;
+import lk.ucsc.NovelGeek.model.Review;
+import lk.ucsc.NovelGeek.model.Users;
+
 import lk.ucsc.NovelGeek.model.*;
 import lk.ucsc.NovelGeek.model.book.BookRating;
 import lk.ucsc.NovelGeek.model.book.Books;
 import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
+
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.book.BookRatingRepository;
 import lk.ucsc.NovelGeek.repository.book.BookRepository;
@@ -105,6 +112,8 @@ public class BookService {
         return diff==1 ? diff+ " day ago":diff+" days ago";
     }
 
+
+
     public Object addRating(RatingRequest ratingRequest) {
         Books findBook = bookRepository.findByBookId(ratingRequest.getBookId());
         Books currentBook;
@@ -191,4 +200,5 @@ public class BookService {
     public Object getUserBookRatings(){
         return this.getCurrentUser().getBookRatings();
     }
+
 }
