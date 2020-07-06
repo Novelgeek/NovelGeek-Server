@@ -139,10 +139,13 @@ public class BookService {
     public Object getRecommendedBooks() {
         Users users = this.getCurrentUser();
         List<Books> recommendedBooks = collaborativeFilter.getMyRecommendations(users);
-
+        if(recommendedBooks.size() == 0) {
+            recommendedBooks = collaborativeFilter.slopeOne(users);
+        }
+        List<Books> finalRecommendedBooks = recommendedBooks;
         users.getBookRatings().forEach(bookRating -> {
-            if (recommendedBooks.contains(bookRating.getBook())){
-                recommendedBooks.remove(bookRating.getBook());
+            if (finalRecommendedBooks.contains(bookRating.getBook())){
+                finalRecommendedBooks.remove(bookRating.getBook());
             }
         });
         return recommendedBooks;

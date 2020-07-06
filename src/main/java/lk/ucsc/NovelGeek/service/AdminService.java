@@ -68,4 +68,7 @@ public class AdminService {
     }
 
 
+    public Object getAllAdmins() {
+        return authRepository.findByRole("ADMIN");
+    }
 }
