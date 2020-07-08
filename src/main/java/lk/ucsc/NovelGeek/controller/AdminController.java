@@ -48,4 +48,9 @@ public class AdminController {
         return ResponseEntity.ok(statService.getBasicStat());
     }
 
+    @DeleteMapping("{adminId}")
+    public ResponseEntity<?> deleteAdmin(@PathVariable(value="adminId") Long adminId){
+        return ResponseEntity.ok(statService.deleteAdmin(adminId));
+    }
+
 }
