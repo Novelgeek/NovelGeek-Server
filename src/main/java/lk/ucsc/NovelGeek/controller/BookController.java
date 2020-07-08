@@ -76,9 +76,6 @@ public class BookController {
             @RequestParam("bookDescription") String description,
             @RequestParam("finishDate") String date,
             @RequestParam("userId") String id
-
-
-
     ){
 
         return auctionService.addAuction(new AuctionDTO(file, title, description,Double.parseDouble(bid), date, Long.parseLong(id)));
@@ -132,6 +129,26 @@ public class BookController {
     public Object getUserBookRatings(){
 
         return bookService.getUserBookRatings();
+    }
+
+    @PostMapping(path="/addNewBook")
+    @ResponseBody
+    public ResponseEntity<Auction> addNewBook(
+            @RequestParam(value = "img",required = false)MultipartFile img,
+            @RequestParam(value = "pdf",required = false)MultipartFile pdf,
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("isbn") String isbn,
+            @RequestParam("year") String year,
+            @RequestParam("author") String author,
+            @RequestParam("genres") String genres,
+            @RequestParam("searchTerms") String searchTerms,
+            @RequestParam("urls") String urls,
+            @RequestParam("publisher") String publisher
+    ){
+
+        return null;
+
     }
 
 
