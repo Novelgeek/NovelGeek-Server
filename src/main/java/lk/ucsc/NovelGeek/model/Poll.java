@@ -2,6 +2,8 @@ package lk.ucsc.NovelGeek.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class Poll {
@@ -17,9 +19,20 @@ public class Poll {
 
     @ManyToOne
     @JoinColumn(name = "id")
-    private Users user;
+    private Optional<Users> user;
 
     private Boolean visible;
+
+    public List<Option> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<Option> options) {
+        this.options = options;
+    }
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "poll")
+    private List<Option> options;
 
     public Poll(){
     }
@@ -60,11 +73,11 @@ public class Poll {
         this.endDate = endDate;
     }
 
-    public Users getUser() {
+    public Optional<Users> getUser() {
         return user;
     }
 
-    public void setUser(Users user) {
+    public void setUser(Optional<Users> user) {
         this.user = user;
     }
 

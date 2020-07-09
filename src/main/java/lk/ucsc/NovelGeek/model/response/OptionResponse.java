@@ -1,25 +1,8 @@
-package lk.ucsc.NovelGeek.model;
+package lk.ucsc.NovelGeek.model.response;
 
-import javax.persistence.*;
-
-@Entity
-public class Option {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class OptionResponse {
     private Long optionid;
-
     private String option;
-
-    private Long score = 0L;
-
-    public Option(){
-
-    }
-
-    public Option(String value){
-        this.option =value;
-    }
 
     public Long getOptionid() {
         return optionid;
@@ -45,15 +28,5 @@ public class Option {
         this.score = score;
     }
 
-    public Poll getPoll() {
-        return poll;
-    }
-
-    public void setPoll(Poll poll) {
-        this.poll = poll;
-    }
-
-    @ManyToOne
-    private Poll poll;
-
+    private Long score = 0L;
 }
