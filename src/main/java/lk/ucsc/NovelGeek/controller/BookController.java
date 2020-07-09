@@ -10,6 +10,7 @@ import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Test;
 
 import lk.ucsc.NovelGeek.repository.AuctionRepository;
+import lk.ucsc.NovelGeek.service.AWSS3Service;
 import lk.ucsc.NovelGeek.service.AuctionService;
 
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
@@ -33,6 +34,9 @@ public class BookController {
 
     @Autowired
     private AuctionService auctionService;
+
+    @Autowired
+    private AWSS3Service awss3Service;
 
 
     @PostMapping(path="/check")
@@ -146,6 +150,20 @@ public class BookController {
             @RequestParam("urls") String urls,
             @RequestParam("publisher") String publisher
     ){
+        String fileUrl;
+        if (pdf == null){
+            fileUrl = null;
+        } else {
+            fileUrl = awss3Service.uploadFile(pdf);
+        }
+
+        String imageUrl;
+        if (img == null){
+            imageUrl = null;
+        } else {
+            imageUrl = awss3Service.uploadFile(img);
+        }
+
 
         return null;
 
