@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("polls")
+@RequestMapping("poll")
 public class PollController {
 
     @Autowired
