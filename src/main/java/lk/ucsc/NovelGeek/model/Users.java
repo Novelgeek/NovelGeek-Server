@@ -5,12 +5,13 @@ import lk.ucsc.NovelGeek.model.book.BookRating;
 import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name="Users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members",
                         "myNotifications", "notiFiredByMe", "password", "provider", "providerId",
-                        "role", "friends", "verified", "recentlyViewed", "bookRatings"})
+                        "role", "friends", "verified", "recentlyViewed", "bookRatings", "poll"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +62,7 @@ public class Users {
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
     Set<PostsComments> postscomments;
 
+
     public Set<BookRating> getRecentlyViewed() {
         return recentlyViewed;
     }
@@ -76,6 +78,13 @@ public class Users {
     public void setBookRatings(Set<BookRating> bookRatings) {
         this.bookRatings = bookRatings;
     }
+
+    @OneToMany(targetEntity = Poll.class, mappedBy = "users")
+    private Set<Poll> poll;
+
+    @OneToMany(targetEntity = Option.class, mappedBy = "poll", cascade = CascadeType.ALL)
+    Set<PollVotes> pollVotes;
+
 
     public Set<Friends> getFriends() {
         return friends;
@@ -184,4 +193,20 @@ public class Users {
     public Set<PostsComments> getPostscomments() { return postscomments; }
 
     public void setPostscomments(Set<PostsComments> postscomments) { this.postscomments = postscomments; }
+
+    public Set<Poll> getPoll() {
+        return poll;
+    }
+
+    public void setPoll(Set<Poll> poll) {
+        this.poll = poll;
+    }
+
+    public Set<PollVotes> getPollVotes() {
+        return pollVotes;
+    }
+
+    public void setPollVotes(Set<PollVotes> pollVotes) {
+        this.pollVotes = pollVotes;
+    }
 }
