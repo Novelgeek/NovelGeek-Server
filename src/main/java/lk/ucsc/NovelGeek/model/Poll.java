@@ -1,11 +1,15 @@
 package lk.ucsc.NovelGeek.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Entity
+@JsonIgnoreProperties({"users"})
 public class Poll {
 
     @Id
@@ -14,39 +18,18 @@ public class Poll {
 
     private String title;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
 
+    @OneToMany(targetEntity = Option.class, mappedBy = "poll", cascade = CascadeType.ALL)
+    private Set<Option> options;
+
     @ManyToOne
-    @JoinColumn(name = "id")
-    private Optional<Users> user;
+    private Users users;
 
-    private Boolean visible;
-
-    public List<Option> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<Option> options) {
-        this.options = options;
-    }
-
-    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "poll")
-    private List<Option> options;
+    @OneToMany(targetEntity = PollVotes.class, mappedBy = "users", cascade = CascadeType.ALL)
+    Set<PollVotes> pollVotes;
 
     public Poll(){
-    }
-
-    public Poll(String title){
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public Long getPollid() {
@@ -57,12 +40,12 @@ public class Poll {
         this.pollid = pollid;
     }
 
-    public Boolean getVisible() {
-        return visible;
+    public String getTitle() {
+        return title;
     }
 
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Date getEndDate() {
@@ -73,14 +56,27 @@ public class Poll {
         this.endDate = endDate;
     }
 
-    public Optional<Users> getUser() {
-        return user;
+    public Set<Option> getOptions() {
+        return options;
     }
 
-    public void setUser(Optional<Users> user) {
-        this.user = user;
+    public void setOptions(Set<Option> options) {
+        this.options = options;
     }
 
+    public Users getUsers() {
+        return users;
+    }
 
+    public void setUsers(Users users) {
+        this.users = users;
+    }
 
+    public Set<PollVotes> getPollVotes() {
+        return pollVotes;
+    }
+
+    public void setPollVotes(Set<PollVotes> pollVotes) {
+        this.pollVotes = pollVotes;
+    }
 }

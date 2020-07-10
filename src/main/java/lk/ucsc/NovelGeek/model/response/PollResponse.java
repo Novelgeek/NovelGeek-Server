@@ -9,16 +9,18 @@ public class PollResponse {
 
     private Long pollid;
     private String title;
-
-    public List<Option> getOptions() {
-        return options;
-    }
+    private Date endDate;
+    private String username;
+    private Boolean visible;
+    private List<Option> options;
 
     public void setOptions(List<Option> options) {
         this.options = options;
     }
 
-    private List<Option> options;
+    public List<Option> getOptions() {
+        return options;
+    }
 
     public Boolean getVisible() {
         return visible;
@@ -27,10 +29,6 @@ public class PollResponse {
     public void setVisible(Boolean visible) {
         this.visible = visible;
     }
-
-    private Date endDate;
-    private String username;
-    private Boolean visible;
 
     public Long getPollid() {
         return pollid;

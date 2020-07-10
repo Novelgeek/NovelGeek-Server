@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name="Users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe", "password", "provider", "providerId", "role", "friends", "verified"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members", "myNotifications", "notiFiredByMe", "password", "provider", "providerId", "role", "friends", "verified", "poll"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +52,12 @@ public class Users {
     @JsonIgnoreProperties
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
     Set<PostsComments> postscomments;
+
+    @OneToMany(targetEntity = Poll.class, mappedBy = "users")
+    private Set<Poll> poll;
+
+    @OneToMany(targetEntity = Option.class, mappedBy = "poll", cascade = CascadeType.ALL)
+    Set<PollVotes> pollVotes;
 
     public Set<Friends> getFriends() {
         return friends;
@@ -159,4 +166,20 @@ public class Users {
     public Set<PostsComments> getPostscomments() { return postscomments; }
 
     public void setPostscomments(Set<PostsComments> postscomments) { this.postscomments = postscomments; }
+
+    public Set<Poll> getPoll() {
+        return poll;
+    }
+
+    public void setPoll(Set<Poll> poll) {
+        this.poll = poll;
+    }
+
+    public Set<PollVotes> getPollVotes() {
+        return pollVotes;
+    }
+
+    public void setPollVotes(Set<PollVotes> pollVotes) {
+        this.pollVotes = pollVotes;
+    }
 }

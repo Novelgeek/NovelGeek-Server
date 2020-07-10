@@ -1,6 +1,7 @@
 package lk.ucsc.NovelGeek.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Option {
@@ -13,12 +14,14 @@ public class Option {
 
     private Long score = 0L;
 
+    @ManyToOne
+    private Poll poll;
+
+    @OneToMany(targetEntity = PollVotes.class, mappedBy = "options", cascade = CascadeType.ALL)
+    Set<PollVotes> pollVotes;
+
     public Option(){
 
-    }
-
-    public Option(String value){
-        this.option =value;
     }
 
     public Long getOptionid() {
@@ -53,7 +56,11 @@ public class Option {
         this.poll = poll;
     }
 
-    @ManyToOne
-    private Poll poll;
+    public Set<PollVotes> getPollVotes() {
+        return pollVotes;
+    }
 
+    public void setPollVotes(Set<PollVotes> pollVotes) {
+        this.pollVotes = pollVotes;
+    }
 }
