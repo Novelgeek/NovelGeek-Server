@@ -65,41 +65,10 @@ public class BookController {
         return bookService.addComment(commentDTO);
 
     }
+//Auction====================================================================================================
 
 
-    @PostMapping(path="/addauction")
-    @ResponseBody
-    public ResponseEntity<Auction> addAuction(
-            @RequestParam(value = "file",required = false)MultipartFile file,
-            @RequestParam("bookTitle") String title,
-            @RequestParam("startingBid") String bid,
-            @RequestParam("bookDescription") String description,
-            @RequestParam("finishDate") String date,
-            @RequestParam("userId") String id
-
-
-
-    ){
-
-        return auctionService.addAuction(new AuctionDTO(file, title, description,Double.parseDouble(bid), date, Long.parseLong(id)));
-
-    }
-
-    @GetMapping(path = "/getauctions")
-    @ResponseBody
-    public List<Auction> getAuctions(){
-        return auctionService.getAuctions();
-
-    }
-    @PostMapping(path="/addnewbid")
-    @ResponseBody
-    public Auction addNewBid(@RequestBody BidDTO bid ){
-
-        return auctionService.addNewBid(Double.parseDouble(bid.getNewBid()), bid.getAuctionId(), bid.getUserId());
-
-    }
-
-
+//==================================================================================================
 
     @PostMapping("/addRating")
     public Object addRating(@RequestBody RatingRequest ratingRequest){

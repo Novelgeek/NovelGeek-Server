@@ -1,7 +1,9 @@
 package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.dto.AuctionDTO;
+import lk.ucsc.NovelGeek.enums.AuctionStatus;
 import lk.ucsc.NovelGeek.model.Auction;
+import lk.ucsc.NovelGeek.model.AuctionUserHitory;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.repository.AuctionRepository;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
@@ -33,6 +35,7 @@ public class AuctionService {
             System.out.print("starting bid : ");
             Auction auction = new Auction(user, auctionDTO.getBookTitle(), auctionDTO.getBookDescription(), auctionDTO.getStartingBid(), auctionDTO.getFinishDate(), imageUrl);
             auction.setStartingBid(auctionDTO.getStartingBid());
+            auction.setAuctionStatus(AuctionStatus.ONGOING);
             System.out.println(auction.getStartingBid());
             return ResponseEntity.ok(auctionRepository.save(auction));
 
@@ -57,6 +60,8 @@ public class AuctionService {
             auction.setNumberOfBids(auction.getNumberOfBids()+1);
             auction.setCurrentBidUser(biddingUser);
 
+            AuctionUserHitory auctionUserHitory = new AuctionUserHitory(biddingUser, bid);
+            auction.getAuctionUserHitory().add(auctionUserHitory);
 
             return auctionRepository.save(auction);
         }else{
