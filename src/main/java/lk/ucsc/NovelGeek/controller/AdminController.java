@@ -26,6 +26,11 @@ public class AdminController {
         return admin;
     }
 
+    @GetMapping("all")
+    public Object getAdmins(){
+        return adminService.getAllAdmins();
+    }
+
     @PostMapping("auth/login")
     public ResponseEntity<?> loginAdmin(@RequestBody UserSignInModel loginRequest) {
         AuthResponse authResponse = adminService.login(loginRequest);

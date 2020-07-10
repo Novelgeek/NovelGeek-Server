@@ -29,6 +29,10 @@ public class Posts {
     Set<PostsLikes> postslikes;
 
     @JsonIgnoreProperties
+    @OneToMany(targetEntity = PostsReports.class, mappedBy = "posts", cascade = CascadeType.ALL)
+    Set<PostsReports> postsreports;
+
+    @JsonIgnoreProperties
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "posts", cascade = CascadeType.ALL)
     Set<PostsComments> postscomments;
 

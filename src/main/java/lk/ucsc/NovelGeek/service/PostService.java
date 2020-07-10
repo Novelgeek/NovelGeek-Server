@@ -1,15 +1,9 @@
 package lk.ucsc.NovelGeek.service;
 
-import lk.ucsc.NovelGeek.model.Posts;
-import lk.ucsc.NovelGeek.model.PostsComments;
-import lk.ucsc.NovelGeek.model.PostsLikes;
-import lk.ucsc.NovelGeek.model.Users;
+import lk.ucsc.NovelGeek.model.*;
 import lk.ucsc.NovelGeek.model.request.NewPost;
 import lk.ucsc.NovelGeek.model.response.*;
-import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.PostCommentRepository;
-import lk.ucsc.NovelGeek.repository.PostLikeRepository;
-import lk.ucsc.NovelGeek.repository.PostRepository;
+import lk.ucsc.NovelGeek.repository.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -30,6 +24,9 @@ public class PostService {
 
     @Autowired
     private PostCommentRepository postCommentRepository;
+
+    @Autowired
+    private PostReportRepository postReportRepository;
 
     @Autowired
     private AuthRepository authRepository;
@@ -65,6 +62,13 @@ public class PostService {
                 response.setLiked(true);
             }else if (postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==0){
                 response.setLiked(false);
+            }
+
+            //check whether the current user reported the post or not
+            if(postReportRepository.checkIsReported(post.getPostid(), this.getCurrentUser().getId())==1){
+                response.setReported(true);
+            }else if(postReportRepository.checkIsReported(post.getPostid(), this.getCurrentUser().getId())==0){
+                response.setReported(false);
             }
 
            //setlikes counts of post
@@ -133,6 +137,8 @@ public class PostService {
         response.setUsername(this.getCurrentUser().getUsername());
         //set owner
         response.setOwned(true);
+        //set is reported
+        response.setReported(false);
         //set is liked
         response.setLiked(false);
         //set like count
@@ -147,6 +153,56 @@ public class PostService {
         DeletePostResponse response = new DeletePostResponse();
         response.setPostid(id);
         postRepository.deleteById(id);
+
+        return response;
+    }
+
+    public ReportPostResponse reportPost(long id, String reason){
+        ReportPostResponse response = new ReportPostResponse();
+
+        //check existency
+        if(!postRepository.existsById(id)){
+            response.setExist(false);
+            response.setReported(false);
+
+        }else{
+            Posts post = postRepository.findById(id);
+            Users currentUser = this.getCurrentUser();
+
+            PostsReports newreport = new PostsReports();
+            newreport.setPosts(post);
+            newreport.setUsers(currentUser);
+            newreport.setReason(reason);
+
+            postReportRepository.save(newreport);
+
+            response.setReported(true);
+            response.setExist(true);
+
+        }
+
+        return response;
+    }
+
+    public ReportPostResponse unReportPost(long postid){
+
+        ReportPostResponse response = new ReportPostResponse();
+
+        //check existency
+        if(!postRepository.existsById((postid))){
+            response.setExist(false);
+            response.setReported(false);
+
+        }else{
+
+            Posts post = postRepository.findById(postid);
+            long idx = postReportRepository.getEntry(post.getPostid(), this.getCurrentUser().getId());
+
+            postReportRepository.deleteById(idx);
+
+            response.setReported(false);
+            response.setExist(true);
+        }
 
         return response;
     }
