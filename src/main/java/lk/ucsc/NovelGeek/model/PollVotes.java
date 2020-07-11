@@ -22,6 +22,10 @@ public class PollVotes {
     @ManyToOne
     Option options;
 
+    public PollVotes(){
+
+    }
+
     public Long getVoteid() {
         return voteid;
     }

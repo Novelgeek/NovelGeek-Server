@@ -2,13 +2,11 @@ package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.model.Option;
 import lk.ucsc.NovelGeek.model.Poll;
+import lk.ucsc.NovelGeek.model.PollVotes;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.NewPollRequest;
 import lk.ucsc.NovelGeek.model.response.PollResponse;
-import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.OptionRepository;
-import lk.ucsc.NovelGeek.repository.PollRepository;
-import lk.ucsc.NovelGeek.repository.UserRepository;
+import lk.ucsc.NovelGeek.repository.*;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,6 +33,9 @@ public class PollService {
 
     @Autowired
     private OptionRepository optionRepository;
+
+    @Autowired
+    PollVotesRepository pollVotesRepository;
 
     public Users getCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -71,6 +73,40 @@ public class PollService {
         return pollResponses;
     }
 
+    public void vote(Long pollid, Long optionid)  {
 
 
+        Poll poll = pollRepository.findById(pollid).get();
+
+        //check whether poll has ended
+        if (poll.getEndDate().before(new Date())) {
+            throw new RuntimeException("Voting has already ended!");
+        }
+
+        //check whether already voted
+        PollVotes pollVotes = pollVotesRepository.findByPollAndUsers(poll, this.getCurrentUser());
+
+        if(pollVotes !=null){
+            throw new RuntimeException("You can only vote once!");
+        }
+        Option option = optionRepository.findById(optionid).get();
+        PollVotes newPollVotes = new PollVotes();
+        newPollVotes.setPoll(poll);
+        newPollVotes.setOptions(option);
+        newPollVotes.setUsers(this.getCurrentUser());
+        pollVotesRepository.save(newPollVotes);
+
+
+        option.setScore(option.getScore()+1);
+        optionRepository.save(option);
+
+
+
+    }
+
+    public List<?> getUserPolls(Long valueOf) {
+        List<PollResponse> pollResponses= pollRepository.findByUsers(this.getCurrentUser()).stream().map( poll -> new PollResponse(poll, this.getCurrentUser())).collect(Collectors.toList());
+//        return  pollRepository.findByUsers(this.getCurrentUser());
+        return pollResponses;
+    }
 }
