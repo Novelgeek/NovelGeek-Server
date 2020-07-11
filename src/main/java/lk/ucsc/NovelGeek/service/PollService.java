@@ -4,6 +4,7 @@ import lk.ucsc.NovelGeek.model.Option;
 import lk.ucsc.NovelGeek.model.Poll;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.NewPollRequest;
+import lk.ucsc.NovelGeek.model.response.PollResponse;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.OptionRepository;
 import lk.ucsc.NovelGeek.repository.PollRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PollService {
@@ -33,7 +35,11 @@ public class PollService {
     @Autowired
     private OptionRepository optionRepository;
 
-
+    public Users getCurrentUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Users currentUser = authRepository.findByEmail(auth.getName());
+        return currentUser;
+    }
 
     public Poll savePoll(NewPollRequest newPollRequest){
 
@@ -47,7 +53,6 @@ public class PollService {
         newPoll.setTitle(newPollRequest.getTitle());
         newPoll.setEndDate(new Date(newPollRequest.getEndDate()));
 
-
         Poll savedPoll = pollRepository.save(newPoll);
 
         newPollRequest.getOptions().stream().forEach(option -> {
@@ -58,13 +63,12 @@ public class PollService {
             optionRepository.save(option1);
         });
 
-
-
       return savedPoll;
     }
 
-    public List<Poll> getAll() {
-        return null;
+    public List<PollResponse> getAllPolls() {
+        List<PollResponse> pollResponses= pollRepository.findAll().stream().map( poll -> new PollResponse(poll, this.getCurrentUser())).collect(Collectors.toList());
+        return pollResponses;
     }
 
 

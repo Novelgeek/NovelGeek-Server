@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@JsonIgnoreProperties({"users"})
+@JsonIgnoreProperties({"users","options"})
 public class Poll {
 
     @Id

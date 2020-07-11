@@ -31,5 +31,10 @@ public class PollController {
 
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllPolls(){return ResponseEntity.ok(pollService.getAllPolls());}
+
+
+
 
 }
