@@ -67,6 +67,19 @@ public class CollaborativeFilter {
         return returnData;
     }
 
+    public void getFriends() {
+        for (User user : outputData.keySet()) {
+            int sum =0;
+            HashMap<Book, Double> currentUser = new HashMap<>();;
+            if (user.getUsername().equals(users.getEmail())){
+                for (Book j : outputData.get(user).keySet()) {
+                    currentUser.put(j, outputData.get(user).get(j));
+                }
+
+            }
+        }
+    }
+
     public List<Books> getMyRecommendations (Users currentUser){
         if (isCalulated){
             return getRecommendations();

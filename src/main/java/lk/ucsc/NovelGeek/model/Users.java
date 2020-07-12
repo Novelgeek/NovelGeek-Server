@@ -2,7 +2,9 @@ package lk.ucsc.NovelGeek.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lk.ucsc.NovelGeek.model.book.BookRating;
+import lk.ucsc.NovelGeek.model.book.LocalBook;
 import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
+import lk.ucsc.NovelGeek.model.group.Members;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -60,6 +62,10 @@ public class Users {
     @JsonIgnoreProperties
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
     Set<PostsComments> postscomments;
+
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = LocalBook.class, mappedBy = "users")
+    Set<LocalBook> localBooks;
 
     public Set<BookRating> getRecentlyViewed() {
         return recentlyViewed;

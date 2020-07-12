@@ -146,8 +146,6 @@ public class BookController {
             @RequestParam("year") String year,
             @RequestParam("author") String author,
             @RequestParam("genres") String genres,
-            @RequestParam("searchTerms") String searchTerms,
-            @RequestParam("urls") String urls,
             @RequestParam("publisher") String publisher
     ){
         String fileUrl;
@@ -163,6 +161,10 @@ public class BookController {
         } else {
             imageUrl = awss3Service.uploadFile(img);
         }
+
+
+//        bookService.uploadNewBook(title, description, isbn, year,
+//                                    author, genres, publisher, fileUrl, imageUrl);
 
 
         return null;

@@ -201,4 +201,10 @@ public class BookService {
         return this.getCurrentUser().getBookRatings();
     }
 
+    public Object uploadNewBook(String title, String description, String isbn, int year, String author, String genres, String publisher, String fileUrl, String imageUrl) {
+
+
+
+        return null;
+    }
 }

@@ -1,12 +1,10 @@
 package lk.ucsc.NovelGeek.model.book;
 
+import lk.ucsc.NovelGeek.model.Users;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class LocalBook {
@@ -17,28 +15,29 @@ public class LocalBook {
     String title;
     String description;
     String isbn;
-    String year;
+    int year;
     String author;
-    String genres;
-    String searchTerms;
-    String urls;
     String publisher;
     String imgUrl;
     String fileUrl;
 
-    public LocalBook(long id, String title, String description, String isbn, String year, String author, String genres, String searchTerms, String urls, String publisher, String imgUrl, String fileUrl) {
-        this.id = id;
+    @ManyToOne
+    Users users;
+
+    @ManyToOne
+    Genres genres;
+
+    public LocalBook(String title, String description, String isbn, int year, String author, String publisher, String imgUrl, String fileUrl, Users users, Genres genres) {
         this.title = title;
         this.description = description;
         this.isbn = isbn;
         this.year = year;
         this.author = author;
-        this.genres = genres;
-        this.searchTerms = searchTerms;
-        this.urls = urls;
         this.publisher = publisher;
         this.imgUrl = imgUrl;
         this.fileUrl = fileUrl;
+        this.users = users;
+        this.genres = genres;
     }
 
     public long getId() {
@@ -73,11 +72,11 @@ public class LocalBook {
         this.isbn = isbn;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(int year) {
         this.year = year;
     }
 
@@ -87,30 +86,6 @@ public class LocalBook {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getGenres() {
-        return genres;
-    }
-
-    public void setGenres(String genres) {
-        this.genres = genres;
-    }
-
-    public String getSearchTerms() {
-        return searchTerms;
-    }
-
-    public void setSearchTerms(String searchTerms) {
-        this.searchTerms = searchTerms;
-    }
-
-    public String getUrls() {
-        return urls;
-    }
-
-    public void setUrls(String urls) {
-        this.urls = urls;
     }
 
     public String getPublisher() {
@@ -135,5 +110,21 @@ public class LocalBook {
 
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
+    public Genres getGenres() {
+        return genres;
+    }
+
+    public void setGenres(Genres genres) {
+        this.genres = genres;
     }
 }

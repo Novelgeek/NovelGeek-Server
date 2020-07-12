@@ -1,15 +1,10 @@
 package lk.ucsc.NovelGeek.controller;
 
-import javassist.NotFoundException;
-import lk.ucsc.NovelGeek.model.Group;
-import lk.ucsc.NovelGeek.model.Users;
-import lk.ucsc.NovelGeek.model.notification.GroupNotification;
+import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
-import lk.ucsc.NovelGeek.model.response.SuccessResponse;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import lk.ucsc.NovelGeek.service.AWSS3Service;
 import lk.ucsc.NovelGeek.service.GroupService;
-import net.minidev.json.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

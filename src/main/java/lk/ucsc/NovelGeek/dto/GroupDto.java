@@ -1,15 +1,10 @@
 package lk.ucsc.NovelGeek.dto;
 
-import lk.ucsc.NovelGeek.model.Group;
-import lk.ucsc.NovelGeek.model.Members;
+import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.Users;
 
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Set;
 
 public class GroupDto implements Serializable {
     private long groupId;
