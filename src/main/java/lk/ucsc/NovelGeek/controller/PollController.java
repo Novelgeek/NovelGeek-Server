@@ -46,9 +46,9 @@ public class PollController {
 
     @GetMapping("/user")
     public ResponseEntity<?> getMyPolls(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal user = (UserPrincipal)auth.getPrincipal();
-        return ResponseEntity.ok(pollService.getUserPolls(Long.valueOf(user.getId())));
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        UserPrincipal user = (UserPrincipal)auth.getPrincipal();
+        return ResponseEntity.ok(pollService.getUserPolls());
     }
 
 

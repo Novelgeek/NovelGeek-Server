@@ -104,7 +104,7 @@ public class PollService {
 
     }
 
-    public List<?> getUserPolls(Long valueOf) {
+    public List<?> getUserPolls() {
         List<PollResponse> pollResponses= pollRepository.findByUsers(this.getCurrentUser()).stream().map( poll -> new PollResponse(poll, this.getCurrentUser())).collect(Collectors.toList());
 //        return  pollRepository.findByUsers(this.getCurrentUser());
         return pollResponses;
