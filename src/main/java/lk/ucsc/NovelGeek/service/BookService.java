@@ -11,6 +11,7 @@ import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.*;
 import lk.ucsc.NovelGeek.model.book.BookRating;
 import lk.ucsc.NovelGeek.model.book.Books;
+import lk.ucsc.NovelGeek.model.book.LocalBook;
 import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
 
@@ -18,6 +19,7 @@ import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.book.BookRatingRepository;
 import lk.ucsc.NovelGeek.repository.book.BookRepository;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
+import lk.ucsc.NovelGeek.repository.book.LocalBookRepository;
 import lk.ucsc.NovelGeek.repository.book.RecentlyViewedRepository;
 import lk.ucsc.NovelGeek.service.recommendation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,8 @@ public class BookService {
     @Autowired
     private RecentlyViewedRepository recentlyViewedRepository;
 
+    @Autowired
+    private LocalBookRepository localBookRepository;
 
     //get current user
     private Users getCurrentUser(){
@@ -202,8 +206,8 @@ public class BookService {
     }
 
     public Object uploadNewBook(String title, String description, String isbn, int year, String author, String genres, String publisher, String fileUrl, String imageUrl) {
-
-
+        LocalBook localBook = new LocalBook(title, description, isbn, year, author, publisher, imageUrl, fileUrl, this.getCurrentUser(), null);
+        localBookRepository.save(localBook);
 
         return null;
     }

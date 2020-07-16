@@ -48,7 +48,8 @@ public class CollaborativeFilter {
         System.out.println("\nSlope One - With Predictions\n");
         predict(inputData);
         getRecommendations();
-
+        printData(outputData);
+        getFriends();
         return returnData;
     }
 
@@ -68,9 +69,8 @@ public class CollaborativeFilter {
     }
 
     public void getFriends() {
+        HashMap<Book, Double> currentUser = new HashMap<>();
         for (User user : outputData.keySet()) {
-            int sum =0;
-            HashMap<Book, Double> currentUser = new HashMap<>();;
             if (user.getUsername().equals(users.getEmail())){
                 for (Book j : outputData.get(user).keySet()) {
                     currentUser.put(j, outputData.get(user).get(j));
@@ -78,6 +78,17 @@ public class CollaborativeFilter {
 
             }
         }
+        for (User user : outputData.keySet()) {
+            double sum =0;
+
+            if (!user.getUsername().equals(users.getEmail())){
+                for (Book j : outputData.get(user).keySet()) {
+                    sum = sum + (currentUser.get(j) - outputData.get(user).get(j));
+                }
+                System.out.println(sum);
+            }
+        }
+
     }
 
     public List<Books> getMyRecommendations (Users currentUser){
@@ -171,10 +182,12 @@ public class CollaborativeFilter {
 
     private void printData(Map<User, HashMap<Book, Double>> data) {
         for (User user : data.keySet()) {
-            if (user.getUsername().equals(users.getEmail())){
-                System.out.println(user.getUsername() + ":");
-                print(data.get(user));
-            }
+//            if (user.getUsername().equals(users.getEmail())){
+//                System.out.println(user.getUsername() + ":");
+//                print(data.get(user));
+//            }
+            System.out.println(user.getUsername() + ":");
+            print(data.get(user));
         }
     }
 

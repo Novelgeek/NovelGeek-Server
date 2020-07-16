@@ -143,28 +143,28 @@ public class BookController {
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("isbn") String isbn,
-            @RequestParam("year") String year,
+            @RequestParam("year") int year,
             @RequestParam("author") String author,
             @RequestParam("genres") String genres,
             @RequestParam("publisher") String publisher
     ){
-        String fileUrl;
-        if (pdf == null){
-            fileUrl = null;
-        } else {
-            fileUrl = awss3Service.uploadFile(pdf);
-        }
+        String fileUrl = null;
+//        if (pdf == null){
+//            fileUrl = null;
+//        } else {
+//            fileUrl = awss3Service.uploadFile(pdf);
+//        }
 
-        String imageUrl;
-        if (img == null){
-            imageUrl = null;
-        } else {
-            imageUrl = awss3Service.uploadFile(img);
-        }
+        String imageUrl = null;
+//        if (img == null){
+//            imageUrl = null;
+//        } else {
+//            imageUrl = awss3Service.uploadFile(img);
+//        }
 
 
-//        bookService.uploadNewBook(title, description, isbn, year,
-//                                    author, genres, publisher, fileUrl, imageUrl);
+        bookService.uploadNewBook(title, description, isbn, year,
+                                    author, genres, publisher, fileUrl, imageUrl);
 
 
         return null;
