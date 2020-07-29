@@ -108,6 +108,9 @@ public class CollaborativeFilter {
 
     public List<String> getFriendRecommendations(Users currentUser) {
         if (isCalulated){
+            if( users !=currentUser ){
+                slopeOne(currentUser);
+            }
             return getFriends();
         } else {
             slopeOne(currentUser);

@@ -164,8 +164,13 @@ public class FriendService {
         List<String> recommendedUsers = collaborativeFilter.getFriendRecommendations(users);
         List<FriendDto> friendRecommendations = recommendedUsers.stream().map(user -> {
             Users currentUser = authRepository.findByEmail(user);
-            return  new FriendDto(currentUser, users.getFriends());
-        }).collect(Collectors.toList());
+            FriendDto friendDto =  new FriendDto(currentUser, users.getFriends());
+            if (friendDto.isFriend() != true) {
+                return friendDto;
+            } else {
+                return null;
+            }
+        }).filter(out -> out!=null).collect(Collectors.toList());
 
         return friendRecommendations;
     }
