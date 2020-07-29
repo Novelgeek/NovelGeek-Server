@@ -48,7 +48,7 @@ public class CollaborativeFilter {
         System.out.println("\nSlope One - With Predictions\n");
         predict(inputData);
         getRecommendations();
-        printData(outputData);
+        // printData(outputData);
         getFriends();
         return returnData;
     }
@@ -68,7 +68,7 @@ public class CollaborativeFilter {
         return returnData;
     }
 
-    public void getFriends() {
+    public List<String> getFriends() {
         HashMap<Book, Double> currentUser = new HashMap<>();
         for (User user : outputData.keySet()) {
             if (user.getUsername().equals(users.getEmail())){
@@ -78,17 +78,22 @@ public class CollaborativeFilter {
 
             }
         }
+        List<String> recommendedFriends = new ArrayList<>();
         for (User user : outputData.keySet()) {
             double sum =0;
-
+            double average = 0;
             if (!user.getUsername().equals(users.getEmail())){
                 for (Book j : outputData.get(user).keySet()) {
-                    sum = sum + (currentUser.get(j) - outputData.get(user).get(j));
+                    sum = sum + Math.abs(currentUser.get(j) - outputData.get(user).get(j));
+                    average = sum / outputData.get(user).size();
                 }
-                System.out.println(sum);
+                if (average < 2.0) {
+                    recommendedFriends.add(user.getUsername());
+                }
             }
         }
 
+        return recommendedFriends;
     }
 
     public List<Books> getMyRecommendations (Users currentUser){
@@ -99,6 +104,15 @@ public class CollaborativeFilter {
             return slopeOne(currentUser);
         }
 
+    }
+
+    public List<String> getFriendRecommendations(Users currentUser) {
+        if (isCalulated){
+            return getFriends();
+        } else {
+            slopeOne(currentUser);
+            return getFriends();
+        }
     }
 
 
@@ -177,7 +191,7 @@ public class CollaborativeFilter {
             }
             outputData.put(e.getKey(), clean);
         }
-        printMatrix(outputData);
+        printData(outputData);
     }
 
     private void printData(Map<User, HashMap<Book, Double>> data) {

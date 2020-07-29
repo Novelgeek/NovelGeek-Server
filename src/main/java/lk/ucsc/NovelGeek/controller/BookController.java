@@ -171,5 +171,11 @@ public class BookController {
 
     }
 
+    @GetMapping("/allLocal")
+    public Object getLocalBooks(){
+
+        return bookService.getLocalBooks();
+    }
+
 
 }

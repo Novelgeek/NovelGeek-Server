@@ -27,6 +27,9 @@ public class LocalBook {
     @ManyToOne
     Genres genres;
 
+    public LocalBook() {
+    }
+
     public LocalBook(String title, String description, String isbn, int year, String author, String publisher, String imgUrl, String fileUrl, Users users, Genres genres) {
         this.title = title;
         this.description = description;

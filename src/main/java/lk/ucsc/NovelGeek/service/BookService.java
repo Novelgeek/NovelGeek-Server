@@ -211,4 +211,9 @@ public class BookService {
 
         return null;
     }
+
+    public Object getLocalBooks(){
+
+        return localBookRepository.findAll();
+    }
 }

@@ -4,8 +4,10 @@ import lk.ucsc.NovelGeek.dto.FriendDto;
 import lk.ucsc.NovelGeek.dto.GroupDto;
 import lk.ucsc.NovelGeek.model.Friends;
 import lk.ucsc.NovelGeek.model.Users;
+import lk.ucsc.NovelGeek.model.book.Books;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.FriendRepository;
+import lk.ucsc.NovelGeek.service.recommendation.CollaborativeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +27,9 @@ public class FriendService {
     
     @Autowired
     FriendRepository friendRepository;
+
+    @Autowired
+    CollaborativeFilter collaborativeFilter;
 
     public Users getCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -152,5 +157,16 @@ public class FriendService {
         friendRepository.delete(friendMirror);
 
         return null;
+    }
+
+    public Object getFriendRecommendations() {
+        Users users = this.getCurrentUser();
+        List<String> recommendedUsers = collaborativeFilter.getFriendRecommendations(users);
+        List<FriendDto> friendRecommendations = recommendedUsers.stream().map(user -> {
+            Users currentUser = authRepository.findByEmail(user);
+            return  new FriendDto(currentUser, users.getFriends());
+        }).collect(Collectors.toList());
+
+        return friendRecommendations;
     }
 }
