@@ -1,7 +1,6 @@
 package lk.ucsc.NovelGeek.repository;
 
 import lk.ucsc.NovelGeek.model.Friends;
-import lk.ucsc.NovelGeek.model.Group;
 import lk.ucsc.NovelGeek.model.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

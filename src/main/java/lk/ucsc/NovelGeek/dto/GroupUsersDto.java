@@ -1,6 +1,6 @@
 package lk.ucsc.NovelGeek.dto;
 
-import lk.ucsc.NovelGeek.model.Members;
+import lk.ucsc.NovelGeek.model.group.Members;
 import lk.ucsc.NovelGeek.model.Users;
 
 import java.util.Set;

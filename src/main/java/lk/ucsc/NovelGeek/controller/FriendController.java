@@ -13,13 +13,17 @@ public class FriendController {
 
     @GetMapping("my-friends")
     public Object getMyFriends(){
-
         return friendService.getMyFriends();
     }
 
     @GetMapping("all-users")
     public Object getNonFriends(){
         return friendService.getAllUsers();
+    }
+
+    @GetMapping("recommended-users")
+    public Object getFriendRecommendations(){
+        return friendService.getFriendRecommendations();
     }
 
     @PostMapping("send-request/{userId}")

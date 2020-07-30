@@ -10,6 +10,7 @@ import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Test;
 
 import lk.ucsc.NovelGeek.repository.AuctionRepository;
+import lk.ucsc.NovelGeek.service.AWSS3Service;
 import lk.ucsc.NovelGeek.service.AuctionService;
 
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
@@ -33,6 +34,9 @@ public class BookController {
 
     @Autowired
     private AuctionService auctionService;
+
+    @Autowired
+    private AWSS3Service awss3Service;
 
 
     @PostMapping(path="/check")
@@ -76,9 +80,6 @@ public class BookController {
             @RequestParam("bookDescription") String description,
             @RequestParam("finishDate") String date,
             @RequestParam("userId") String id
-
-
-
     ){
 
         return auctionService.addAuction(new AuctionDTO(file, title, description,Double.parseDouble(bid), date, Long.parseLong(id)));
@@ -132,6 +133,48 @@ public class BookController {
     public Object getUserBookRatings(){
 
         return bookService.getUserBookRatings();
+    }
+
+    @PostMapping(path="/addNewBook")
+    @ResponseBody
+    public ResponseEntity<Auction> addNewBook(
+            @RequestParam(value = "img",required = false)MultipartFile img,
+            @RequestParam(value = "pdf",required = false)MultipartFile pdf,
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("isbn") String isbn,
+            @RequestParam("year") int year,
+            @RequestParam("author") String author,
+            @RequestParam("genres") String genres,
+            @RequestParam("publisher") String publisher
+    ){
+        String fileUrl = null;
+//        if (pdf == null){
+//            fileUrl = null;
+//        } else {
+//            fileUrl = awss3Service.uploadFile(pdf);
+//        }
+
+        String imageUrl = null;
+//        if (img == null){
+//            imageUrl = null;
+//        } else {
+//            imageUrl = awss3Service.uploadFile(img);
+//        }
+
+
+        bookService.uploadNewBook(title, description, isbn, year,
+                                    author, genres, publisher, fileUrl, imageUrl);
+
+
+        return null;
+
+    }
+
+    @GetMapping("/allLocal")
+    public Object getLocalBooks(){
+
+        return bookService.getLocalBooks();
     }
 
 

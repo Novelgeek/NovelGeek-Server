@@ -1,6 +1,6 @@
 package lk.ucsc.NovelGeek.service;
 
-import lk.ucsc.NovelGeek.model.Group;
+import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.response.BasicStat;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
