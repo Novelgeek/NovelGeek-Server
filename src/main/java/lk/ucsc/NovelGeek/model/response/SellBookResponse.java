@@ -1,32 +1,26 @@
-package lk.ucsc.NovelGeek.model;
+package lk.ucsc.NovelGeek.model.response;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import javax.persistence.*;
 import java.util.Date;
 
-@Entity(name = "Selling")
-public class SellBook {
+public class SellBookResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long sellingid;
-
+    private String username;
     private String title;
-    private Date publishedDate;
-    private String imagePath;
     private String description;
-    private String telephone;
-    private long merchantid;
+    private Date publishedDate;
     private float price;
-
-    @JsonBackReference
-    @ManyToOne()
-    @JoinColumn(name = "id")
-    Users users;
+    private long merchantid;
+    private String imagePath;
+    private String telephone;
+    private boolean isOwned;
+    private boolean isSold;
 
     public long getSellingid() { return sellingid; }
     public void setSellingid(long sellingid) { this.sellingid = sellingid; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -40,15 +34,18 @@ public class SellBook {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
+    public boolean isOwned() { return isOwned; }
+    public void setOwned(boolean owned) { isOwned = owned; }
+
+    public boolean isSold() { return isSold; }
+    public void setSold(boolean sold) { isSold = sold; }
+
     public String getTelephone() { return telephone; }
     public void setTelephone(String telephone) { this.telephone = telephone; }
 
-    public long getMerchantid() { return merchantid; }
-    public void setMerchantid(long merchantid) { this.merchantid = merchantid; }
-
-    public Users getUsers() { return users; }
-    public void setUsers(Users users) { this.users = users; }
-
     public float getPrice() { return price; }
     public void setPrice(float price) { this.price = price; }
+
+    public long getMerchantid() { return merchantid; }
+    public void setMerchantid(long merchantid) { this.merchantid = merchantid; }
 }

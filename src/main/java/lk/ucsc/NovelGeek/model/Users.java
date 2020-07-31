@@ -55,6 +55,10 @@ public class Users {
     Set<Posts> posts;
 
     @JsonIgnoreProperties
+    @OneToMany(targetEntity = SellBook.class, mappedBy = "users",cascade = CascadeType.ALL)
+    Set<SellBook> Selling;
+
+    @JsonIgnoreProperties
     @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users")
     Set<PostsLikes> postslikes;
 
