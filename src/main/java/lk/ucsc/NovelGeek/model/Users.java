@@ -93,7 +93,6 @@ public class Users {
     public Set<Friends> getFriends() {
         return friends;
     }
-
     public void setFriends(Set<Friends> friends) {
         this.friends = friends;
     }
@@ -101,7 +100,6 @@ public class Users {
     public Set<Members> getMyNotifications() {
         return myNotifications;
     }
-
     public void setMyNotifications(Set<Members> myNotifications) {
         this.myNotifications = myNotifications;
     }
@@ -109,7 +107,6 @@ public class Users {
     public String getProvider() {
         return provider;
     }
-
     public void setProvider(String provider) {
         this.provider = provider;
     }
@@ -117,7 +114,6 @@ public class Users {
     public String getProviderId() {
         return providerId;
     }
-
     public void setProviderId(String providerId) {
         this.providerId = providerId;
     }
@@ -125,7 +121,6 @@ public class Users {
     public String getImageUrl() {
         return imageUrl;
     }
-
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
@@ -133,7 +128,6 @@ public class Users {
     public long getId() {
         return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
@@ -141,7 +135,6 @@ public class Users {
     public String getRole() {
         return role;
     }
-
     public void setRole(String role) {
         this.role = role;
     }
@@ -149,7 +142,6 @@ public class Users {
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -157,7 +149,6 @@ public class Users {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -165,7 +156,6 @@ public class Users {
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -173,7 +163,6 @@ public class Users {
     public Set<Members> getMembers() {
         return members;
     }
-
     public void setMembers(Set<Members> members) {
         this.members = members;
     }
@@ -181,27 +170,22 @@ public class Users {
     public boolean isVerified() {
         return isVerified;
     }
-
     public void setVerified(boolean verified) {
         isVerified = verified;
     }
 
     public void setPosts(Set<Posts> posts) { this.posts = posts; }
-
     public Set<Posts> getPosts() { return posts; }
 
     public void setPostslikes(Set<PostsLikes> postslikes) { this.postslikes = postslikes; }
-
     public Set<PostsLikes> getPostslikes() { return postslikes; }
 
     public Set<PostsComments> getPostscomments() { return postscomments; }
-
     public void setPostscomments(Set<PostsComments> postscomments) { this.postscomments = postscomments; }
 
     public Set<Poll> getPoll() {
         return poll;
     }
-
     public void setPoll(Set<Poll> poll) {
         this.poll = poll;
     }
@@ -209,8 +193,10 @@ public class Users {
     public Set<PollVotes> getPollVotes() {
         return pollVotes;
     }
-
     public void setPollVotes(Set<PollVotes> pollVotes) {
         this.pollVotes = pollVotes;
     }
+
+    public Set<SellBook> getSelling() { return Selling; }
+    public void setSelling(Set<SellBook> selling) { Selling = selling; }
 }

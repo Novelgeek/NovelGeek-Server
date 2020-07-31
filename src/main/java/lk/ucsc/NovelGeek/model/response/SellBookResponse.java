@@ -10,7 +10,7 @@ public class SellBookResponse {
     private String description;
     private Date publishedDate;
     private float price;
-    private long merchantid;
+    private String merchantid;
     private String imagePath;
     private String telephone;
     private boolean isOwned;
@@ -46,6 +46,6 @@ public class SellBookResponse {
     public float getPrice() { return price; }
     public void setPrice(float price) { this.price = price; }
 
-    public long getMerchantid() { return merchantid; }
-    public void setMerchantid(long merchantid) { this.merchantid = merchantid; }
+    public String  getMerchantid() { return merchantid; }
+    public void setMerchantid(String  merchantid) { this.merchantid = merchantid; }
 }
