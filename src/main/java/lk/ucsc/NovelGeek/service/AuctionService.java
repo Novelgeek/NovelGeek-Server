@@ -3,7 +3,7 @@ package lk.ucsc.NovelGeek.service;
 import lk.ucsc.NovelGeek.dto.AuctionDTO;
 import lk.ucsc.NovelGeek.enums.AuctionStatus;
 import lk.ucsc.NovelGeek.model.Auction;
-import lk.ucsc.NovelGeek.model.AuctionUserHitory;
+import lk.ucsc.NovelGeek.model.AuctionUserHistory;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.repository.AuctionRepository;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
@@ -54,18 +54,23 @@ public class AuctionService {
         Optional<Users> op2  = userRepository.findById(userId);
 
         if(!op1.isEmpty() && !op2.isEmpty()){
+            System.out.println("auction and user exists");
             Auction auction=op1.get();
             Users biddingUser = op2.get();
             auction.setCurrentBid(bid);
             auction.setNumberOfBids(auction.getNumberOfBids()+1);
             auction.setCurrentBidUser(biddingUser);
 
-            AuctionUserHitory auctionUserHitory = new AuctionUserHitory(biddingUser, bid);
-            auction.getAuctionUserHitory().add(auctionUserHitory);
+            AuctionUserHistory auctionUserHistory = new AuctionUserHistory(biddingUser, bid);
+            auction.getAuctionUserHitory().add(auctionUserHistory);
 
             return auctionRepository.save(auction);
         }else{
             return null;
         }
+    }
+
+    public Auction getAuctionData(Long aid) {
+        return auctionRepository.findById(aid).get();
     }
 }

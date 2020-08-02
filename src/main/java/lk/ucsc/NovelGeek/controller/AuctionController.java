@@ -48,9 +48,23 @@ public class AuctionController {
     @PostMapping(path="/addnewbid")
     @ResponseBody
     public Auction addNewBid(@RequestBody BidDTO bid ){
-
+        System.out.println(bid.getUserId()+"coming");
         return auctionService.addNewBid(Double.parseDouble(bid.getNewBid()), bid.getAuctionId(), bid.getUserId());
 
     }
+    @GetMapping(path = "/getauctiondata/{id}")
+    public Auction getAuctionData(@PathVariable("id") Long aid){
+        System.out.println("get auction data");
+        return auctionService.getAuctionData(aid);
+
+    }
+    @GetMapping(path="/test/{id}")
+    @ResponseBody
+    public Auction test(){
+        System.out.println("test");
+        return null;
+
+    }
+
 
 }

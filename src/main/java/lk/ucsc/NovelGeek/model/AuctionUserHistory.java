@@ -1,24 +1,25 @@
 package lk.ucsc.NovelGeek.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-public class AuctionUserHitory {
+public class AuctionUserHistory {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long historyId;
 
-    @OneToOne
+    @OneToOne()
+    @JoinColumn(name = "bidUser")
     private Users bidUser;
+
     private Date timestamp;
     private double bidAmount;
 
-    public AuctionUserHitory() {
+    public AuctionUserHistory() {
     }
 
-    public AuctionUserHitory(Users user, double bidAmount) {
+    public AuctionUserHistory(Users user, double bidAmount) {
         this.bidUser = user;
         this.timestamp = new Date();
         this.bidAmount = bidAmount;

@@ -3,6 +3,7 @@ package lk.ucsc.NovelGeek.model;
 import lk.ucsc.NovelGeek.enums.AuctionStatus;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,8 +32,8 @@ public class Auction {
     private String finishDate;
     private String imageUrl;
 
-    @OneToMany
-    private List<AuctionUserHitory> auctionUserHitory;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<AuctionUserHistory> auctionUserHistory = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private AuctionStatus auctionStatus;
@@ -59,12 +60,12 @@ public class Auction {
         this.imageUrl = imageUrl;
     }
 
-    public List<AuctionUserHitory> getAuctionUserHitory() {
-        return auctionUserHitory;
+    public List<AuctionUserHistory> getAuctionUserHitory() {
+        return auctionUserHistory;
     }
 
-    public void setAuctionUserHitory(List<AuctionUserHitory> auctionUserHitory) {
-        this.auctionUserHitory = auctionUserHitory;
+    public void setAuctionUserHitory(List<AuctionUserHistory> auctionUserHistory) {
+        this.auctionUserHistory = auctionUserHistory;
     }
 
     public AuctionStatus getAuctionStatus() {
