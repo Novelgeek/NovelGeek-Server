@@ -1,16 +1,11 @@
 package lk.ucsc.NovelGeek.service;
 
-import com.fasterxml.jackson.core.PrettyPrinter;
 import lk.ucsc.NovelGeek.model.*;
-import lk.ucsc.NovelGeek.model.request.NewPaymentCutomer;
-import lk.ucsc.NovelGeek.model.request.NewPaymentData;
-import lk.ucsc.NovelGeek.model.request.NewPost;
+import lk.ucsc.NovelGeek.model.request.NewPayment;
 import lk.ucsc.NovelGeek.model.request.NewSelling;
-import lk.ucsc.NovelGeek.model.response.PostResponse;
 import lk.ucsc.NovelGeek.model.response.SellBookResponse;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.PaymentCustomerRepository;
-import lk.ucsc.NovelGeek.repository.PaymentDataRepository;
+import lk.ucsc.NovelGeek.repository.PaymentsRepository;
 import lk.ucsc.NovelGeek.repository.SellingRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +26,7 @@ public class SellingService {
     private AuthRepository authRepository;
 
     @Autowired
-    private PaymentDataRepository paymentDataRepository;
-
-    @Autowired
-    private PaymentCustomerRepository paymentCustomerRepository;
+    private PaymentsRepository paymentsRepository;
 
     @Autowired
     private AWSS3Service awsService;
@@ -120,26 +112,11 @@ public class SellingService {
         return posts;
     }
 
-    public void storePayment(NewPaymentData request){
-        if(request.getStatus_code()==2){
-            PaymentData newpayment = new PaymentData();
-            BeanUtils.copyProperties(request, newpayment);
-
-            paymentDataRepository.save(newpayment);
-        }
-
-
+    public void storePayment(NewPayment data){
+        Payments newdata = new Payments();
+        BeanUtils.copyProperties(data, newdata);
+        newdata.setUsers(this.getCurrentUser());
+        paymentsRepository.save(newdata);
     }
 
-    public NewPaymentCutomer storeCustomer(NewPaymentCutomer request){
-        PaymentCustomer newcustomer = new PaymentCustomer();
-        BeanUtils.copyProperties(request, newcustomer);
-
-        PaymentCustomer res = paymentCustomerRepository.save(newcustomer);
-        NewPaymentCutomer response = new NewPaymentCutomer();
-
-        BeanUtils.copyProperties(res, response);
-
-        return response;
-    }
 }

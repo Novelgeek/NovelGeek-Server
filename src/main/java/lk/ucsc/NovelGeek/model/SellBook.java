@@ -1,6 +1,8 @@
 package lk.ucsc.NovelGeek.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -24,6 +26,10 @@ public class SellBook {
     @ManyToOne()
     @JoinColumn(name = "id")
     Users users;
+
+    @JsonIgnoreProperties
+    @OneToOne(mappedBy = "sellbook")
+    private Payments payments;
 
     public long getSellingid() { return sellingid; }
     public void setSellingid(long sellingid) { this.sellingid = sellingid; }
@@ -51,6 +57,8 @@ public class SellBook {
     public void setPrice(float price) { this.price = price; }
 
     public String getMerchantid() { return merchantid; }
-
     public void setMerchantid(String merchantid) { this.merchantid = merchantid; }
+
+    public Payments getPayments() { return payments; }
+    public void setPayments(Payments payments) { this.payments = payments; }
 }

@@ -59,6 +59,10 @@ public class Users {
     Set<SellBook> Selling;
 
     @JsonIgnoreProperties
+    @OneToMany(targetEntity = Payments.class, mappedBy = "users")
+    Set<Payments> payments;
+
+    @JsonIgnoreProperties
     @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users")
     Set<PostsLikes> postslikes;
 
@@ -199,4 +203,7 @@ public class Users {
 
     public Set<SellBook> getSelling() { return Selling; }
     public void setSelling(Set<SellBook> selling) { Selling = selling; }
+
+    public Set<Payments> getPayments() { return payments; }
+    public void setPayments(Set<Payments> payments) { this.payments = payments; }
 }

@@ -1,8 +1,6 @@
 package lk.ucsc.NovelGeek.controller;
 
-import lk.ucsc.NovelGeek.model.request.NewComment;
-import lk.ucsc.NovelGeek.model.request.NewPaymentCutomer;
-import lk.ucsc.NovelGeek.model.request.NewPaymentData;
+import lk.ucsc.NovelGeek.model.request.NewPayment;
 import lk.ucsc.NovelGeek.model.request.NewSelling;
 import lk.ucsc.NovelGeek.service.AWSS3Service;
 import lk.ucsc.NovelGeek.service.SellingService;
@@ -48,14 +46,10 @@ public class SellingController {
     }
 
     @PostMapping("/newpayment")
-    public void storePayment(@RequestBody NewPaymentData data){
+    public void storePayment(@RequestBody NewPayment data){
         sellingService.storePayment(data);
     }
 
-    @PostMapping("/newcustomer")
-    public ResponseEntity<?> storeCustomer (@RequestBody NewPaymentCutomer data){
-        return ResponseEntity.ok(sellingService.storeCustomer(data));
-    }
 
     @GetMapping("/allposts")
     public ResponseEntity<?> getAllPosts(){
