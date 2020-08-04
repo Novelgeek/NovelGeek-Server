@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FeatureBook extends JpaRepository<FeaturedBook, Long> {
+public interface FeaturedBookRepository extends JpaRepository<lk.ucsc.NovelGeek.model.book.FeaturedBook, Long> {
 
 }
