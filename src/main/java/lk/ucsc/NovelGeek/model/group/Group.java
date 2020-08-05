@@ -29,6 +29,7 @@ public class Group {
     @OneToMany(targetEntity = Members.class, mappedBy = "group", cascade = CascadeType.ALL)
     Set<Members> members;
 
+    @JsonManagedReference
     @OneToMany(targetEntity = GroupPosts.class, mappedBy = "group", cascade = CascadeType.ALL)
     Set<GroupPosts> posts;
 

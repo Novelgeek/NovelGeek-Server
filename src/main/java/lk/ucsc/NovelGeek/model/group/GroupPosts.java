@@ -1,14 +1,18 @@
 package lk.ucsc.NovelGeek.model.group;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lk.ucsc.NovelGeek.model.Posts;
 
 import javax.persistence.*;
 
 @Entity(name = "group_posts")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "group"})
 public class GroupPosts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupPostId;
+
 
     @ManyToOne()
     @JoinColumn(name = "postid")

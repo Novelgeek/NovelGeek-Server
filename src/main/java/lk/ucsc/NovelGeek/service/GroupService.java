@@ -4,6 +4,7 @@ import lk.ucsc.NovelGeek.dto.GroupDetailedDto;
 import lk.ucsc.NovelGeek.dto.GroupDto;
 import lk.ucsc.NovelGeek.dto.GroupUsersDto;
 import lk.ucsc.NovelGeek.enums.MemberStatus;
+import lk.ucsc.NovelGeek.model.Posts;
 import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.group.Members;
 import lk.ucsc.NovelGeek.model.Users;
@@ -138,6 +139,11 @@ public class GroupService {
                 }
             }
         });
+
+        List<Posts> posts = group.get().getPosts().stream().map(groupPosts -> groupPosts.getPosts()).collect(Collectors.toList());
+
+        groupDetailedDto.setPosts(posts);
+
         return groupDetailedDto;
     }
 

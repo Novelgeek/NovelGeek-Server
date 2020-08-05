@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity(name = "Posts")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "groupPosts"})
 public class Posts {
 
     @Id
