@@ -1,9 +1,13 @@
 package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.model.*;
+import lk.ucsc.NovelGeek.model.group.Group;
+import lk.ucsc.NovelGeek.model.group.GroupPosts;
 import lk.ucsc.NovelGeek.model.request.NewPost;
 import lk.ucsc.NovelGeek.model.response.*;
 import lk.ucsc.NovelGeek.repository.*;
+import lk.ucsc.NovelGeek.repository.group.GroupPostRepository;
+import lk.ucsc.NovelGeek.repository.group.GroupRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -33,6 +37,12 @@ public class PostService {
 
     @Autowired
     private AWSS3Service awsService;
+
+    @Autowired
+    private GroupPostRepository groupPostRepository;
+
+    @Autowired
+    private GroupRepository groupRepository;
 
     //to get current user
     public Users getCurrentUser(){
@@ -298,5 +308,25 @@ public class PostService {
         }).collect(Collectors.toList());
 
         return comments;
+    }
+
+    public Object createGroupPost(NewPost newpostrequest, Long groupId) {
+        Posts newpost= new Posts();
+        BeanUtils.copyProperties(newpostrequest,newpost);
+
+        newpost.setPublishedDate(new Date());
+
+        Users currentUser = this.getCurrentUser();
+        newpost.setUsers(currentUser);
+
+        Posts createdPost = postRepository.save(newpost);
+
+        GroupPosts groupPosts = new GroupPosts();
+        Optional<Group> group = groupRepository.findById(groupId);
+        groupPosts.setGroup(group.get());
+        groupPosts.setPosts(createdPost);
+
+        groupPostRepository.save(groupPosts);
+        return createdPost;
     }
 }

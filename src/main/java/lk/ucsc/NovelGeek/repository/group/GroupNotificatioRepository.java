@@ -1,4 +1,4 @@
-package lk.ucsc.NovelGeek.repository;
+package lk.ucsc.NovelGeek.repository.group;
 
 import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.Users;

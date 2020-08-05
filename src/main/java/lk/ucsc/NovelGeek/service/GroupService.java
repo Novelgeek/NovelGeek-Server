@@ -10,6 +10,9 @@ import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.notification.GroupNotification;
 import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
 import lk.ucsc.NovelGeek.repository.*;
+import lk.ucsc.NovelGeek.repository.group.GroupNotificatioRepository;
+import lk.ucsc.NovelGeek.repository.group.GroupRepository;
+import lk.ucsc.NovelGeek.repository.group.MemberRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -254,4 +257,5 @@ public class GroupService {
         groupRepository.deleteById(groupId);
         return null;
     }
+
 }
