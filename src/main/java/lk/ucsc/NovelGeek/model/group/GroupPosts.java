@@ -4,22 +4,26 @@ import lk.ucsc.NovelGeek.model.Posts;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "group_posts")
 public class GroupPosts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long groupId;
+    private long groupPostId;
+
+    @ManyToOne()
+    @JoinColumn(name = "postid")
+    Posts posts;
 
     @ManyToOne()
     @JoinColumn(name = "groupId")
-    Posts posts;
+    Group group;
 
-    public long getGroupId() {
-        return groupId;
+    public long getGroupPostId() {
+        return groupPostId;
     }
 
-    public void setGroupId(long groupId) {
-        this.groupId = groupId;
+    public void setGroupPostId(long groupPostId) {
+        this.groupPostId = groupPostId;
     }
 
     public Posts getPosts() {
@@ -28,5 +32,13 @@ public class GroupPosts {
 
     public void setPosts(Posts posts) {
         this.posts = posts;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }

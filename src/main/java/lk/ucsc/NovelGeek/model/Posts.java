@@ -3,6 +3,8 @@ package lk.ucsc.NovelGeek.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lk.ucsc.NovelGeek.model.group.GroupPosts;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
@@ -35,6 +37,17 @@ public class Posts {
     @JsonIgnoreProperties
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "posts", cascade = CascadeType.ALL)
     Set<PostsComments> postscomments;
+
+    @OneToMany(targetEntity = GroupPosts.class, mappedBy = "posts")
+    Set<GroupPosts> groupPosts;
+
+    public Set<GroupPosts> getGroupPosts() {
+        return groupPosts;
+    }
+
+    public void setGroupPosts(Set<GroupPosts> groupPosts) {
+        this.groupPosts = groupPosts;
+    }
 
     public long getPostid() { return postid; }
 

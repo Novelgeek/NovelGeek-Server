@@ -29,7 +29,7 @@ public class Group {
     @OneToMany(targetEntity = Members.class, mappedBy = "group", cascade = CascadeType.ALL)
     Set<Members> members;
 
-    @OneToMany(targetEntity = GroupPosts.class, mappedBy = "posts", cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = GroupPosts.class, mappedBy = "group", cascade = CascadeType.ALL)
     Set<GroupPosts> posts;
 
     public long getGroupId() {
