@@ -37,8 +37,8 @@ public class PollController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllPolls(){return ResponseEntity.ok(pollService.getAllPolls());}
 
-
-    @PostMapping("{pollid}/vote/{optionid}")
+    //poll vote
+    @PostMapping("/{pollid}/vote/{optionid}")
     public ResponseEntity<?> post(@PathVariable(value="pollid") Long pollid, @PathVariable(value="optionid") Long optionid){
         pollService.vote(pollid, optionid);
         return ResponseEntity.ok().build();
@@ -50,6 +50,14 @@ public class PollController {
 //        UserPrincipal user = (UserPrincipal)auth.getPrincipal();
         return ResponseEntity.ok(pollService.getUserPolls());
     }
+
+    @DeleteMapping("/delete/{pollid}")
+    public ResponseEntity<?> delete(@PathVariable Long pollid){
+        pollService.deletePollById(pollid);
+        return  ResponseEntity.status(204).build();
+    }
+
+
 
 
 

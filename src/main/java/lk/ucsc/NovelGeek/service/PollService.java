@@ -89,24 +89,24 @@ public class PollService {
         if(pollVotes !=null){
             throw new RuntimeException("You can only vote once!");
         }
+
         Option option = optionRepository.findById(optionid).get();
         PollVotes newPollVotes = new PollVotes();
         newPollVotes.setPoll(poll);
         newPollVotes.setOptions(option);
         newPollVotes.setUsers(this.getCurrentUser());
         pollVotesRepository.save(newPollVotes);
-
-
         option.setScore(option.getScore()+1);
         optionRepository.save(option);
-
-
-
     }
 
     public List<?> getUserPolls() {
         List<PollResponse> pollResponses= pollRepository.findByUsers(this.getCurrentUser()).stream().map( poll -> new PollResponse(poll, this.getCurrentUser())).collect(Collectors.toList());
 //        return  pollRepository.findByUsers(this.getCurrentUser());
         return pollResponses;
+    }
+
+    public void deletePollById(Long pollid){
+        pollRepository.deleteById(pollid);
     }
 }
