@@ -3,6 +3,7 @@ package lk.ucsc.NovelGeek.dto;
 import lk.ucsc.NovelGeek.model.Posts;
 import lk.ucsc.NovelGeek.model.group.GroupPosts;
 import lk.ucsc.NovelGeek.model.group.Members;
+import lk.ucsc.NovelGeek.model.response.PostResponse;
 
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,7 @@ public class GroupDetailedDto {
 
     Set<Members> members;
 
-    List<Posts> posts;
+    List<PostResponse> posts;
 
     private boolean isMember;
 
@@ -31,11 +32,11 @@ public class GroupDetailedDto {
     }
 
 
-    public List<Posts> getPosts() {
+    public List<PostResponse> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<Posts> posts) {
+    public void setPosts(List<PostResponse> posts) {
         this.posts = posts;
     }
 

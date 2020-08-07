@@ -10,6 +10,7 @@ import lk.ucsc.NovelGeek.model.group.Members;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.notification.GroupNotification;
 import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
+import lk.ucsc.NovelGeek.model.response.PostResponse;
 import lk.ucsc.NovelGeek.repository.*;
 import lk.ucsc.NovelGeek.repository.group.GroupNotificatioRepository;
 import lk.ucsc.NovelGeek.repository.group.GroupRepository;
@@ -43,6 +44,18 @@ public class GroupService {
 
     @Autowired
     GroupNotificatioRepository groupNotificatioRepository;
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private PostLikeRepository postLikeRepository;
+
+    @Autowired
+    private PostCommentRepository postCommentRepository;
+
+    @Autowired
+    private PostReportRepository postReportRepository;
 
     // helpers
 
@@ -124,28 +137,7 @@ public class GroupService {
         return groupUsersDtos;
     }
 
-    public GroupDetailedDto getSingleGroup(Long groupId) {
-        Optional<Group> group = groupRepository.findById(groupId);
-        if(group.get() == null)
-            throw new NoSuchElementException("Cant find group");
-        Users currentUser = this.getCurrentUser();
-        GroupDetailedDto groupDetailedDto = new GroupDetailedDto();
-        BeanUtils.copyProperties(group.get(), groupDetailedDto);
-        group.get().getMembers().forEach(member -> {
-            if(member.getUsers().getId() == currentUser.getId()) {
-                groupDetailedDto.setMember(true);
-                if(member.getMemberStatus() != MemberStatus.MEMBER) {
-                    groupDetailedDto.setAdmin(true);
-                }
-            }
-        });
 
-        List<Posts> posts = group.get().getPosts().stream().map(groupPosts -> groupPosts.getPosts()).collect(Collectors.toList());
-
-        groupDetailedDto.setPosts(posts);
-
-        return groupDetailedDto;
-    }
 
     // invites
 
@@ -262,6 +254,75 @@ public class GroupService {
     public Object deleteGroup(Long groupId) {
         groupRepository.deleteById(groupId);
         return null;
+    }
+
+
+
+    // getting group posts
+    public GroupDetailedDto getSingleGroup(Long groupId) {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if(group.get() == null)
+            throw new NoSuchElementException("Cant find group");
+        Users currentUser = this.getCurrentUser();
+        GroupDetailedDto groupDetailedDto = new GroupDetailedDto();
+        BeanUtils.copyProperties(group.get(), groupDetailedDto);
+        group.get().getMembers().forEach(member -> {
+            if(member.getUsers().getId() == currentUser.getId()) {
+                groupDetailedDto.setMember(true);
+                if(member.getMemberStatus() != MemberStatus.MEMBER) {
+                    groupDetailedDto.setAdmin(true);
+                }
+            }
+        });
+
+        List<Posts> posts = group.get().getPosts().stream().map(groupPosts -> groupPosts.getPosts()).collect(Collectors.toList());
+        List<PostResponse> postDetails = this.getPostDetails(posts);
+        groupDetailedDto.setPosts(postDetails);
+
+        return groupDetailedDto;
+    }
+
+    public List<PostResponse> getPostDetails(List<Posts> groupPosts){
+        //List <Posts> posts = postRepository.findBySharedtype("public");
+        List <PostResponse> posts = groupPosts.stream().map(post->{
+            PostResponse response = new PostResponse();
+            BeanUtils.copyProperties(post, response);
+
+            //set owner
+            response.setUsername(post.getUsers().getUsername());
+
+            //check whether the request is send by owner or not
+            if(post.getUsers().getId()==this.getCurrentUser().getId()){
+                response.setOwned(true);
+            }else{
+                response.setOwned(false);
+            }
+
+            //check whether already liked or not
+            if(postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==1){
+                response.setLiked(true);
+            }else if (postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==0){
+                response.setLiked(false);
+            }
+
+            //check whether the current user reported the post or not
+            if(postReportRepository.checkIsReported(post.getPostid(), this.getCurrentUser().getId())==1){
+                response.setReported(true);
+            }else if(postReportRepository.checkIsReported(post.getPostid(), this.getCurrentUser().getId())==0){
+                response.setReported(false);
+            }
+
+            //setlikes counts of post
+            long count = postLikeRepository.countLikes(post.getPostid());
+            response.setLikecount(count);
+
+            //setcomment count of post
+            count = postCommentRepository.countComments(post.getPostid());
+            response.setCommentcount(count);
+            return response;
+        }).collect(Collectors.toList());
+
+        return posts;
     }
 
 }
