@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("book")
@@ -175,6 +176,20 @@ public class BookController {
     public Object getLocalBooks(){
 
         return bookService.getLocalBooks();
+    }
+
+    @PostMapping("/boost-book")
+    public Object boostLocalBook(@RequestParam Map<String,String> allRequestParams) {
+        System.out.println(allRequestParams.get("merchant_id"));
+        System.out.println("Came");
+        return null;
+    }
+
+    @GetMapping("/boost-book")
+    public Object boostLocalBook1(@RequestParam Map<String,String> allRequestParams) {
+        System.out.println(allRequestParams.get("merchant_id"));
+        System.out.println("Came");
+        return null;
     }
 
 
