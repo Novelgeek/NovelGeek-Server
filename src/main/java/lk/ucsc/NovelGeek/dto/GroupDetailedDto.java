@@ -1,8 +1,12 @@
 package lk.ucsc.NovelGeek.dto;
 
+import lk.ucsc.NovelGeek.model.Posts;
+import lk.ucsc.NovelGeek.model.group.GroupPosts;
 import lk.ucsc.NovelGeek.model.group.Members;
+import lk.ucsc.NovelGeek.model.response.PostResponse;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 public class GroupDetailedDto {
@@ -18,11 +22,22 @@ public class GroupDetailedDto {
 
     Set<Members> members;
 
+    List<PostResponse> posts;
+
     private boolean isMember;
 
     private boolean isAdmin;
 
     public GroupDetailedDto() {
+    }
+
+
+    public List<PostResponse> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<PostResponse> posts) {
+        this.posts = posts;
     }
 
     public long getGroupId() {

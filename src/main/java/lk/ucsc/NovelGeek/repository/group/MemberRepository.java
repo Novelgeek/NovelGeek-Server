@@ -1,4 +1,4 @@
-package lk.ucsc.NovelGeek.repository;
+package lk.ucsc.NovelGeek.repository.group;
 
 import lk.ucsc.NovelGeek.enums.MemberStatus;
 import lk.ucsc.NovelGeek.model.group.Group;
