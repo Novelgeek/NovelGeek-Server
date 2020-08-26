@@ -70,6 +70,9 @@ public class Users {
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
     Set<PostsComments> postscomments;
 
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = CommentReply.class, mappedBy = "users")
+    Set<CommentReply> commentreply;
 
     public Set<BookRating> getRecentlyViewed() {
         return recentlyViewed;
@@ -186,6 +189,9 @@ public class Users {
 
     public Set<PostsComments> getPostscomments() { return postscomments; }
     public void setPostscomments(Set<PostsComments> postscomments) { this.postscomments = postscomments; }
+
+    public Set<CommentReply> getCommentreply() { return commentreply; }
+    public void setCommentreply(Set<CommentReply> commentreply) { this.commentreply = commentreply; }
 
     public Set<Poll> getPoll() {
         return poll;

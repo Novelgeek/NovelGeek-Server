@@ -114,8 +114,12 @@ public class SellingService {
 
     public void storePayment(NewPayment data){
         Payments newdata = new Payments();
-        BeanUtils.copyProperties(data, newdata);
+        newdata.setPayment_id(data.getPayment_id());
+        newdata.setStatus_code(data.getStatus_code());
+        newdata.setStatus_message(data.getStatus_message());
+        //BeanUtils.copyProperties(data, newdata);
         newdata.setUsers(this.getCurrentUser());
+        newdata.setPaidDate(new Date());
         paymentsRepository.save(newdata);
     }
 

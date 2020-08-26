@@ -26,6 +26,9 @@ public class PostService {
     private PostCommentRepository postCommentRepository;
 
     @Autowired
+    private CommentReplyRepository commentReplyRepository;
+
+    @Autowired
     private PostReportRepository postReportRepository;
 
     @Autowired
@@ -49,7 +52,8 @@ public class PostService {
 
            //set owner
             response.setUsername(post.getUsers().getUsername());
-
+            //set user image
+            response.setUserimg(post.getUsers().getImageUrl());
            //check whether the request is send by owner or not
            if(post.getUsers().getId()==this.getCurrentUser().getId()){
                response.setOwned(true);
@@ -96,6 +100,8 @@ public class PostService {
 
             //set owner
             response.setOwned(true);
+            //set user image
+            response.setUserimg(this.getCurrentUser().getImageUrl());
 
             //check whether already liked or not
             if(postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==1){
@@ -137,6 +143,9 @@ public class PostService {
         response.setUsername(this.getCurrentUser().getUsername());
         //set owner
         response.setOwned(true);
+        //set user image
+        response.setUserimg(this.getCurrentUser().getImageUrl());
+
         //set is reported
         response.setReported(false);
         //set is liked
@@ -277,10 +286,11 @@ public class PostService {
         PostsComments returncomment = postCommentRepository.save(newComment);
 
         CommentResponse response = new CommentResponse();
+        response.setCommentid(returncomment.getCommentid());
         response.setComment(returncomment.getComment());
         response.setUsername(this.getCurrentUser().getUsername());
         response.setImagePath(this.getCurrentUser().getImageUrl());
-
+        response.setOwned(true);
         return response;
 
     }
@@ -290,13 +300,74 @@ public class PostService {
 
         List<CommentResponse> comments = postCommentRepository.findByPosts(post).stream().map(entry ->{
             CommentResponse response = new CommentResponse();
+            response.setCommentid(entry.getCommentid());
             response.setComment(entry.getComment());
             response.setUsername(entry.getUsers().getUsername());
             response.setImagePath(entry.getUsers().getImageUrl());
+
+            //check whether the request is send by owner or not
+            if(entry.getUsers().getId()==this.getCurrentUser().getId()){
+                response.setOwned(true);
+            }else{
+                response.setOwned(false);
+            }
 
             return response;
         }).collect(Collectors.toList());
 
         return comments;
+    }
+
+    public long deleteComment(long id){
+        long response = id;
+        postCommentRepository.deleteById(id);
+        return response;
+    }
+
+    public CommentReplyResponse addReply(String comment, long id ){
+        CommentReply newReply = new CommentReply();
+        newReply.setComment(comment);
+        newReply.setPostscomments(postCommentRepository.findById(id));
+        //newReply.setPostscomments(postCommentRepository.findById(id));
+        newReply.setUsers(this.getCurrentUser());
+
+        CommentReply returnreply = commentReplyRepository.save(newReply);
+
+        CommentReplyResponse response = new CommentReplyResponse();
+        response.setReplyid(returnreply.getReplyid());
+        response.setComment(returnreply.getComment());
+        response.setUsername(this.getCurrentUser().getUsername());
+        response.setImagePath(this.getCurrentUser().getImageUrl());
+        response.setOwned(true);
+        return response;
+    }
+
+    public List<CommentReplyResponse> getReplies(long id){
+        PostsComments comment = postCommentRepository.findById(id);
+        //Optional<PostsComments> comment = postCommentRepository.findById(id);
+        List<CommentReplyResponse> replies = commentReplyRepository.findByPostscomments(comment).stream().map(entry ->{
+            CommentReplyResponse response = new CommentReplyResponse();
+            response.setReplyid(entry.getReplyid());
+            response.setComment(entry.getComment());
+            response.setUsername(entry.getUsers().getUsername());
+            response.setImagePath(entry.getUsers().getImageUrl());
+
+            //check whether the request is send by owner or not
+            if(entry.getUsers().getId()==this.getCurrentUser().getId()){
+                response.setOwned(true);
+            }else{
+                response.setOwned(false);
+            }
+
+            return response;
+        }).collect(Collectors.toList());
+
+        return replies;
+    }
+
+    public long deleteReply(long id){
+        long response = id;
+        commentReplyRepository.deleteById(id);
+        return response;
     }
 }

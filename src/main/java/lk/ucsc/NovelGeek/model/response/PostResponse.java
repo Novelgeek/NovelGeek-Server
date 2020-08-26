@@ -6,6 +6,7 @@ public class PostResponse {
 
     private long postid;
     private String username;
+    private String userimg;
     private String title;
     private Date publishedDate;
     private String imagePath;
@@ -64,4 +65,7 @@ public class PostResponse {
     public boolean isReported() { return isReported; }
 
     public void setReported(boolean reported) { isReported = reported; }
+
+    public String getUserimg() { return userimg; }
+    public void setUserimg(String userimg) { this.userimg = userimg; }
 }
