@@ -370,4 +370,56 @@ public class PostService {
         commentReplyRepository.deleteById(id);
         return response;
     }
+
+    //ADMIN POST REPORT HANDLING
+    public List<ReportsAdminResponse> getReports(){
+
+        List<ReportsAdminResponse> reports = postReportRepository.findUniquePosts().stream().map(entry ->{
+           ReportsAdminResponse response = new ReportsAdminResponse();
+
+           long k = entry.longValue();
+            Posts post = postRepository.findById(k);
+            response.setId(post.getUsers().getId());
+            response.setPostid(post.getPostid());
+            response.setUserimg(post.getUsers().getImageUrl());
+            response.setUsername(post.getUsers().getUsername());
+            response.setReportcount(postReportRepository.countReports(k));
+            return response;
+        }).collect(Collectors.toList());
+
+        return reports;
+    }
+
+    public PostAdminResponse getReportedPost(long postid){
+        Posts post = postRepository.findById(postid);
+        PostAdminResponse response = new PostAdminResponse();
+        response.setPostid(post.getPostid());
+        response.setUsername(post.getUsers().getUsername());
+        response.setUserimg(post.getUsers().getImageUrl());
+        response.setTitle(post.getTitle());
+        response.setDescription(post.getDescription());
+        response.setImagePath(post.getImagePath());
+        response.setCommentcount(postCommentRepository.countComments(postid));
+        response.setLikecount(postLikeRepository.countLikes(postid));
+
+        return response;
+    }
+
+
+    public List<PostReportsData> getReportedData(long postid){
+        Posts post = postRepository.findById(postid);
+        List <PostReportsData> response = postReportRepository.findByPosts(post).stream().map(entry->{
+            PostReportsData temp = new PostReportsData();
+            temp.setId(entry.getUsers().getId());
+            temp.setUserimg(entry.getUsers().getImageUrl());
+            temp.setUsername(entry.getUsers().getUsername());
+            temp.setReportid(entry.getReportid());
+            temp.setReason(entry.getReason());
+            return  temp;
+        }).collect(Collectors.toList());
+
+        return  response;
+    }
+
+
 }

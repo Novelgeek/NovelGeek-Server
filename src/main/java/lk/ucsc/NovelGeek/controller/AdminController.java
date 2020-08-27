@@ -5,6 +5,7 @@ import lk.ucsc.NovelGeek.model.request.UserSignInModel;
 import lk.ucsc.NovelGeek.model.request.UserSignUpModel;
 import lk.ucsc.NovelGeek.model.response.AuthResponse;
 import lk.ucsc.NovelGeek.service.AdminService;
+import lk.ucsc.NovelGeek.service.PostService;
 import lk.ucsc.NovelGeek.service.StatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class AdminController {
 
     @Autowired
     StatService statService;
+
+    @Autowired
+    PostService postService;
 
     @PostMapping("auth/signup")
     public Users createAdmin(@RequestBody UserSignUpModel userSignUpModel) {
@@ -48,4 +52,19 @@ public class AdminController {
         return ResponseEntity.ok(statService.getBasicStat());
     }
 
+    //ADMIN REPORTED POST HANDLING
+    @GetMapping("/posts/getreports")
+    public ResponseEntity<?> getReports(){
+        return ResponseEntity.ok(postService.getReports());
+    }
+
+    @GetMapping("/posts/getreportedpost/{postid}")
+    public ResponseEntity<?> getReportedPost(@PathVariable(value="postid")long postid){
+        return ResponseEntity.ok(postService.getReportedPost(postid));
+    }
+
+    @GetMapping("/posts/getreporteddata/{postid}")
+    public ResponseEntity<?> ggetReportedData(@PathVariable(value="postid")long postid){
+        return ResponseEntity.ok(postService.getReportedData(postid));
+    }
 }
