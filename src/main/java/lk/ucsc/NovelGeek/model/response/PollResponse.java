@@ -12,6 +12,7 @@ public class PollResponse {
 
     private Long pollid;
     private String title;
+    private Users user;
     private Date endDate;
     private Boolean voted;
     private Set<Option> options;
@@ -26,6 +27,7 @@ public class PollResponse {
     public PollResponse(Poll poll, Users user){
         this.pollid= poll.getPollid();
         this.title=poll.getTitle();
+        this.user=poll.getUsers();
         this.endDate=poll.getEndDate();
         this.options=poll.getOptions();
         this.voted=false;
@@ -50,6 +52,14 @@ public class PollResponse {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
     }
 
     public Date getEndDate() {
