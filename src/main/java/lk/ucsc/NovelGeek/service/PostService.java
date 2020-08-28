@@ -421,5 +421,17 @@ public class PostService {
         return  response;
     }
 
+    public long deleteReportedPost (long postid){
+        Posts post = postRepository.findById(postid);
+        postReportRepository.deleteByPosts(post);
+        postRepository.deleteById(postid);
+        return postid;
+    }
 
+    public long cancelReportedPost (long postid){
+        Posts post = postRepository.findById(postid);
+        postReportRepository.deleteByPosts(post);
+        //postReportRepository.deleteReports(postid);
+        return postid;
+    }
 }

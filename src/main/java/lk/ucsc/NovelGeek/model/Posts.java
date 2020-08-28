@@ -16,6 +16,8 @@ public class Posts {
     private String title;
     private Date publishedDate;
     private String imagePath;
+
+    @Column(length = 3000)
     private String description;
     private String sharedtype;
 

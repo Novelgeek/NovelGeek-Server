@@ -64,7 +64,17 @@ public class AdminController {
     }
 
     @GetMapping("/posts/getreporteddata/{postid}")
-    public ResponseEntity<?> ggetReportedData(@PathVariable(value="postid")long postid){
+    public ResponseEntity<?> getReportedData(@PathVariable(value="postid")long postid){
         return ResponseEntity.ok(postService.getReportedData(postid));
+    }
+
+    @DeleteMapping("posts/deletereportedpost/{postid}")
+    public ResponseEntity<?> deleteReportedPost(@PathVariable(value="postid") long postid ){
+        return ResponseEntity.ok(postService.deleteReportedPost(postid));
+    }
+
+    @DeleteMapping("posts/cancelreport/{postid}")
+    public ResponseEntity<?> cancelReportedPost(@PathVariable(value="postid") long postid ){
+        return ResponseEntity.ok(postService.cancelReportedPost(postid));
     }
 }
