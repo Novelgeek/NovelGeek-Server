@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //
 @Service
@@ -18,6 +19,9 @@ public class PostService {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private FriendRepository friendRepository;
 
     @Autowired
     private PostLikeRepository postLikeRepository;
@@ -46,7 +50,7 @@ public class PostService {
 
     public List<PostResponse> getAllPosts(){
         //List <Posts> posts = postRepository.findBySharedtype("public");
-        List <PostResponse> posts = postRepository.findBySharedtype("public").stream().map(post->{
+        List <PostResponse> publicPosts = postRepository.findBySharedtype("public").stream().map(post->{
            PostResponse response = new PostResponse();
            BeanUtils.copyProperties(post, response);
 
@@ -84,6 +88,54 @@ public class PostService {
             response.setCommentcount(count);
            return response;
         }).collect(Collectors.toList());
+
+        List <PostResponse> friendsOnlyPosts = postRepository.findBySharedtype("friends only").stream().map(post->{
+            Friends isfriend = friendRepository.findByUser1AndUser2(this.getCurrentUser(), post.getUsers());
+            if(isfriend != null){
+                PostResponse response = new PostResponse();
+                BeanUtils.copyProperties(post, response);
+
+                //set owner
+                response.setUsername(post.getUsers().getUsername());
+                //set user image
+                response.setUserimg(post.getUsers().getImageUrl());
+                //check whether the request is send by owner or not
+                if(post.getUsers().getId()==this.getCurrentUser().getId()){
+                    response.setOwned(true);
+                }else{
+                    response.setOwned(false);
+                }
+
+                //check whether already liked or not
+                if(postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==1){
+                    response.setLiked(true);
+                }else if (postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==0){
+                    response.setLiked(false);
+                }
+
+                //check whether the current user reported the post or not
+                if(postReportRepository.checkIsReported(post.getPostid(), this.getCurrentUser().getId())==1){
+                    response.setReported(true);
+                }else if(postReportRepository.checkIsReported(post.getPostid(), this.getCurrentUser().getId())==0){
+                    response.setReported(false);
+                }
+
+                //setlikes counts of post
+                long count = postLikeRepository.countLikes(post.getPostid());
+                response.setLikecount(count);
+
+                //setcomment count of post
+                count = postCommentRepository.countComments(post.getPostid());
+                response.setCommentcount(count);
+                return response;
+            }else{
+                return null;
+            }
+
+        }).collect(Collectors.toList());
+
+        List<PostResponse> posts = Stream.concat(publicPosts.stream(), friendsOnlyPosts.stream())
+                .collect(Collectors.toList());
 
         return posts;
     }
