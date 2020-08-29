@@ -112,6 +112,33 @@ public class SellingService {
         return posts;
     }
 
+    public SellBookResponse getPost(long sellingid){
+
+        SellBook book = sellingRepository.findById(sellingid);
+        SellBookResponse response = new SellBookResponse();
+        BeanUtils.copyProperties(book, response);
+        response.setUsername(book.getUsers().getUsername());
+
+        response.setOwned(true);
+        response.setSold(false);
+
+        return response;
+    }
+
+    public SellBookResponse editPost(SellBook newbook){
+        SellBook book = sellingRepository.save(newbook);
+
+        SellBookResponse response = new SellBookResponse();
+        BeanUtils.copyProperties(book, response);
+
+        response.setUsername(book.getUsers().getUsername());
+
+        response.setOwned(true);
+        response.setSold(false);
+
+        return response;
+    }
+
     public void storePayment(NewPayment data){
         Payments newdata = new Payments();
         newdata.setPayment_id(data.getPayment_id());

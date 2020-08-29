@@ -17,6 +17,7 @@ public class SellBook {
     private String title;
     private Date publishedDate;
     private String imagePath;
+    @Column(length = 2000)
     private String description;
     private String telephone;
     private String merchantid;

@@ -61,5 +61,8 @@ public class SellingController {
         return ResponseEntity.ok(sellingService.getMyPosts());
     }
 
-
+    @GetMapping("/getpost/{sellingid}")
+    public ResponseEntity<?> getPost(@PathVariable(value="sellingid")long sellingid){
+        return ResponseEntity.ok(sellingService.getPost(sellingid));
+    }
 }
