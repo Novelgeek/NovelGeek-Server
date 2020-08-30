@@ -3,6 +3,7 @@ package lk.ucsc.NovelGeek.service;
 import lk.ucsc.NovelGeek.model.*;
 import lk.ucsc.NovelGeek.model.request.NewPayment;
 import lk.ucsc.NovelGeek.model.request.NewSelling;
+import lk.ucsc.NovelGeek.model.response.DeletePostResponse;
 import lk.ucsc.NovelGeek.model.response.SellBookResponse;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.PaymentsRepository;
@@ -150,4 +151,10 @@ public class SellingService {
         paymentsRepository.save(newdata);
     }
 
+    public long deletePost(long id){
+
+        sellingRepository.deleteById(id);
+
+        return id;
+    }
 }
