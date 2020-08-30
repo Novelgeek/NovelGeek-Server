@@ -3,6 +3,7 @@ package lk.ucsc.NovelGeek.controller;
 import lk.ucsc.NovelGeek.model.SellBook;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.NewPayment;
+import lk.ucsc.NovelGeek.model.request.NewPaymentTemp;
 import lk.ucsc.NovelGeek.model.request.NewSelling;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.service.AWSS3Service;
@@ -120,5 +121,15 @@ public class SellingController {
     @DeleteMapping("/delete/{sellingid}")
     public ResponseEntity<?> deletePost(@PathVariable(value="sellingid") long sellingid ){
         return ResponseEntity.ok(sellingService.deletePost(sellingid));
+    }
+
+    @PostMapping("/soldbook")
+    public ResponseEntity<?> soldBook(@RequestBody NewPaymentTemp data){
+        return ResponseEntity.ok( sellingService.soldBook(data));
+    }
+
+    @GetMapping("/getpurchasedata/{sellingid}")
+    public ResponseEntity<?> getPurchaseData(@PathVariable(value="sellingid")long sellingid){
+        return ResponseEntity.ok(sellingService.getPurchaseData(sellingid));
     }
 }

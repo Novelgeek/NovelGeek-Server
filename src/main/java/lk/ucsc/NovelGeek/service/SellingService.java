@@ -2,8 +2,10 @@ package lk.ucsc.NovelGeek.service;
 
 import lk.ucsc.NovelGeek.model.*;
 import lk.ucsc.NovelGeek.model.request.NewPayment;
+import lk.ucsc.NovelGeek.model.request.NewPaymentTemp;
 import lk.ucsc.NovelGeek.model.request.NewSelling;
 import lk.ucsc.NovelGeek.model.response.DeletePostResponse;
+import lk.ucsc.NovelGeek.model.response.PurchaseResponse;
 import lk.ucsc.NovelGeek.model.response.SellBookResponse;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.PaymentsRepository;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,7 +84,11 @@ public class SellingService {
                 response.setOwned(false);
             }
 
-            response.setSold(false);
+            if(paymentsRepository.checkIsSold(post.getSellingid())==1){
+                response.setSold(true);
+            }else{
+                response.setSold(false);
+            }
 
             return response;
 
@@ -104,7 +111,11 @@ public class SellingService {
             response.setOwned(true);
 
 
-            response.setSold(false);
+            if(paymentsRepository.checkIsSold(post.getSellingid())==1){
+                response.setSold(true);
+            }else{
+                response.setSold(false);
+            };
 
             return response;
 
@@ -121,7 +132,12 @@ public class SellingService {
         response.setUsername(book.getUsers().getUsername());
 
         response.setOwned(true);
-        response.setSold(false);
+
+        if(paymentsRepository.checkIsSold(book.getSellingid())==1){
+            response.setSold(true);
+        }else{
+            response.setSold(false);
+        }
 
         return response;
     }
@@ -135,9 +151,47 @@ public class SellingService {
         response.setUsername(book.getUsers().getUsername());
 
         response.setOwned(true);
-        response.setSold(false);
+
+        if(paymentsRepository.checkIsSold(book.getSellingid())==1){
+            response.setSold(true);
+        }else{
+            response.setSold(false);
+        }
 
         return response;
+    }
+
+    public long soldBook(NewPaymentTemp data){
+
+        Payments payment = new Payments();
+        payment.setSellbook(sellingRepository.findById(data.getOrder_id()));
+        payment.setStatus_code(data.getStatus_code());
+        payment.setStatus_message(data.getStatus_message());
+
+        Random rand = new Random();
+        long random_no = rand.nextLong();
+        String payment_id = String.valueOf(random_no);
+        payment.setPayment_id(payment_id);
+
+        payment.setUsers(this.getCurrentUser());
+        payment.setPaidDate(new Date());
+
+        Payments result = paymentsRepository.save(payment);
+
+        return  result.getPayid();
+    }
+
+    public PurchaseResponse getPurchaseData(long sellingid){
+        Payments payment = paymentsRepository.findBySellbook(sellingRepository.findById(sellingid));
+        PurchaseResponse response = new PurchaseResponse();
+        response.setBuyer_name(payment.getUsers().getUsername());
+        response.setImagePath(payment.getUsers().getImageUrl());
+        response.setEmail(payment.getUsers().getEmail());
+        response.setPayment_id(payment.getPayment_id());
+        response.setPaid_date(payment.getPaidDate());
+        response.setOrder_id(payment.getSellbook().getSellingid());
+
+        return  response;
     }
 
     public void storePayment(NewPayment data){
