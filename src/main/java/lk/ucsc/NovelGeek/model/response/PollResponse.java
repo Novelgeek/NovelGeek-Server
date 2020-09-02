@@ -1,35 +1,43 @@
 package lk.ucsc.NovelGeek.model.response;
 
 import lk.ucsc.NovelGeek.model.Option;
+import lk.ucsc.NovelGeek.model.Poll;
+import lk.ucsc.NovelGeek.model.Users;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class PollResponse {
 
     private Long pollid;
     private String title;
+    private Users user;
     private Date endDate;
-    private String username;
-    private Boolean visible;
-    private List<Option> options;
+    private Boolean voted;
+    private Set<Option> options;
 
-    public void setOptions(List<Option> options) {
-        this.options = options;
+    public PollResponse(Poll poll){
+        this.pollid= poll.getPollid();
+        this.title=poll.getTitle();
+        this.endDate=poll.getEndDate();
+        this.options=poll.getOptions();
     }
 
-    public List<Option> getOptions() {
-        return options;
-    }
+    public PollResponse(Poll poll, Users user){
+        this.pollid= poll.getPollid();
+        this.title=poll.getTitle();
+        this.user=poll.getUsers();
+        this.endDate=poll.getEndDate();
+        this.options=poll.getOptions();
+        this.voted=false;
 
-    public Boolean getVisible() {
-        return visible;
+        poll.getPollVotes().forEach(votedusers ->{
+            if(votedusers.getUsers()==user){
+                this.voted=true;
+            }
+        });
     }
-
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
-    }
-
     public Long getPollid() {
         return pollid;
     }
@@ -46,6 +54,14 @@ public class PollResponse {
         this.title = title;
     }
 
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
+    }
+
     public Date getEndDate() {
         return endDate;
     }
@@ -54,11 +70,19 @@ public class PollResponse {
         this.endDate = endDate;
     }
 
-    public String getUsername() {
-        return username;
+    public Boolean getVoted() {
+        return voted;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setVoted(Boolean voted) {
+        this.voted = voted;
+    }
+
+    public Set<Option> getOptions() {
+        return options;
+    }
+
+    public void setOptions(Set<Option> options) {
+        this.options = options;
     }
 }
