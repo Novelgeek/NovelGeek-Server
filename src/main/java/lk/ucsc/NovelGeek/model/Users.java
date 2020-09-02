@@ -13,10 +13,8 @@ import java.util.Set;
 @Entity(name="Users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members",
                         "myNotifications", "notiFiredByMe", "password", "provider", "providerId",
-                        "role", "friends", "verified", "recentlyViewed", "bookRatings",
+                        "role", "friends", "verified", "recentlyViewed", "bookRatings","poll",
                         "posts", "postslikes", "postscomments"})
-
-                        "role", "friends", "verified", "recentlyViewed", "bookRatings", "poll"})
 
 public class Users {
     @Id
