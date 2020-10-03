@@ -491,11 +491,12 @@ public class PostService {
         return postid;
     }
 
-    public long cancelReportedPost (long postid){
+    public long cancelReportedPost (long postid) {
         Posts post = postRepository.findById(postid);
         postReportRepository.deleteByPosts(post);
         //postReportRepository.deleteReports(postid);
         return postid;
+    }
 
     public Object createGroupPost(NewPost newpostrequest, Long groupId) {
         Posts newpost= new Posts();
