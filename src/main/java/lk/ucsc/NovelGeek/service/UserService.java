@@ -12,7 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 import com.fasterxml.jackson.databind.util.BeanUtil;
@@ -78,4 +80,11 @@ public class UserService {
 
             return authRepository.findAll();
         }
+
+    public Object getAllUsersExceptMe() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<Users> usersList = authRepository.findByEmailNotAndRole(auth.getName(), "USER");
+        List<UserResponse> users = usersList.stream().map(users1 -> new UserResponse(users1)).collect(Collectors.toList());
+        return users;
+    }
 }

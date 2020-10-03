@@ -43,4 +43,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllUsersExceptMe(){
+        return ResponseEntity.ok(userService.getAllUsersExceptMe());
+    }
+
 }

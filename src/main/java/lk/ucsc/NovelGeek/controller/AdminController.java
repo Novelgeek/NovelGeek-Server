@@ -52,6 +52,13 @@ public class AdminController {
         return ResponseEntity.ok(statService.getBasicStat());
     }
 
+
+    @DeleteMapping("{adminId}")
+    public ResponseEntity<?> deleteAdmin(@PathVariable(value="adminId") Long adminId){
+        return ResponseEntity.ok(statService.deleteAdmin(adminId));
+    }
+
+
     //ADMIN REPORTED POST HANDLING
     @GetMapping("/posts/getreports")
     public ResponseEntity<?> getReports(){
@@ -77,4 +84,5 @@ public class AdminController {
     public ResponseEntity<?> cancelReportedPost(@PathVariable(value="postid") long postid ){
         return ResponseEntity.ok(postService.cancelReportedPost(postid));
     }
+
 }
