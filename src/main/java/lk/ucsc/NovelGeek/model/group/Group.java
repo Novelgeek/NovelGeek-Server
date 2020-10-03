@@ -1,10 +1,7 @@
-package lk.ucsc.NovelGeek.model;
+package lk.ucsc.NovelGeek.model.group;
 
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -32,6 +29,10 @@ public class Group {
     @OneToMany(targetEntity = Members.class, mappedBy = "group", cascade = CascadeType.ALL)
     Set<Members> members;
 
+    @JsonManagedReference
+    @OneToMany(targetEntity = GroupPosts.class, mappedBy = "group", cascade = CascadeType.ALL)
+    Set<GroupPosts> posts;
+
     public long getGroupId() {
         return groupId;
     }
@@ -58,6 +59,14 @@ public class Group {
 
     public String getDescription() {
         return description;
+    }
+
+    public Set<GroupPosts> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<GroupPosts> posts) {
+        this.posts = posts;
     }
 
     public void setDescription(String description) {

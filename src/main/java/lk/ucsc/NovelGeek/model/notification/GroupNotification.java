@@ -1,6 +1,6 @@
 package lk.ucsc.NovelGeek.model.notification;
 
-import lk.ucsc.NovelGeek.model.Group;
+import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.Notification;
 
 import javax.persistence.DiscriminatorValue;

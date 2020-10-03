@@ -1,10 +1,10 @@
 package lk.ucsc.NovelGeek.service;
 
-import lk.ucsc.NovelGeek.model.Group;
+import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.response.BasicStat;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.GroupRepository;
+import lk.ucsc.NovelGeek.repository.group.GroupRepository;
 import lk.ucsc.NovelGeek.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

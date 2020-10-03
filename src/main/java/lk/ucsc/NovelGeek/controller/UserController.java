@@ -27,7 +27,6 @@ public class UserController {
         System.out.println(user.getEmail());
         return  userService.getUserDetails(user.getId());
 
-
     }
 
     @PostMapping("/save")

@@ -48,7 +48,8 @@ public class CollaborativeFilter {
         System.out.println("\nSlope One - With Predictions\n");
         predict(inputData);
         getRecommendations();
-
+        // printData(outputData);
+        getFriends();
         return returnData;
     }
 
@@ -67,6 +68,34 @@ public class CollaborativeFilter {
         return returnData;
     }
 
+    public List<String> getFriends() {
+        HashMap<Book, Double> currentUser = new HashMap<>();
+        for (User user : outputData.keySet()) {
+            if (user.getUsername().equals(users.getEmail())){
+                for (Book j : outputData.get(user).keySet()) {
+                    currentUser.put(j, outputData.get(user).get(j));
+                }
+
+            }
+        }
+        List<String> recommendedFriends = new ArrayList<>();
+        for (User user : outputData.keySet()) {
+            double sum =0;
+            double average = 0;
+            if (!user.getUsername().equals(users.getEmail())){
+                for (Book j : outputData.get(user).keySet()) {
+                    sum = sum + Math.abs(currentUser.get(j) - outputData.get(user).get(j));
+                    average = sum / outputData.get(user).size();
+                }
+                if (average < 2.0) {
+                    recommendedFriends.add(user.getUsername());
+                }
+            }
+        }
+
+        return recommendedFriends;
+    }
+
     public List<Books> getMyRecommendations (Users currentUser){
         if (isCalulated){
             return getRecommendations();
@@ -75,6 +104,18 @@ public class CollaborativeFilter {
             return slopeOne(currentUser);
         }
 
+    }
+
+    public List<String> getFriendRecommendations(Users currentUser) {
+        if (isCalulated){
+            if( users !=currentUser ){
+                slopeOne(currentUser);
+            }
+            return getFriends();
+        } else {
+            slopeOne(currentUser);
+            return getFriends();
+        }
     }
 
 
@@ -153,15 +194,17 @@ public class CollaborativeFilter {
             }
             outputData.put(e.getKey(), clean);
         }
-        printMatrix(outputData);
+        printData(outputData);
     }
 
     private void printData(Map<User, HashMap<Book, Double>> data) {
         for (User user : data.keySet()) {
-            if (user.getUsername().equals(users.getEmail())){
-                System.out.println(user.getUsername() + ":");
-                print(data.get(user));
-            }
+//            if (user.getUsername().equals(users.getEmail())){
+//                System.out.println(user.getUsername() + ":");
+//                print(data.get(user));
+//            }
+            System.out.println(user.getUsername() + ":");
+            print(data.get(user));
         }
     }
 
