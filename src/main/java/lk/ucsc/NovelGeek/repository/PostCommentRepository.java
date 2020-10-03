@@ -10,7 +10,7 @@ import java.util.List;
 public interface PostCommentRepository extends CrudRepository<PostsComments, Long> {
 
     List<PostsComments> findByPosts(Posts post);
-
+    PostsComments findById(long id);
     @Query(value = "SELECT COUNT(c.postid) FROM posts_comments c WHERE c.postid =?1", nativeQuery = true)
     public long countComments(long id);
 }

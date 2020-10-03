@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //
 @Service
@@ -24,10 +25,16 @@ public class PostService {
     private PostRepository postRepository;
 
     @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
     private PostLikeRepository postLikeRepository;
 
     @Autowired
     private PostCommentRepository postCommentRepository;
+
+    @Autowired
+    private CommentReplyRepository commentReplyRepository;
 
     @Autowired
     private PostReportRepository postReportRepository;
@@ -53,13 +60,14 @@ public class PostService {
 
     public List<PostResponse> getAllPosts(){
         //List <Posts> posts = postRepository.findBySharedtype("public");
-        List <PostResponse> posts = postRepository.findBySharedtype("public").stream().map(post->{
+        List <PostResponse> publicPosts = postRepository.findBySharedtype("public").stream().map(post->{
            PostResponse response = new PostResponse();
            BeanUtils.copyProperties(post, response);
 
            //set owner
             response.setUsername(post.getUsers().getUsername());
-
+            //set user image
+            response.setUserimg(post.getUsers().getImageUrl());
            //check whether the request is send by owner or not
            if(post.getUsers().getId()==this.getCurrentUser().getId()){
                response.setOwned(true);
@@ -91,6 +99,54 @@ public class PostService {
            return response;
         }).collect(Collectors.toList());
 
+        List <PostResponse> friendsOnlyPosts = postRepository.findBySharedtype("friends only").stream().map(post->{
+            Friends isfriend = friendRepository.findByUser1AndUser2(this.getCurrentUser(), post.getUsers());
+            if(isfriend != null){
+                PostResponse response = new PostResponse();
+                BeanUtils.copyProperties(post, response);
+
+                //set owner
+                response.setUsername(post.getUsers().getUsername());
+                //set user image
+                response.setUserimg(post.getUsers().getImageUrl());
+                //check whether the request is send by owner or not
+                if(post.getUsers().getId()==this.getCurrentUser().getId()){
+                    response.setOwned(true);
+                }else{
+                    response.setOwned(false);
+                }
+
+                //check whether already liked or not
+                if(postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==1){
+                    response.setLiked(true);
+                }else if (postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==0){
+                    response.setLiked(false);
+                }
+
+                //check whether the current user reported the post or not
+                if(postReportRepository.checkIsReported(post.getPostid(), this.getCurrentUser().getId())==1){
+                    response.setReported(true);
+                }else if(postReportRepository.checkIsReported(post.getPostid(), this.getCurrentUser().getId())==0){
+                    response.setReported(false);
+                }
+
+                //setlikes counts of post
+                long count = postLikeRepository.countLikes(post.getPostid());
+                response.setLikecount(count);
+
+                //setcomment count of post
+                count = postCommentRepository.countComments(post.getPostid());
+                response.setCommentcount(count);
+                return response;
+            }else{
+                return null;
+            }
+
+        }).collect(Collectors.toList());
+
+        List<PostResponse> posts = Stream.concat(publicPosts.stream(), friendsOnlyPosts.stream())
+                .collect(Collectors.toList());
+
         return posts;
     }
 
@@ -106,6 +162,8 @@ public class PostService {
 
             //set owner
             response.setOwned(true);
+            //set user image
+            response.setUserimg(this.getCurrentUser().getImageUrl());
 
             //check whether already liked or not
             if(postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==1){
@@ -147,6 +205,9 @@ public class PostService {
         response.setUsername(this.getCurrentUser().getUsername());
         //set owner
         response.setOwned(true);
+        //set user image
+        response.setUserimg(this.getCurrentUser().getImageUrl());
+
         //set is reported
         response.setReported(false);
         //set is liked
@@ -287,10 +348,11 @@ public class PostService {
         PostsComments returncomment = postCommentRepository.save(newComment);
 
         CommentResponse response = new CommentResponse();
+        response.setCommentid(returncomment.getCommentid());
         response.setComment(returncomment.getComment());
         response.setUsername(this.getCurrentUser().getUsername());
         response.setImagePath(this.getCurrentUser().getImageUrl());
-
+        response.setOwned(true);
         return response;
 
     }
@@ -300,15 +362,140 @@ public class PostService {
 
         List<CommentResponse> comments = postCommentRepository.findByPosts(post).stream().map(entry ->{
             CommentResponse response = new CommentResponse();
+            response.setCommentid(entry.getCommentid());
             response.setComment(entry.getComment());
             response.setUsername(entry.getUsers().getUsername());
             response.setImagePath(entry.getUsers().getImageUrl());
+
+            //check whether the request is send by owner or not
+            if(entry.getUsers().getId()==this.getCurrentUser().getId()){
+                response.setOwned(true);
+            }else{
+                response.setOwned(false);
+            }
 
             return response;
         }).collect(Collectors.toList());
 
         return comments;
     }
+
+
+    public long deleteComment(long id){
+        long response = id;
+        postCommentRepository.deleteById(id);
+        return response;
+    }
+
+    public CommentReplyResponse addReply(String comment, long id ){
+        CommentReply newReply = new CommentReply();
+        newReply.setComment(comment);
+        newReply.setPostscomments(postCommentRepository.findById(id));
+        //newReply.setPostscomments(postCommentRepository.findById(id));
+        newReply.setUsers(this.getCurrentUser());
+
+        CommentReply returnreply = commentReplyRepository.save(newReply);
+
+        CommentReplyResponse response = new CommentReplyResponse();
+        response.setReplyid(returnreply.getReplyid());
+        response.setComment(returnreply.getComment());
+        response.setUsername(this.getCurrentUser().getUsername());
+        response.setImagePath(this.getCurrentUser().getImageUrl());
+        response.setOwned(true);
+        return response;
+    }
+
+    public List<CommentReplyResponse> getReplies(long id){
+        PostsComments comment = postCommentRepository.findById(id);
+        //Optional<PostsComments> comment = postCommentRepository.findById(id);
+        List<CommentReplyResponse> replies = commentReplyRepository.findByPostscomments(comment).stream().map(entry ->{
+            CommentReplyResponse response = new CommentReplyResponse();
+            response.setReplyid(entry.getReplyid());
+            response.setComment(entry.getComment());
+            response.setUsername(entry.getUsers().getUsername());
+            response.setImagePath(entry.getUsers().getImageUrl());
+
+            //check whether the request is send by owner or not
+            if(entry.getUsers().getId()==this.getCurrentUser().getId()){
+                response.setOwned(true);
+            }else{
+                response.setOwned(false);
+            }
+
+            return response;
+        }).collect(Collectors.toList());
+
+        return replies;
+    }
+
+    public long deleteReply(long id){
+        long response = id;
+        commentReplyRepository.deleteById(id);
+        return response;
+    }
+
+    //ADMIN POST REPORT HANDLING
+    public List<ReportsAdminResponse> getReports(){
+
+        List<ReportsAdminResponse> reports = postReportRepository.findUniquePosts().stream().map(entry ->{
+           ReportsAdminResponse response = new ReportsAdminResponse();
+
+           long k = entry.longValue();
+            Posts post = postRepository.findById(k);
+            response.setId(post.getUsers().getId());
+            response.setPostid(post.getPostid());
+            response.setUserimg(post.getUsers().getImageUrl());
+            response.setUsername(post.getUsers().getUsername());
+            response.setReportcount(postReportRepository.countReports(k));
+            return response;
+        }).collect(Collectors.toList());
+
+        return reports;
+    }
+
+    public PostAdminResponse getReportedPost(long postid){
+        Posts post = postRepository.findById(postid);
+        PostAdminResponse response = new PostAdminResponse();
+        response.setPostid(post.getPostid());
+        response.setUsername(post.getUsers().getUsername());
+        response.setUserimg(post.getUsers().getImageUrl());
+        response.setTitle(post.getTitle());
+        response.setDescription(post.getDescription());
+        response.setImagePath(post.getImagePath());
+        response.setCommentcount(postCommentRepository.countComments(postid));
+        response.setLikecount(postLikeRepository.countLikes(postid));
+
+        return response;
+    }
+
+
+    public List<PostReportsData> getReportedData(long postid){
+        Posts post = postRepository.findById(postid);
+        List <PostReportsData> response = postReportRepository.findByPosts(post).stream().map(entry->{
+            PostReportsData temp = new PostReportsData();
+            temp.setId(entry.getUsers().getId());
+            temp.setUserimg(entry.getUsers().getImageUrl());
+            temp.setUsername(entry.getUsers().getUsername());
+            temp.setReportid(entry.getReportid());
+            temp.setReason(entry.getReason());
+            return  temp;
+        }).collect(Collectors.toList());
+
+        return  response;
+    }
+
+    public long deleteReportedPost (long postid){
+        Posts post = postRepository.findById(postid);
+        postReportRepository.deleteByPosts(post);
+        postRepository.deleteById(postid);
+        return postid;
+    }
+
+    public long cancelReportedPost (long postid){
+        Posts post = postRepository.findById(postid);
+        postReportRepository.deleteByPosts(post);
+        //postReportRepository.deleteReports(postid);
+        return postid;
 
     public Object createGroupPost(NewPost newpostrequest, Long groupId) {
         Posts newpost= new Posts();
@@ -328,5 +515,6 @@ public class PostService {
 
         groupPostRepository.save(groupPosts);
         return createdPost;
+
     }
 }

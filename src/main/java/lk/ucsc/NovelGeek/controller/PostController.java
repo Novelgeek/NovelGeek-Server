@@ -4,6 +4,7 @@ import com.amazonaws.Response;
 import com.amazonaws.auth.AWS3Signer;
 import lk.ucsc.NovelGeek.model.request.NewComment;
 import lk.ucsc.NovelGeek.model.request.NewPost;
+import lk.ucsc.NovelGeek.model.request.NewReply;
 import lk.ucsc.NovelGeek.model.response.PostResponse;
 import lk.ucsc.NovelGeek.service.AWSS3Service;
 import lk.ucsc.NovelGeek.service.PostService;
@@ -97,5 +98,27 @@ public class PostController {
     public ResponseEntity<?> getComments(@PathVariable(value="postid")long postid){
         return ResponseEntity.ok(postService.getComments(postid));
     }
+
+    @DeleteMapping("/deletecomment/{commentid}")
+    public ResponseEntity<?> deleteComment(@PathVariable(value="commentid") long commentid ){
+        return ResponseEntity.ok(postService.deleteComment(commentid));
+    }
+
+    @PostMapping("/addreply/{commentid}")
+    public ResponseEntity<?> addReply(@RequestBody NewReply comment, @PathVariable(value="commentid")long commentid){
+        return ResponseEntity.ok(postService.addReply(comment.getComment(), commentid));
+    }
+
+    @GetMapping("/getreplies/{commentid}")
+    public ResponseEntity<?> getReplies(@PathVariable(value="commentid")long commentid){
+        return ResponseEntity.ok(postService.getReplies(commentid));
+    }
+
+    @DeleteMapping("/deletereply/{replyid}")
+    public ResponseEntity<?> deleteReply(@PathVariable(value="replyid") long replyid ){
+        return ResponseEntity.ok(postService.deleteReply(replyid));
+    }
+
+
 
 }
