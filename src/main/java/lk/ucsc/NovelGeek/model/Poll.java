@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@JsonIgnoreProperties({"users"})
+@JsonIgnoreProperties({"users","options"})
 public class Poll {
 
     @Id
@@ -26,7 +26,7 @@ public class Poll {
     @ManyToOne
     private Users users;
 
-    @OneToMany(targetEntity = PollVotes.class, mappedBy = "users", cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = PollVotes.class, mappedBy = "poll", cascade = CascadeType.ALL)
     Set<PollVotes> pollVotes;
 
     public Poll(){

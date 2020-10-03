@@ -2,7 +2,9 @@ package lk.ucsc.NovelGeek.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lk.ucsc.NovelGeek.model.book.BookRating;
+import lk.ucsc.NovelGeek.model.book.LocalBook;
 import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
+import lk.ucsc.NovelGeek.model.group.Members;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,7 +13,9 @@ import java.util.Set;
 @Entity(name="Users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "members",
                         "myNotifications", "notiFiredByMe", "password", "provider", "providerId",
-                        "role", "friends", "verified", "recentlyViewed", "bookRatings", "poll"})
+                        "role", "friends", "verified", "recentlyViewed", "bookRatings","poll",
+                        "posts", "postslikes", "postscomments"})
+
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,6 +77,10 @@ public class Users {
     @JsonIgnoreProperties
     @OneToMany(targetEntity = CommentReply.class, mappedBy = "users")
     Set<CommentReply> commentreply;
+
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = LocalBook.class, mappedBy = "users")
+    Set<LocalBook> localBooks;
 
     public Set<BookRating> getRecentlyViewed() {
         return recentlyViewed;

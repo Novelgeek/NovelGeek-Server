@@ -1,15 +1,12 @@
 package lk.ucsc.NovelGeek.controller;
 
-import javassist.NotFoundException;
-import lk.ucsc.NovelGeek.model.Group;
-import lk.ucsc.NovelGeek.model.Users;
-import lk.ucsc.NovelGeek.model.notification.GroupNotification;
+import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.request.NewGroupRequest;
-import lk.ucsc.NovelGeek.model.response.SuccessResponse;
+import lk.ucsc.NovelGeek.model.request.NewPost;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import lk.ucsc.NovelGeek.service.AWSS3Service;
 import lk.ucsc.NovelGeek.service.GroupService;
-import net.minidev.json.JSONValue;
+import lk.ucsc.NovelGeek.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,7 +22,10 @@ public class GroupController {
     GroupService groupService;
 
     @Autowired
-    private AWSS3Service service;
+    private AWSS3Service awss3Service;
+
+    @Autowired
+    private PostService postService;
 
     // basic group functions
 
@@ -38,7 +38,7 @@ public class GroupController {
         if (multipartFile == null){
             fileUrl = null;
         } else {
-            fileUrl = service.uploadFile(multipartFile);
+            fileUrl = awss3Service.uploadFile(multipartFile);
         }
         NewGroupRequest newGroupRequest = new NewGroupRequest();
         newGroupRequest.setDescription(description);
@@ -152,6 +152,30 @@ public class GroupController {
     @DeleteMapping("{groupId}")
     public ResponseEntity<?> deleteGroup(@PathVariable(value="groupId") Long groupId){
         return ResponseEntity.ok(groupService.deleteGroup(groupId));
+    }
+
+
+    @PostMapping("{groupId}/newpost")
+    public ResponseEntity<?> createPost(@RequestParam("title") String title,
+                                        @RequestParam("description") String description,
+                                        @RequestParam("sharedtype") String sharedtype,
+                                        @RequestParam(value = "file", required = false) MultipartFile file,
+                                        @PathVariable(value="groupId") Long groupId)
+    {
+        String filePath;
+        if (file == null) {
+            filePath = null;
+        } else {
+            filePath = awss3Service.uploadFile(file);
+        }
+
+        NewPost newpost = new NewPost();
+        newpost.setTitle(title);
+        newpost.setDescription(description);
+        newpost.setSharedType(sharedtype);
+        newpost.setImagePath(filePath);
+
+        return ResponseEntity.ok(postService.createGroupPost(newpost, groupId));
     }
 
 }

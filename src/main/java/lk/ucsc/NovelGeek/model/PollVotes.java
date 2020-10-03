@@ -1,10 +1,12 @@
 package lk.ucsc.NovelGeek.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.userdetails.User;
 
 import javax.persistence.*;
 
 @Entity
+@JsonIgnoreProperties({"users","poll","options"})
 public class PollVotes {
 
     @Id
@@ -19,6 +21,10 @@ public class PollVotes {
 
     @ManyToOne
     Option options;
+
+    public PollVotes(){
+
+    }
 
     public Long getVoteid() {
         return voteid;
