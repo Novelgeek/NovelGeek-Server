@@ -70,6 +70,8 @@ public class BookController {
         return bookService.addComment(commentDTO);
 
     }
+//Auction====================================================================================================
+
 
 
     @PostMapping(path="/addauction")
@@ -100,6 +102,7 @@ public class BookController {
         return auctionService.addNewBid(Double.parseDouble(bid.getNewBid()), bid.getAuctionId(), bid.getUserId());
 
     }
+
 
 
 
