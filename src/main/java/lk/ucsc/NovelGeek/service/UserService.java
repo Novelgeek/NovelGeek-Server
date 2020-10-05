@@ -32,6 +32,7 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
     public Object getUserDetails(Long id) {
 
         Optional<Users> users = authRepository.findById(id);
@@ -77,5 +78,17 @@ public class UserService {
 //        });
 
             return authRepository.findAll();
+        }
+
+        public Object uploadImage(String filepath){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+
+            Optional<Users> users = authRepository.findById(user.getId());
+            users.get().setImageUrl(filepath);
+
+            authRepository.save(users.get());
+            return null;
+
         }
 }
