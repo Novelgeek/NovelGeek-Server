@@ -2,6 +2,7 @@ package lk.ucsc.NovelGeek.controller;
 
 import lk.ucsc.NovelGeek.dto.AuctionDTO;
 import lk.ucsc.NovelGeek.dto.BidDTO;
+import lk.ucsc.NovelGeek.dto.SaleDTO;
 import lk.ucsc.NovelGeek.model.Auction;
 import lk.ucsc.NovelGeek.service.AuctionService;
 import lk.ucsc.NovelGeek.service.BookService;
@@ -65,6 +66,12 @@ public class AuctionController {
         return null;
 
     }
+    @PostMapping(path="/makesale")
+    @ResponseBody
+    public ResponseEntity<Auction> makeSale(@RequestBody SaleDTO saleDTO){
 
+        return auctionService.makeSale(saleDTO);
+
+    }
 
 }
