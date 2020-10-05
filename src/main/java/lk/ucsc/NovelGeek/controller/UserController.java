@@ -27,7 +27,6 @@ public class UserController {
         System.out.println(user.getEmail());
         return  userService.getUserDetails(user.getId());
 
-
     }
 
     @PostMapping("/save")
@@ -42,6 +41,11 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<?> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllUsersExceptMe(){
+        return ResponseEntity.ok(userService.getAllUsersExceptMe());
     }
 
 }

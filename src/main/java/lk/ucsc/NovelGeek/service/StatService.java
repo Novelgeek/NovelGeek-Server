@@ -1,10 +1,10 @@
 package lk.ucsc.NovelGeek.service;
 
-import lk.ucsc.NovelGeek.model.Group;
+import lk.ucsc.NovelGeek.model.group.Group;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.response.BasicStat;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.GroupRepository;
+import lk.ucsc.NovelGeek.repository.group.GroupRepository;
 import lk.ucsc.NovelGeek.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,5 +34,14 @@ public class StatService {
         basicStat.setNoOfPosts(postRepository.findAll().size());
         basicStat.setNoOfAdmins(admins.size());
         return basicStat;
+    }
+
+    public Object deleteAdmin(Long adminId) {
+        List<Users> users = authRepository.findByRole("ADMIN");
+        if (users.size() == 1){
+            throw new RuntimeException("Cant delete only admin");
+        }
+        authRepository.deleteById(adminId);
+        return null;
     }
 }

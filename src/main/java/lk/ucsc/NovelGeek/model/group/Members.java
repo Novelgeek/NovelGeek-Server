@@ -1,10 +1,8 @@
-package lk.ucsc.NovelGeek.model;
+package lk.ucsc.NovelGeek.model.group;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lk.ucsc.NovelGeek.enums.MemberStatus;
+import lk.ucsc.NovelGeek.model.Users;
 
 import javax.persistence.*;
 import java.util.Date;

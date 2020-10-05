@@ -1,8 +1,8 @@
-package lk.ucsc.NovelGeek.repository;
+package lk.ucsc.NovelGeek.repository.group;
 
 import lk.ucsc.NovelGeek.enums.MemberStatus;
-import lk.ucsc.NovelGeek.model.Group;
-import lk.ucsc.NovelGeek.model.Members;
+import lk.ucsc.NovelGeek.model.group.Group;
+import lk.ucsc.NovelGeek.model.group.Members;
 import lk.ucsc.NovelGeek.model.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
