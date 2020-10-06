@@ -1,7 +1,7 @@
 package lk.ucsc.NovelGeek.repository;
 
 import lk.ucsc.NovelGeek.model.FanFiction;
-import lk.ucsc.NovelGeek.model.Members;
+
 import lk.ucsc.NovelGeek.model.Users;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
