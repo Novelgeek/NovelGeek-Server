@@ -87,8 +87,7 @@ public class UserService {
             Optional<Users> users = authRepository.findById(user.getId());
             users.get().setImageUrl(filepath);
 
-            authRepository.save(users.get());
-            return null;
+            return authRepository.save(users.get());
 
         }
 }

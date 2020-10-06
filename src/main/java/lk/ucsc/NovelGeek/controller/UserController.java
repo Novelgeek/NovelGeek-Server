@@ -48,7 +48,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PatchMapping("/image")
+    @PatchMapping("/{userId}/updateImage")
     public ResponseEntity<?> uploadImage(@RequestParam(value = "file", required = false) MultipartFile file){
 
         String filePath;
