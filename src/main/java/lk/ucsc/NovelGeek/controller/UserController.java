@@ -62,4 +62,9 @@ public class UserController {
         return ResponseEntity.ok("image uploaded");
     }
 
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser (@PathVariable(value="userId") Long userId){
+        return ResponseEntity.ok(userService.deleteUser(userId));
+    }
+
 }

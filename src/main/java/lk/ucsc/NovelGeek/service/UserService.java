@@ -90,4 +90,9 @@ public class UserService {
             return authRepository.save(users.get());
 
         }
+
+        public Object deleteUser(Long userId) {
+            authRepository.findById(userId);
+            return null;
+        }
 }
