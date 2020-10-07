@@ -51,6 +51,9 @@ public class PostService {
     @Autowired
     private GroupRepository groupRepository;
 
+    @Autowired
+    private PostNotificationRepository postNotificationRepository;
+
     //to get current user
     public Users getCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -347,6 +350,14 @@ public class PostService {
 
         PostsComments returncomment = postCommentRepository.save(newComment);
 
+        PostNotification commentNotification = new PostNotification();
+        commentNotification.setUser(postRepository.findById(id).getUsers());
+        commentNotification.setCommentor(this.getCurrentUser());
+        commentNotification.setPost(postRepository.findById(id));
+        commentNotification.setNotificationType("Comment");
+        commentNotification.setDate(new Date());
+        postNotificationRepository.save(commentNotification);
+
         CommentResponse response = new CommentResponse();
         response.setCommentid(returncomment.getCommentid());
         response.setComment(returncomment.getComment());
@@ -395,6 +406,13 @@ public class PostService {
         newReply.setUsers(this.getCurrentUser());
 
         CommentReply returnreply = commentReplyRepository.save(newReply);
+
+        PostNotification replyNotification = new PostNotification();
+        replyNotification.setUser(postCommentRepository.findById(id).getPosts().getUsers());
+        replyNotification.setPost(postCommentRepository.findById(id).getPosts());
+        replyNotification.setNotificationType("Reply");
+        replyNotification.setDate(new Date());
+        postNotificationRepository.save(replyNotification);
 
         CommentReplyResponse response = new CommentReplyResponse();
         response.setReplyid(returnreply.getReplyid());
@@ -486,6 +504,15 @@ public class PostService {
 
     public long deleteReportedPost (long postid){
         Posts post = postRepository.findById(postid);
+
+        PostNotification deletePostNotification = new PostNotification();
+        deletePostNotification.setUser(post.getUsers());
+        deletePostNotification.setPostTitle(post.getTitle());
+        deletePostNotification.setNotificationType("deleted");
+        deletePostNotification.setDate(new Date());
+
+        postNotificationRepository.save(deletePostNotification);
+
         postReportRepository.deleteByPosts(post);
         postRepository.deleteById(postid);
         return postid;
@@ -496,6 +523,11 @@ public class PostService {
         postReportRepository.deleteByPosts(post);
         //postReportRepository.deleteReports(postid);
         return postid;
+    }
+
+    public long deleteNotifications(long notificationid){
+        postNotificationRepository.deleteById(notificationid);
+        return notificationid;
     }
 
     public Object createGroupPost(NewPost newpostrequest, Long groupId) {

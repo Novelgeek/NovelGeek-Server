@@ -79,6 +79,10 @@ public class Users {
     Set<CommentReply> commentreply;
 
     @JsonIgnoreProperties
+    @OneToMany(targetEntity = PostNotification.class, mappedBy = "user")
+    Set<PostNotification> postNotifications;
+
+    @JsonIgnoreProperties
     @OneToMany(targetEntity = LocalBook.class, mappedBy = "users")
     Set<LocalBook> localBooks;
 
@@ -200,6 +204,9 @@ public class Users {
 
     public Set<CommentReply> getCommentreply() { return commentreply; }
     public void setCommentreply(Set<CommentReply> commentreply) { this.commentreply = commentreply; }
+
+    public Set<PostNotification> getPostNotifications() { return postNotifications; }
+    public void setPostNotifications(Set<PostNotification> postNotifications) { this.postNotifications = postNotifications; }
 
     public Set<Poll> getPoll() {
         return poll;
