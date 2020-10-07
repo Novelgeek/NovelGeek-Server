@@ -2,8 +2,10 @@ package lk.ucsc.NovelGeek.service;
 
 import com.amazonaws.services.workdocs.model.User;
 import lk.ucsc.NovelGeek.model.FanFiction;
+import lk.ucsc.NovelGeek.model.FanFictionReview;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.repository.FanFictionRepository;
+import lk.ucsc.NovelGeek.repository.FanFictionReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ public class FanFictionService {
 
     @Autowired
     FanFictionRepository fanFictionRepository;
+
+    @Autowired
+    FanFictionReviewRepository fanFictionReviewRepository;
 
     @Autowired
     GroupService groupService;
@@ -39,5 +44,9 @@ public class FanFictionService {
 
     public FanFiction getSpecificFanFiction(long id) {
         return fanFictionRepository.findById(id).get();
+    }
+
+    public Object addReview(FanFictionReview fanFictionReview) {
+        return fanFictionReviewRepository.save(fanFictionReview);
     }
 }
