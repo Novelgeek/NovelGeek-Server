@@ -37,6 +37,7 @@ public class FanFictionService {
     }
 
 
-
-
+    public FanFiction getSpecificFanFiction(long id) {
+        return fanFictionRepository.findById(id).get();
+    }
 }

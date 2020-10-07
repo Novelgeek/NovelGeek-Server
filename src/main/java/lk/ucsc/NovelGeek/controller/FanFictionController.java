@@ -33,18 +33,11 @@ public class FanFictionController {
     @PostMapping(path="/add")
     @ResponseBody
     public ResponseEntity<?> add(@RequestParam String bookName,@RequestParam String title,@RequestParam String imageName,@RequestParam  String description, @RequestParam(value = "file", required = false) MultipartFile multipartFile){
-        String fileUrl;
-        if (multipartFile == null){
-            fileUrl = null;
-        } else {
-            fileUrl = service.uploadFile(multipartFile);
-        }
+
         FanFiction fanFiction = new FanFiction();
         fanFiction.setBookName(bookName);
         fanFiction.setTitle(title);
-        fanFiction.setImageName(imageName);
         fanFiction.setDescription(description);
-        fanFiction.setFileUrl(fileUrl);
         fanFiction.setUserId(groupService.getCurrentUser().getId());
         return ResponseEntity.ok(fanFictionService.addFanFiction(fanFiction));
     }
@@ -52,6 +45,11 @@ public class FanFictionController {
     @GetMapping(path = "/get-all")
     public List<FanFiction> getAll(){
         return fanFictionService.getFanFictions();
+    }
+
+    @GetMapping(path = "/{id}")
+    public FanFiction getSpecific(@PathVariable long id){
+        return fanFictionService.getSpecificFanFiction(id);
     }
 
     @DeleteMapping(path = "/delete/{id}")
