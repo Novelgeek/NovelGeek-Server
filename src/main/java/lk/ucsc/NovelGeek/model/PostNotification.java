@@ -19,12 +19,12 @@ public class PostNotification {
 
     @JsonBackReference
     @ManyToOne()
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "id", insertable = false, updatable = false)
     private Users commentor;
 
     @JsonBackReference
     @ManyToOne()
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "id", insertable = false, updatable = false)
     private Users replier;
 
     @JsonBackReference

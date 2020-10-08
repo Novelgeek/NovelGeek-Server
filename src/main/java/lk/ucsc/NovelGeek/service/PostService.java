@@ -354,6 +354,7 @@ public class PostService {
         commentNotification.setUser(postRepository.findById(id).getUsers());
         commentNotification.setCommentor(this.getCurrentUser());
         commentNotification.setPost(postRepository.findById(id));
+        //commentNotification.setPostTitle(postRepository.findById(id).getTitle());
         commentNotification.setNotificationType("Comment");
         commentNotification.setDate(new Date());
         postNotificationRepository.save(commentNotification);
@@ -408,8 +409,9 @@ public class PostService {
         CommentReply returnreply = commentReplyRepository.save(newReply);
 
         PostNotification replyNotification = new PostNotification();
-        replyNotification.setUser(postCommentRepository.findById(id).getPosts().getUsers());
+        replyNotification.setUser(postCommentRepository.findById(id).getUsers());
         replyNotification.setPost(postCommentRepository.findById(id).getPosts());
+        //replyNotification.setPostTitle(postCommentRepository.findById(id).getPosts().getTitle());
         replyNotification.setNotificationType("Reply");
         replyNotification.setDate(new Date());
         postNotificationRepository.save(replyNotification);
@@ -508,7 +510,7 @@ public class PostService {
         PostNotification deletePostNotification = new PostNotification();
         deletePostNotification.setUser(post.getUsers());
         deletePostNotification.setPostTitle(post.getTitle());
-        deletePostNotification.setNotificationType("deleted");
+        deletePostNotification.setNotificationType("Deleted");
         deletePostNotification.setDate(new Date());
 
         postNotificationRepository.save(deletePostNotification);
@@ -528,6 +530,37 @@ public class PostService {
     public long deleteNotifications(long notificationid){
         postNotificationRepository.deleteById(notificationid);
         return notificationid;
+    }
+
+    public List<?> getReportNotifications(){
+        List<String> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Deleted").stream().map(noti->{
+            return noti.getPostTitle();
+        }).collect(Collectors.toList());
+
+        return response;
+    }
+
+    public List<CommentNotificationResponse> getCommentNotifications(){
+        List<CommentNotificationResponse> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Comment").stream().map(noti->{
+            CommentNotificationResponse temp = new CommentNotificationResponse();
+            temp.setCommentor(noti.getCommentor().getUsername());
+            temp.setPostTitle(noti.getPost().getTitle());
+            temp.setPostid(noti.getPost().getPostid());
+            return temp;
+        }).collect(Collectors.toList());
+        return response;
+    }
+
+    public List<ReplyNotificationResponse> getReplyNotifications(){
+        List<ReplyNotificationResponse> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Reply").stream().map(noti->{
+            ReplyNotificationResponse temp = new ReplyNotificationResponse();
+            temp.setReplier(noti.getReplier().getUsername());
+            temp.setPostid(noti.getPost().getPostid());
+            temp.setPostTitle(noti.getPost().getTitle());
+
+            return temp;
+        }).collect(Collectors.toList());
+        return response;
     }
 
     public Object createGroupPost(NewPost newpostrequest, Long groupId) {
