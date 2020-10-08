@@ -49,4 +49,16 @@ public class FanFictionService {
     public Object addReview(FanFictionReview fanFictionReview) {
         return fanFictionReviewRepository.save(fanFictionReview);
     }
+
+    public Object getFanFictionReviews(Long bookId) {
+        return fanFictionReviewRepository.findByFanFictionId(fanFictionRepository.findById(bookId).get());
+    }
+
+    public Object editFanFiction(FanFiction fanFiction) {
+        FanFiction editFan = fanFictionRepository.findById(fanFiction.getId()).get();
+        editFan.setBookName(fanFiction.getBookName());
+        editFan.setDescription(fanFiction.getDescription());
+        editFan.setTitle(fanFiction.getTitle());
+        return fanFictionRepository.save(editFan);
+    }
 }

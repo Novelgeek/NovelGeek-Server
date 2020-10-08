@@ -153,18 +153,18 @@ public class BookController {
             @RequestParam("publisher") String publisher
     ){
         String fileUrl = null;
-//        if (pdf == null){
-//            fileUrl = null;
-//        } else {
-//            fileUrl = awss3Service.uploadFile(pdf);
-//        }
+        if (pdf == null){
+            fileUrl = null;
+        } else {
+            fileUrl = awss3Service.uploadFile(pdf);
+        }
 
         String imageUrl = null;
-//        if (img == null){
-//            imageUrl = null;
-//        } else {
-//            imageUrl = awss3Service.uploadFile(img);
-//        }
+        if (img == null){
+            imageUrl = null;
+        } else {
+            imageUrl = awss3Service.uploadFile(img);
+        }
 
 
         bookService.uploadNewBook(title, description, isbn, year,
@@ -177,7 +177,6 @@ public class BookController {
 
     @GetMapping("/allLocal")
     public Object getLocalBooks(){
-
         return bookService.getLocalBooks();
     }
 
@@ -193,6 +192,24 @@ public class BookController {
         System.out.println(allRequestParams.get("merchant_id"));
         System.out.println("Came");
         return null;
+    }
+
+    @PostMapping(path="/local/addreview",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Object addLocalReview(@RequestBody ReviewDTO reviewDTO){
+        return bookService.addLocalReview(reviewDTO);
+    }
+
+
+
+    @GetMapping("/local/review/{id}")
+    public Object getLocalReviews(@PathVariable("id") Long bookId){
+        return bookService.getLocalBookReviews(bookId);
+    }
+
+    @GetMapping("/local/{id}")
+    public Object getLocalBook(@PathVariable("id") Long bookId){
+        return bookService.getLocalBook(bookId);
     }
 
 

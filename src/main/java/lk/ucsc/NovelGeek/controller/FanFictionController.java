@@ -1,5 +1,6 @@
 package lk.ucsc.NovelGeek.controller;
 
+import lk.ucsc.NovelGeek.dto.ReviewDTO;
 import lk.ucsc.NovelGeek.model.FanFiction;
 import lk.ucsc.NovelGeek.model.FanFictionReview;
 import lk.ucsc.NovelGeek.model.Test;
@@ -49,13 +50,26 @@ public class FanFictionController {
         return ResponseEntity.ok(fanFictionService.addFanFiction(fanFiction));
     }
 
+    @PostMapping(path="/edit")
+    @ResponseBody
+    public ResponseEntity<?> edit(@RequestParam String bookName,@RequestParam String title,@RequestParam  String description, @RequestParam String id){
+
+        FanFiction fanFiction = new FanFiction();
+        fanFiction.setBookName(bookName);
+        fanFiction.setTitle(title);
+        fanFiction.setDescription(description);
+        fanFiction.setUserId(groupService.getCurrentUser().getId());
+        fanFiction.setId(Long.parseLong(id));
+        return ResponseEntity.ok(fanFictionService.editFanFiction(fanFiction));
+    }
+
     @PostMapping(path="/add-review")
-    public ResponseEntity<?> addReview(@RequestBody Map<String, Object> payload){
+    public ResponseEntity<?> addReview(@RequestBody ReviewDTO reviewDTO){
 
         FanFictionReview fanFictionReview = new FanFictionReview();
         fanFictionReview.setUserId(groupService.getCurrentUser());
-        fanFictionReview.setReview((String) payload.get("review"));
-        fanFictionReview.setFanFictionId(fanFictionRepository.findById(Long.valueOf((String) payload.get("fanFictionId"))).get());
+        fanFictionReview.setReview(reviewDTO.getReviewDescription());
+        fanFictionReview.setFanFictionId(fanFictionRepository.findById(Long.valueOf(reviewDTO.getBookId())).get());
         fanFictionReview.setTimestamp(new Date());
 
         return ResponseEntity.ok(fanFictionService.addReview(fanFictionReview));
@@ -80,5 +94,10 @@ public class FanFictionController {
     public List<FanFiction> getFanFictionsByUserid() {
         long userId = groupService.getCurrentUser().getId();
         return fanFictionService.getFanFictionsByuserID(userId);
+    }
+
+    @GetMapping("/review/{id}")
+    public Object getFanFictionReviews(@PathVariable("id") Long bookId){
+        return fanFictionService.getFanFictionReviews(bookId);
     }
 }
