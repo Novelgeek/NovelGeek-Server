@@ -9,18 +9,12 @@ import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Users;
 
 import lk.ucsc.NovelGeek.model.*;
-import lk.ucsc.NovelGeek.model.book.BookRating;
-import lk.ucsc.NovelGeek.model.book.Books;
-import lk.ucsc.NovelGeek.model.book.LocalBook;
-import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
+import lk.ucsc.NovelGeek.model.book.*;
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
 
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.book.BookRatingRepository;
-import lk.ucsc.NovelGeek.repository.book.BookRepository;
+import lk.ucsc.NovelGeek.repository.book.*;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
-import lk.ucsc.NovelGeek.repository.book.LocalBookRepository;
-import lk.ucsc.NovelGeek.repository.book.RecentlyViewedRepository;
 import lk.ucsc.NovelGeek.service.recommendation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -53,6 +47,9 @@ public class BookService {
 
     @Autowired
     private LocalBookRepository localBookRepository;
+
+    @Autowired
+    private LocalBookReviewRepository localBookReviewRepository;
 
     //get current user
     private Users getCurrentUser(){
@@ -215,5 +212,22 @@ public class BookService {
     public Object getLocalBooks(){
 
         return localBookRepository.findAll();
+    }
+
+    public Object addLocalReview(ReviewDTO reviewDTO) {
+        LocalBookReview localBookReview = new LocalBookReview();
+        localBookReview.setLocalBook(localBookRepository.findById(Long.valueOf(reviewDTO.getBookId())).get());
+        localBookReview.setReview(reviewDTO.getReviewDescription());
+        localBookReview.setTimestamp(new Date());
+        localBookReview.setUserId(this.getCurrentUser());
+        return localBookReviewRepository.save(localBookReview);
+    }
+
+    public Object getLocalBookReviews(Long bookId) {
+        return localBookReviewRepository.findByLocalBook(localBookRepository.findById(bookId).get());
+    }
+
+    public Object getLocalBook(Long bookId) {
+        return localBookRepository.findById(bookId);
     }
 }

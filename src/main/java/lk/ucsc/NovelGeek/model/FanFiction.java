@@ -1,21 +1,19 @@
 package lk.ucsc.NovelGeek.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class FanFiction {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String imageName;
+
+
     private String bookName;
     private String title;
+    @Column(length = 3000)
     private String description;
-    private String fileUrl;
     private long userId;
 
     public long getId() {
@@ -34,28 +32,12 @@ public class FanFiction {
         this.userId = userId;
     }
 
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
-    }
-
     public String getBookName() {
         return bookName;
     }
 
     public void setBookName(String bookName) {
         this.bookName = bookName;
-    }
-
-    public String getImageName() {
-        return imageName;
-    }
-
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
     }
 
     public String getTitle() {
