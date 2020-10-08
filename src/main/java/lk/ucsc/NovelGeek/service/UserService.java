@@ -70,6 +70,10 @@ public class UserService {
         return null;
     }
 
+    public Object getUser(Long userId){
+        return authRepository.findById(userId);
+    }
+
         public Object getAllUsers () {
 
 //        UserResponse userResponse = new UserResponse();
@@ -92,7 +96,7 @@ public class UserService {
         }
 
         public Object deleteUser(Long userId) {
-            authRepository.findById(userId);
+            authRepository.deleteById(userId);
             return null;
         }
 }

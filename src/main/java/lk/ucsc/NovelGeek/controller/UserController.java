@@ -34,6 +34,11 @@ public class UserController {
 
     }
 
+    @GetMapping("/{userId}")
+    public Object getUser(@PathVariable(value = "userId")Long userId){
+        return ResponseEntity.ok(userService.getUser(userId));
+    }
+
     @PostMapping("/save")
     public Object saveUser(@RequestBody UserDetailsResponse userDetailsResponse){
         System.out.println(userDetailsResponse.getUsername());
@@ -62,7 +67,7 @@ public class UserController {
         return ResponseEntity.ok("image uploaded");
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/delete/{userId}")
     public ResponseEntity<?> deleteUser (@PathVariable(value="userId") Long userId){
         return ResponseEntity.ok(userService.deleteUser(userId));
     }
