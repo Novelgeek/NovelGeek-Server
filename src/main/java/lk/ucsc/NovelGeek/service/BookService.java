@@ -52,6 +52,10 @@ public class BookService {
     @Autowired
     private FeaturedBookRepository featuredBookRepository;
 
+    @Autowired
+    private LocalBookReviewRepository localBookReviewRepository;
+
+
     //get current user
     private Users getCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -214,6 +218,7 @@ public class BookService {
         return localBookRepository.findAll();
     }
 
+
     public Object getFeaturedBooks(){
         return featuredBookRepository.findAll();
     }
@@ -226,5 +231,22 @@ public class BookService {
         featuredBook.setLocalBook(localBookRepository.findById(Long.valueOf((String) boostBookParam.get("bookId"))).get());
         featuredBook.setPaymentId((String) boostBookParam.get("orderId"));
         featuredBookRepository.save(featuredBook);
+    }
+
+    public Object addLocalReview(ReviewDTO reviewDTO) {
+        LocalBookReview localBookReview = new LocalBookReview();
+        localBookReview.setLocalBook(localBookRepository.findById(Long.valueOf(reviewDTO.getBookId())).get());
+        localBookReview.setReview(reviewDTO.getReviewDescription());
+        localBookReview.setTimestamp(new Date());
+        localBookReview.setUserId(this.getCurrentUser());
+        return localBookReviewRepository.save(localBookReview);
+    }
+
+    public Object getLocalBookReviews(Long bookId) {
+        return localBookReviewRepository.findByLocalBook(localBookRepository.findById(bookId).get());
+    }
+
+    public Object getLocalBook(Long bookId) {
+        return localBookRepository.findById(bookId);
     }
 }
