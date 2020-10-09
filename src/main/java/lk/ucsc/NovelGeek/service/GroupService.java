@@ -241,8 +241,23 @@ public class GroupService {
 
     public Object leaveGroup(Long groupId) {
         Users currentUser = this.getCurrentUser();
+
         List<Members> member = memberRepository.findByUsersAndGroup(Optional.ofNullable(currentUser), groupRepository.findById(groupId));
         memberRepository.delete(member.get(0));
+        Group group = groupRepository.findById(groupId).get();
+        List<Members> admins = memberRepository.findByGroupAndMemberStatus(group, MemberStatus.ADMIN);
+        List<Members> creators = memberRepository.findByGroupAndMemberStatus(group, MemberStatus.CREATOR);
+        if (((member.get(0).getMemberStatus() == MemberStatus.ADMIN) || (member.get(0).getMemberStatus() == MemberStatus.CREATOR))
+                && ((admins.size() ==0 || creators.size() ==0)) ){
+            List<Members> newAdmin = memberRepository.findByGroup(group);
+            newAdmin.get(0).setMemberStatus(MemberStatus.ADMIN);
+            memberRepository.save(newAdmin.get(0));
+        }
+
+        if (group.getMembers().size()==0) {
+            groupRepository.deleteById(groupId);
+        }
+
         return null;
     }
 

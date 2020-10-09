@@ -34,6 +34,10 @@ public class FanFictionService {
     }
 
     public void deleteFanFiction( long id) {
+        List<FanFictionReview> reviews = fanFictionReviewRepository.findByFanFictionId(fanFictionRepository.findById(id).get());
+        if(reviews.size() != 0){
+            fanFictionReviewRepository.deleteAll(reviews);
+        }
         fanFictionRepository.deleteById(id);
     }
 

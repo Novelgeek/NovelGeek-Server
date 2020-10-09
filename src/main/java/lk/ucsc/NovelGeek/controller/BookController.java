@@ -215,6 +215,12 @@ public class BookController {
     public Object getLocalBook(@PathVariable("id") Long bookId){
         return bookService.getLocalBook(bookId);
     }
+    @DeleteMapping("/local/{id}")
+    public Object deleteLocalBook(@PathVariable("id") Long bookId){
+
+         bookService.deleteLocalBook(bookId);
+         return null;
+    }
 
 
 }

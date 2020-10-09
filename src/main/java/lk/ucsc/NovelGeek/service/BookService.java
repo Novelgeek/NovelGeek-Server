@@ -13,6 +13,7 @@ import lk.ucsc.NovelGeek.model.book.*;
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
 
 import lk.ucsc.NovelGeek.repository.AuthRepository;
+import lk.ucsc.NovelGeek.repository.ConfirmationTokenRepository;
 import lk.ucsc.NovelGeek.repository.book.*;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
 import lk.ucsc.NovelGeek.service.recommendation.*;
@@ -224,13 +225,27 @@ public class BookService {
     }
 
     public void boostBook(Map<String, Object> boostBookParam) {
-        FeaturedBook featuredBook = new FeaturedBook();
-        featuredBook.setFeaturedBy(this.getCurrentUser());
-        featuredBook.setFeaturedFrom(LocalDate.now());
-        featuredBook.setFeaturedTo(LocalDate.now().plusDays(7));
-        featuredBook.setLocalBook(localBookRepository.findById(Long.valueOf((String) boostBookParam.get("bookId"))).get());
-        featuredBook.setPaymentId((String) boostBookParam.get("orderId"));
-        featuredBookRepository.save(featuredBook);
+        FeaturedBook currentBook = featuredBookRepository.findByLocalBook(localBookRepository.findById(Long.valueOf((String) boostBookParam.get("bookId"))).get());
+        if(currentBook != null){
+            currentBook.setFeaturedBy(this.getCurrentUser());
+            if (currentBook.getFeaturedTo().isAfter(LocalDate.now())) {
+                currentBook.setFeaturedTo(currentBook.getFeaturedTo().plusDays(Long.valueOf((String) boostBookParam.get("days"))));
+            }else {
+                currentBook.setFeaturedTo(LocalDate.now().plusDays(Long.valueOf((String) boostBookParam.get("days"))));
+            }
+
+            currentBook.setPaymentId((String) boostBookParam.get("orderId"));
+            featuredBookRepository.save(currentBook);
+        } else {
+            FeaturedBook featuredBook = new FeaturedBook();
+            featuredBook.setFeaturedBy(this.getCurrentUser());
+            featuredBook.setFeaturedFrom(LocalDate.now());
+            featuredBook.setFeaturedTo(LocalDate.now().plusDays(Long.valueOf((String) boostBookParam.get("days"))));
+            featuredBook.setLocalBook(localBookRepository.findById(Long.valueOf((String) boostBookParam.get("bookId"))).get());
+            featuredBook.setPaymentId((String) boostBookParam.get("orderId"));
+            featuredBookRepository.save(featuredBook);
+        }
+
     }
 
     public Object addLocalReview(ReviewDTO reviewDTO) {
@@ -248,5 +263,19 @@ public class BookService {
 
     public Object getLocalBook(Long bookId) {
         return localBookRepository.findById(bookId);
+    }
+
+    public void deleteLocalBook(Long bookId) {
+        LocalBook localBook = localBookRepository.findById(bookId).get();
+        FeaturedBook featuredBooks = featuredBookRepository.findByLocalBook(localBook);
+        List<LocalBookReview> localBookReviews = localBookReviewRepository.findByLocalBook(localBook);
+        if(featuredBooks != null) {
+            featuredBookRepository.delete(featuredBooks);
+        }
+        if(localBookReviews.size() !=0){
+            localBookReviewRepository.deleteAll(localBookReviews);
+        }
+
+        localBookRepository.delete(localBook);
     }
 }
