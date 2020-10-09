@@ -1,5 +1,6 @@
 package lk.ucsc.NovelGeek.controller;
 
+import lk.ucsc.NovelGeek.model.request.UserSignInModel;
 import lk.ucsc.NovelGeek.model.response.UserDetailsResponse;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import lk.ucsc.NovelGeek.service.AWSS3Service;
@@ -53,7 +54,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PatchMapping("/{userId}/updateImage")
+    @PostMapping("/{userId}/updateImage")
     public ResponseEntity<?> uploadImage(@RequestParam(value = "file", required = false) MultipartFile file){
 
         String filePath;
@@ -63,13 +64,14 @@ public class UserController {
             filePath = awsService.uploadFile(file);
         }
 
-        userService.uploadImage(filePath);
-        return ResponseEntity.ok("image uploaded");
+
+
+        return ResponseEntity.ok(userService.uploadImage(filePath));
     }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<?> deleteUser (@PathVariable(value="userId") Long userId){
-        return ResponseEntity.ok(userService.deleteUser(userId));
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser (@RequestBody UserSignInModel password ){
+        return ResponseEntity.ok(userService.deleteUser(password.getPassword()));
     }
 
 }

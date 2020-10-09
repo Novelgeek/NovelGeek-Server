@@ -10,6 +10,7 @@ import lk.ucsc.NovelGeek.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,6 +33,9 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Object getUserDetails(Long id) {
 
@@ -95,8 +99,15 @@ public class UserService {
 
         }
 
-        public Object deleteUser(Long userId) {
-            authRepository.deleteById(userId);
+        public Object deleteUser(String password) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Users currentUser = authRepository.findByEmail(auth.getName());
+            if (bCryptPasswordEncoder.matches(password, currentUser.getPassword())) {
+                authRepository.deleteById(currentUser.getId());
+            } else {
+                throw new RuntimeException("Password is invalid");
+            }
+
             return null;
         }
 }

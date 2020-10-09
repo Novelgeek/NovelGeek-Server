@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,6 +65,13 @@ public class PollService {
         });
 
       return savedPoll;
+    }
+
+    public PollResponse getPoll(Long pollid){
+        Poll poll=pollRepository.findById(pollid).get();
+        PollResponse pollResponse = new PollResponse(poll, this.getCurrentUser());
+        return pollResponse;
+
     }
 
     public List<PollResponse> getAllPolls() {
