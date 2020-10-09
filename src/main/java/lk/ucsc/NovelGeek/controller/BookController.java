@@ -177,21 +177,24 @@ public class BookController {
 
     @GetMapping("/allLocal")
     public Object getLocalBooks(){
-
         return bookService.getLocalBooks();
     }
 
-    @PostMapping("/boost-book")
-    public Object boostLocalBook(@RequestParam Map<String,String> allRequestParams) {
-        System.out.println(allRequestParams.get("merchant_id"));
-        System.out.println("Came");
-        return null;
+    @GetMapping("/featured")
+    public Object getFeaturedBooks(){
+        return bookService.getFeaturedBooks();
     }
 
-    @GetMapping("/boost-book")
-    public Object boostLocalBook1(@RequestParam Map<String,String> allRequestParams) {
-        System.out.println(allRequestParams.get("merchant_id"));
-        System.out.println("Came");
+//    @PostMapping("/boost-book")
+//    public Object boostLocalBook(@RequestParam Map<String,String> allRequestParams) {
+//        System.out.println(allRequestParams.get("merchant_id"));
+//        System.out.println("Came");
+//        return null;
+//    }
+
+    @PostMapping("/boost-book")
+    public Object boostLocalBook(@RequestBody Map<String, Object>  boostBookParam) {
+        bookService.boostBook(boostBookParam);
         return null;
     }
 

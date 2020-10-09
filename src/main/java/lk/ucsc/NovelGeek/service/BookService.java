@@ -9,18 +9,12 @@ import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Users;
 
 import lk.ucsc.NovelGeek.model.*;
-import lk.ucsc.NovelGeek.model.book.BookRating;
-import lk.ucsc.NovelGeek.model.book.Books;
-import lk.ucsc.NovelGeek.model.book.LocalBook;
-import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
+import lk.ucsc.NovelGeek.model.book.*;
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
 
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.book.BookRatingRepository;
-import lk.ucsc.NovelGeek.repository.book.BookRepository;
+import lk.ucsc.NovelGeek.repository.book.*;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
-import lk.ucsc.NovelGeek.repository.book.LocalBookRepository;
-import lk.ucsc.NovelGeek.repository.book.RecentlyViewedRepository;
 import lk.ucsc.NovelGeek.service.recommendation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -29,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +48,9 @@ public class BookService {
 
     @Autowired
     private LocalBookRepository localBookRepository;
+
+    @Autowired
+    private FeaturedBookRepository featuredBookRepository;
 
     //get current user
     private Users getCurrentUser(){
@@ -213,7 +211,20 @@ public class BookService {
     }
 
     public Object getLocalBooks(){
-
         return localBookRepository.findAll();
+    }
+
+    public Object getFeaturedBooks(){
+        return featuredBookRepository.findAll();
+    }
+
+    public void boostBook(Map<String, Object> boostBookParam) {
+        FeaturedBook featuredBook = new FeaturedBook();
+        featuredBook.setFeaturedBy(this.getCurrentUser());
+        featuredBook.setFeaturedFrom(LocalDate.now());
+        featuredBook.setFeaturedTo(LocalDate.now().plusDays(7));
+        featuredBook.setLocalBook(localBookRepository.findById(Long.valueOf((String) boostBookParam.get("bookId"))).get());
+        featuredBook.setPaymentId((String) boostBookParam.get("orderId"));
+        featuredBookRepository.save(featuredBook);
     }
 }
