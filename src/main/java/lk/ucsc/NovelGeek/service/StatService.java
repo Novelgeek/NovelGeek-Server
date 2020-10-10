@@ -35,4 +35,13 @@ public class StatService {
         basicStat.setNoOfAdmins(admins.size());
         return basicStat;
     }
+
+    public Object deleteAdmin(Long adminId) {
+        List<Users> users = authRepository.findByRole("ADMIN");
+        if (users.size() == 1){
+            throw new RuntimeException("Cant delete only admin");
+        }
+        authRepository.deleteById(adminId);
+        return null;
+    }
 }

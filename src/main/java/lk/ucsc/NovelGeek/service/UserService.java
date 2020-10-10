@@ -14,7 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 import com.fasterxml.jackson.databind.util.BeanUtil;
@@ -95,6 +97,7 @@ public class UserService {
             return authRepository.findAll();
         }
 
+
         public Object uploadImage(String filepath){
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             UserPrincipal user = (UserPrincipal) auth.getPrincipal();
@@ -124,4 +127,12 @@ public class UserService {
 
             return null;
         }
+
+    public Object getAllUsersExceptMe() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<Users> usersList = authRepository.findByEmailNotAndRole(auth.getName(), "USER");
+        List<UserResponse> users = usersList.stream().map(users1 -> new UserResponse(users1)).collect(Collectors.toList());
+        return users;
+    }
+
 }

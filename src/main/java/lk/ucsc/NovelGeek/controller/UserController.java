@@ -54,24 +54,27 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+
     @PostMapping("/{userId}/updateImage")
     public ResponseEntity<?> uploadImage(@RequestParam(value = "file", required = false) MultipartFile file){
-
         String filePath;
         if (file == null) {
             filePath = null;
         } else {
             filePath = awsService.uploadFile(file);
         }
-
-
-
         return ResponseEntity.ok(userService.uploadImage(filePath));
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser (@RequestBody UserSignInModel password ){
         return ResponseEntity.ok(userService.deleteUser(password.getPassword()));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllUsersExceptMe(){
+        return ResponseEntity.ok(userService.getAllUsersExceptMe());
+
     }
 
 }

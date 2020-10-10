@@ -63,7 +63,8 @@ public class PollService {
             option1.setScore((long) 0);
             optionRepository.save(option1);
         });
-
+        Optional<Poll> returnPoll = pollRepository.findById(savedPoll.getPollid());
+        //PollResponse pollResponse = new PollResponse(returnPoll.get(), this.getCurrentUser());
       return savedPoll;
     }
 

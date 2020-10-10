@@ -1,18 +1,29 @@
 package lk.ucsc.NovelGeek.model.response;
 
-import javax.persistence.Column;
+import lk.ucsc.NovelGeek.model.Users;
 
 public class UserResponse {
-    private String id;
+    private Long id;
     private String username;
     private String email;
     private String imageUrl;
 
-    public String getId() {
+    public UserResponse() {
+    }
+
+    public UserResponse(Users users) {
+        this.id = users.getId();
+        this.username = users.getUsername();
+        this.email = users.getEmail();
+        this.imageUrl = users.getImageUrl();
+    }
+
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
