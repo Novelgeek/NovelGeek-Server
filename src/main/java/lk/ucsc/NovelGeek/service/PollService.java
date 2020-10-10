@@ -68,6 +68,13 @@ public class PollService {
       return savedPoll;
     }
 
+    public PollResponse getPoll(Long pollid){
+        Poll poll=pollRepository.findById(pollid).get();
+        PollResponse pollResponse = new PollResponse(poll, this.getCurrentUser());
+        return pollResponse;
+
+    }
+
     public List<PollResponse> getAllPolls() {
         List<PollResponse> pollResponses= pollRepository.findAll().stream().map( poll -> new PollResponse(poll, this.getCurrentUser())).collect(Collectors.toList());
         return pollResponses;

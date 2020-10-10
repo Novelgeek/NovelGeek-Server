@@ -139,6 +139,11 @@ public class BookController {
         return bookService.getUserBookRatings();
     }
 
+    @GetMapping("/friendBookRatings/{email}")
+    public Object getFriendBookRatings(@PathVariable(value="email")String email){
+        return bookService.getFriendBookRatings(email);
+    }
+
     @PostMapping(path="/addNewBook")
     @ResponseBody
     public ResponseEntity<Auction> addNewBook(

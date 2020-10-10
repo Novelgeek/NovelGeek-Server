@@ -1,15 +1,17 @@
 package lk.ucsc.NovelGeek.service;
 
 
+import lk.ucsc.NovelGeek.model.ConfirmationToken;
 import lk.ucsc.NovelGeek.model.UserDetails;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.response.UserDetailsResponse;
-import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.UserRepository;
+import lk.ucsc.NovelGeek.repository.*;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +36,16 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    @Qualifier("confirmationTokenRepository")
+    ConfirmationTokenRepository confirmationTokenRepository;
+
+
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public Object getUserDetails(Long id) {
 
         Optional<Users> users = authRepository.findById(id);
@@ -71,6 +83,10 @@ public class UserService {
         return null;
     }
 
+    public Object getUser(Long userId){
+        return authRepository.findById(userId);
+    }
+
         public Object getAllUsers () {
 
 //        UserResponse userResponse = new UserResponse();
@@ -81,10 +97,42 @@ public class UserService {
             return authRepository.findAll();
         }
 
+
+        public Object uploadImage(String filepath){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+
+            Optional<Users> users = authRepository.findById(user.getId());
+            users.get().setImageUrl(filepath);
+
+            return authRepository.save(users.get());
+
+        }
+
+        public Object deleteUser(String password) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Users currentUser = authRepository.findByEmail(auth.getName());
+            ConfirmationToken token = confirmationTokenRepository.findByUser(currentUser);
+            UserDetails userDetails = userRepository.findByUser(currentUser);
+
+            if (bCryptPasswordEncoder.matches(password, currentUser.getPassword())) {
+                if(token != null && currentUser!=null){
+                    confirmationTokenRepository.delete(token);
+                    userRepository.deleteById(userDetails.getUserId());
+                    authRepository.deleteById(currentUser.getId());
+                }
+            } else {
+                throw new RuntimeException("Password is invalid");
+            }
+
+            return null;
+        }
+
     public Object getAllUsersExceptMe() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<Users> usersList = authRepository.findByEmailNotAndRole(auth.getName(), "USER");
         List<UserResponse> users = usersList.stream().map(users1 -> new UserResponse(users1)).collect(Collectors.toList());
         return users;
     }
+
 }

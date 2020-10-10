@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,12 @@ public class PollController {
 //    public List<Poll> list() {
 //        return pollService.getAll();
 //    }
+
+    @GetMapping("/{pollid}")
+    public ResponseEntity<?> getPoll(@PathVariable(value = "pollid") Long pollid){
+        return ResponseEntity.ok(pollService.getPoll(pollid));
+
+    }
 
     @PostMapping("/newpoll")
     public ResponseEntity<?> createPoll (@RequestBody NewPollRequest newPollRequest){
