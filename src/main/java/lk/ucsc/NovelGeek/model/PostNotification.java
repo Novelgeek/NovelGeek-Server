@@ -14,17 +14,17 @@ public class PostNotification {
 
     @JsonBackReference
     @ManyToOne()
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user")
     private Users user;
 
     @JsonBackReference
     @ManyToOne()
-    @JoinColumn(name = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "commentor")
     private Users commentor;
 
     @JsonBackReference
     @ManyToOne()
-    @JoinColumn(name = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "replier")
     private Users replier;
 
     @JsonBackReference

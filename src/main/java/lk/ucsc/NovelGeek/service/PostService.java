@@ -410,6 +410,7 @@ public class PostService {
 
         PostNotification replyNotification = new PostNotification();
         replyNotification.setUser(postCommentRepository.findById(id).getUsers());
+        replyNotification.setReplier(this.getCurrentUser());
         replyNotification.setPost(postCommentRepository.findById(id).getPosts());
         //replyNotification.setPostTitle(postCommentRepository.findById(id).getPosts().getTitle());
         replyNotification.setNotificationType("Reply");
