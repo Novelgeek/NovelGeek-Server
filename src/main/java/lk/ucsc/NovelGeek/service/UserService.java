@@ -1,13 +1,14 @@
 package lk.ucsc.NovelGeek.service;
 
 
+import lk.ucsc.NovelGeek.model.ConfirmationToken;
 import lk.ucsc.NovelGeek.model.UserDetails;
 import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.response.UserDetailsResponse;
-import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.UserRepository;
+import lk.ucsc.NovelGeek.repository.*;
 import lk.ucsc.NovelGeek.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,6 +34,12 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    @Qualifier("confirmationTokenRepository")
+    ConfirmationTokenRepository confirmationTokenRepository;
+
+
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -102,8 +109,14 @@ public class UserService {
         public Object deleteUser(String password) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Users currentUser = authRepository.findByEmail(auth.getName());
+            ConfirmationToken token = confirmationTokenRepository.findByUser(currentUser);
+
             if (bCryptPasswordEncoder.matches(password, currentUser.getPassword())) {
-                authRepository.deleteById(currentUser.getId());
+                if(token != null && currentUser!=null){
+                    confirmationTokenRepository.delete(token);
+                    userRepository.deleteById(currentUser.getId());
+                    authRepository.deleteById(currentUser.getId());
+                }
             } else {
                 throw new RuntimeException("Password is invalid");
             }

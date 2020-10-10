@@ -95,6 +95,8 @@ public class PostService {
     }
 
 
+
+
     public List<PostResponse> getMyPosts(){
         Users currentUser = this.getCurrentUser();
         List<PostResponse> myPosts = currentUser.getPosts().stream().map(post ->{
@@ -328,5 +330,40 @@ public class PostService {
 
         groupPostRepository.save(groupPosts);
         return createdPost;
+    }
+
+
+    public List<PostResponse> getUserPost(String email) {
+
+        Users user = authRepository.findByEmail(email);
+        List<PostResponse> userPosts = user.getPosts().stream().map(post ->{
+            PostResponse response = new PostResponse();
+            BeanUtils.copyProperties(post, response);
+
+            //set owner
+            response.setUsername(user.getUsername());
+
+            //set owner
+            response.setOwned(false);
+
+            //check whether already liked or not
+            if(postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==1){
+                response.setLiked(true);
+            }else if (postLikeRepository.checkIsLiked(post.getPostid(),this.getCurrentUser().getId())==0){
+                response.setLiked(false);
+            }
+
+            //setlikes count
+            long count = postLikeRepository.countLikes(post.getPostid());
+            response.setLikecount(count);
+
+            //setcomment count of post
+            count = postCommentRepository.countComments(post.getPostid());
+            response.setCommentcount(count);
+
+            return response;
+        }).collect(Collectors.toList());
+
+        return userPosts;
     }
 }

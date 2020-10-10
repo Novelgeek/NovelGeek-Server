@@ -98,4 +98,9 @@ public class PostController {
         return ResponseEntity.ok(postService.getComments(postid));
     }
 
+    @GetMapping("/userpost/{email}")
+    public ResponseEntity<?> getUserPost(@PathVariable(value ="email")String email){
+        return  ResponseEntity.ok(postService.getUserPost(email));
+    }
+
 }

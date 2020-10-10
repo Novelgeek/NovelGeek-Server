@@ -19,7 +19,7 @@ public class UserDetails {
     private String description;
 
     @OneToOne
-    @JoinColumn(name="id")
+    @JoinColumn(name="id" )
     Users user;
 
     //this contructor is necessary for every model

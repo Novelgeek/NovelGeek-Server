@@ -34,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookService {
+
+
     @Autowired
     private ReviewRepository reviewRepository;
     @Autowired
@@ -203,6 +205,11 @@ public class BookService {
 
     public Object getUserBookRatings(){
         return this.getCurrentUser().getBookRatings();
+    }
+
+    public  Object getFriendBookRatings(String email){
+        Users users = userRepository.findByEmail(email);
+        return users.getBookRatings();
     }
 
     public Object uploadNewBook(String title, String description, String isbn, int year, String author, String genres, String publisher, String fileUrl, String imageUrl) {
