@@ -110,11 +110,12 @@ public class UserService {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Users currentUser = authRepository.findByEmail(auth.getName());
             ConfirmationToken token = confirmationTokenRepository.findByUser(currentUser);
+            UserDetails userDetails = userRepository.findByUser(currentUser);
 
             if (bCryptPasswordEncoder.matches(password, currentUser.getPassword())) {
                 if(token != null && currentUser!=null){
                     confirmationTokenRepository.delete(token);
-                    userRepository.deleteById(currentUser.getId());
+                    userRepository.deleteById(userDetails.getUserId());
                     authRepository.deleteById(currentUser.getId());
                 }
             } else {
