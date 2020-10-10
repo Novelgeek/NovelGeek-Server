@@ -62,14 +62,11 @@ public class Users {
     @OneToMany(targetEntity = SellBook.class, mappedBy = "users",cascade = CascadeType.ALL)
     Set<SellBook> Selling;
 
-    @JsonIgnoreProperties
-    @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users" , cascade = CascadeType.ALL, orphanRemoval = true)
-
     @OneToMany(targetEntity = Payments.class, mappedBy = "users")
     Set<Payments> payments;
 
     @JsonIgnoreProperties
-    @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users")
+    @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<PostsLikes> postslikes;
 
     @JsonIgnoreProperties
