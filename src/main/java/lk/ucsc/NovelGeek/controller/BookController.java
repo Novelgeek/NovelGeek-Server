@@ -78,7 +78,7 @@ public class BookController {
 
     @PostMapping("/updateView")
     public Object updateView(@RequestBody RatingRequest ratingRequest){
-
+        System.out.println(ratingRequest.genre);
         return bookService.updateView(ratingRequest);
     }
 

@@ -20,11 +20,21 @@ public class RecentlyViewed {
     @Column(length = 3000)
     private String img;
 
+    private String genre;
+
     private Date date;
 
     @ManyToOne
     @JoinColumn(name = "user")
     Users user;
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 
     public Users getUser() {
         return user;
