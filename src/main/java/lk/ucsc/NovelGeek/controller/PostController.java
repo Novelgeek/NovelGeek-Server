@@ -134,4 +134,8 @@ public class PostController {
         return ResponseEntity.ok(postService.getReplyNotifications());
     }
 
+    @DeleteMapping("/deletenotifications/{notiid}")
+    public ResponseEntity<?> deleteNotifications(@PathVariable(value="notiid") long notiid){
+        return ResponseEntity.ok(postService.deleteNotifications(notiid));
+    }
 }
