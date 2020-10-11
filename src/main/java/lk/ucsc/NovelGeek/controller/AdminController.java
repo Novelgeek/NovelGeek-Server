@@ -5,7 +5,9 @@ import lk.ucsc.NovelGeek.model.Users;
 import lk.ucsc.NovelGeek.model.request.UserSignInModel;
 import lk.ucsc.NovelGeek.model.request.UserSignUpModel;
 import lk.ucsc.NovelGeek.model.response.AuthResponse;
+import lk.ucsc.NovelGeek.model.response.UserDetailsResponse;
 import lk.ucsc.NovelGeek.service.AdminService;
+import lk.ucsc.NovelGeek.service.AuthService;
 import lk.ucsc.NovelGeek.service.PostService;
 import lk.ucsc.NovelGeek.service.StatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("admin")
@@ -27,6 +30,9 @@ public class AdminController {
 
     @Autowired
     PostService postService;
+
+    @Autowired
+    AuthService authService;
 
     @PostMapping("auth/signup")
     public Users createAdmin(@RequestBody UserSignUpModel userSignUpModel) {
@@ -98,4 +104,15 @@ public class AdminController {
         return ResponseEntity.ok(postService.cancelReportedPost(postid));
     }
 
+    @PostMapping("/update")
+    public Object saveUser(@RequestBody UserDetailsResponse userDetailsResponse){
+        adminService.updateAdmin(userDetailsResponse);
+        return null;
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> change(@RequestBody Map<String, String> payload) {
+        authService.changeAdminPassword(payload.get("password"), payload.get("oldPassword"));
+        return ResponseEntity.ok(null);
+    }
 }

@@ -189,4 +189,18 @@ public class AuthService implements UserDetailsService {
         }
         return null;
     }
+
+    public void changeAdminPassword(String password, String oldPassword) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Users currentUser = authRepository.findByEmail(auth.getName());
+        if (bCryptPasswordEncoder.matches(oldPassword, currentUser.getPassword())) {
+            currentUser.setPassword(bCryptPasswordEncoder.encode(password));
+            authRepository.save(currentUser);
+        } else {
+            throw new RuntimeException("Password is invalid");
+        }
+
+    }
+
+
 }

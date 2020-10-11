@@ -8,6 +8,7 @@ import lk.ucsc.NovelGeek.model.request.UserSignInModel;
 import lk.ucsc.NovelGeek.model.request.UserSignUpModel;
 import lk.ucsc.NovelGeek.model.response.AuthResponse;
 import lk.ucsc.NovelGeek.model.response.BasicStat;
+import lk.ucsc.NovelGeek.model.response.UserDetailsResponse;
 import lk.ucsc.NovelGeek.repository.AuthRepository;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
 import lk.ucsc.NovelGeek.repository.book.RecentlyViewedRepository;
@@ -48,7 +49,11 @@ public class AdminService {
     @Autowired
     private RecentlyViewedRepository recentlyViewedRepository;
 
-
+    public Users getCurrentUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Users currentUser = authRepository.findByEmail(auth.getName());
+        return currentUser;
+    }
 
     public Users createAdmin(UserSignUpModel userDto) {
         if(authRepository.findByEmail(userDto.getEmail()) != null) {
@@ -162,4 +167,13 @@ public class AdminService {
         }
         return realStat;
     }
+
+
+    public void updateAdmin(UserDetailsResponse userDetailsResponse) {
+        Users admin = this.getCurrentUser();
+        admin.setUsername(userDetailsResponse.getUsername());
+        authRepository.save(admin);
+    }
+
+
 }
