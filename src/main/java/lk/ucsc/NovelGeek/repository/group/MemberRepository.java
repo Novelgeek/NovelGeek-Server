@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Members, Long> {
-    List<Members> findByGroup(Optional<Group> group);
+    List<Members> findByGroup(Group group);
 
     List<Members> findByUsers(Optional<Users> userId);
 
@@ -22,5 +22,5 @@ public interface MemberRepository extends JpaRepository<Members, Long> {
 
     List<Members> findByGroupAndUsersAndMemberStatus(Optional<Group> group, Users user, MemberStatus memberStatus);
 
-    List<Members> findByGroupAndMemberStatus(Optional<Group> byId, MemberStatus requested);
+    List<Members> findByGroupAndMemberStatus(Group byId, MemberStatus requested);
 }

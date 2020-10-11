@@ -36,21 +36,21 @@ public class Users {
     private boolean isVerified;
 
 
-    @OneToMany(targetEntity = Members.class, mappedBy = "users")
+    @OneToMany(targetEntity = Members.class, mappedBy = "users" , cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Members> members;
 
-    @OneToMany(targetEntity = Notification.class, mappedBy = "targetUser")
+    @OneToMany(targetEntity = Notification.class, mappedBy = "targetUser" , cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Members> myNotifications;
 
 
-    @OneToMany(targetEntity = Friends.class, mappedBy = "user1")
+    @OneToMany(targetEntity = Friends.class, mappedBy = "user1" , cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Friends> friends;
 
-    @OneToMany(targetEntity = BookRating.class, mappedBy = "user")
+    @OneToMany(targetEntity = BookRating.class, mappedBy = "user" , cascade = CascadeType.ALL, orphanRemoval = true)
     Set<BookRating> bookRatings;
 
 
-    @OneToMany(targetEntity = RecentlyViewed.class, mappedBy = "user")
+    @OneToMany(targetEntity = RecentlyViewed.class, mappedBy = "user" , cascade = CascadeType.ALL, orphanRemoval = true)
     Set<BookRating> recentlyViewed;
 
 
@@ -62,16 +62,15 @@ public class Users {
     @OneToMany(targetEntity = SellBook.class, mappedBy = "users",cascade = CascadeType.ALL)
     Set<SellBook> Selling;
 
-    @JsonIgnoreProperties
     @OneToMany(targetEntity = Payments.class, mappedBy = "users")
     Set<Payments> payments;
 
     @JsonIgnoreProperties
-    @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users")
+    @OneToMany(targetEntity = PostsLikes.class, mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<PostsLikes> postslikes;
 
     @JsonIgnoreProperties
-    @OneToMany(targetEntity = PostsComments.class, mappedBy = "users")
+    @OneToMany(targetEntity = PostsComments.class, mappedBy = "users" , cascade = CascadeType.ALL, orphanRemoval = true)
     Set<PostsComments> postscomments;
 
     @JsonIgnoreProperties
@@ -83,7 +82,8 @@ public class Users {
     Set<PostNotification> postNotifications;
 
     @JsonIgnoreProperties
-    @OneToMany(targetEntity = LocalBook.class, mappedBy = "users")
+    @OneToMany(targetEntity = LocalBook.class, mappedBy = "users" , cascade = CascadeType.ALL, orphanRemoval = true)
+
     Set<LocalBook> localBooks;
 
     public Set<BookRating> getRecentlyViewed() {
@@ -102,12 +102,11 @@ public class Users {
         this.bookRatings = bookRatings;
     }
 
-    @OneToMany(targetEntity = Poll.class, mappedBy = "users")
+    @OneToMany(targetEntity = Poll.class, mappedBy = "users" , cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Poll> poll;
 
-    @OneToMany(targetEntity = Option.class, mappedBy = "poll", cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = Option.class, mappedBy = "poll", cascade = CascadeType.ALL , orphanRemoval = true)
     Set<PollVotes> pollVotes;
-
 
     public Set<Friends> getFriends() {
         return friends;

@@ -3,7 +3,7 @@ package lk.ucsc.NovelGeek.model.book;
 import lk.ucsc.NovelGeek.model.Users;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 public class FeaturedBook {
@@ -11,8 +11,8 @@ public class FeaturedBook {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long featuredId;
 
-    private Date featuredFrom;
-    private Date featuredTo;
+    private LocalDate featuredFrom;
+    private LocalDate featuredTo;
 
     @ManyToOne
     LocalBook localBook;
@@ -30,19 +30,19 @@ public class FeaturedBook {
         this.featuredId = featuredId;
     }
 
-    public Date getFeaturedFrom() {
+    public LocalDate getFeaturedFrom() {
         return featuredFrom;
     }
 
-    public void setFeaturedFrom(Date featuredFrom) {
+    public void setFeaturedFrom(LocalDate featuredFrom) {
         this.featuredFrom = featuredFrom;
     }
 
-    public Date getFeaturedTo() {
+    public LocalDate getFeaturedTo() {
         return featuredTo;
     }
 
-    public void setFeaturedTo(Date featuredTo) {
+    public void setFeaturedTo(LocalDate featuredTo) {
         this.featuredTo = featuredTo;
     }
 

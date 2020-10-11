@@ -9,18 +9,13 @@ import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Users;
 
 import lk.ucsc.NovelGeek.model.*;
-import lk.ucsc.NovelGeek.model.book.BookRating;
-import lk.ucsc.NovelGeek.model.book.Books;
-import lk.ucsc.NovelGeek.model.book.LocalBook;
-import lk.ucsc.NovelGeek.model.book.RecentlyViewed;
+import lk.ucsc.NovelGeek.model.book.*;
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
 
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.book.BookRatingRepository;
-import lk.ucsc.NovelGeek.repository.book.BookRepository;
+import lk.ucsc.NovelGeek.repository.ConfirmationTokenRepository;
+import lk.ucsc.NovelGeek.repository.book.*;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
-import lk.ucsc.NovelGeek.repository.book.LocalBookRepository;
-import lk.ucsc.NovelGeek.repository.book.RecentlyViewedRepository;
 import lk.ucsc.NovelGeek.service.recommendation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -29,11 +24,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookService {
+
+
     @Autowired
     private ReviewRepository reviewRepository;
     @Autowired
@@ -53,6 +51,13 @@ public class BookService {
 
     @Autowired
     private LocalBookRepository localBookRepository;
+
+    @Autowired
+    private FeaturedBookRepository featuredBookRepository;
+
+    @Autowired
+    private LocalBookReviewRepository localBookReviewRepository;
+
 
     //get current user
     private Users getCurrentUser(){
@@ -205,6 +210,11 @@ public class BookService {
         return this.getCurrentUser().getBookRatings();
     }
 
+    public  Object getFriendBookRatings(String email){
+        Users users = userRepository.findByEmail(email);
+        return users.getBookRatings();
+    }
+
     public Object uploadNewBook(String title, String description, String isbn, int year, String author, String genres, String publisher, String fileUrl, String imageUrl) {
         LocalBook localBook = new LocalBook(title, description, isbn, year, author, publisher, imageUrl, fileUrl, this.getCurrentUser(), null);
         localBookRepository.save(localBook);
@@ -213,7 +223,66 @@ public class BookService {
     }
 
     public Object getLocalBooks(){
-
         return localBookRepository.findAll();
+    }
+
+
+    public Object getFeaturedBooks(){
+        return featuredBookRepository.findAll();
+    }
+
+    public void boostBook(Map<String, Object> boostBookParam) {
+        FeaturedBook currentBook = featuredBookRepository.findByLocalBook(localBookRepository.findById(Long.valueOf((String) boostBookParam.get("bookId"))).get());
+        if(currentBook != null){
+            currentBook.setFeaturedBy(this.getCurrentUser());
+            if (currentBook.getFeaturedTo().isAfter(LocalDate.now())) {
+                currentBook.setFeaturedTo(currentBook.getFeaturedTo().plusDays(Long.valueOf((String) boostBookParam.get("days"))));
+            }else {
+                currentBook.setFeaturedTo(LocalDate.now().plusDays(Long.valueOf((String) boostBookParam.get("days"))));
+            }
+
+            currentBook.setPaymentId((String) boostBookParam.get("orderId"));
+            featuredBookRepository.save(currentBook);
+        } else {
+            FeaturedBook featuredBook = new FeaturedBook();
+            featuredBook.setFeaturedBy(this.getCurrentUser());
+            featuredBook.setFeaturedFrom(LocalDate.now());
+            featuredBook.setFeaturedTo(LocalDate.now().plusDays(Long.valueOf((String) boostBookParam.get("days"))));
+            featuredBook.setLocalBook(localBookRepository.findById(Long.valueOf((String) boostBookParam.get("bookId"))).get());
+            featuredBook.setPaymentId((String) boostBookParam.get("orderId"));
+            featuredBookRepository.save(featuredBook);
+        }
+
+    }
+
+    public Object addLocalReview(ReviewDTO reviewDTO) {
+        LocalBookReview localBookReview = new LocalBookReview();
+        localBookReview.setLocalBook(localBookRepository.findById(Long.valueOf(reviewDTO.getBookId())).get());
+        localBookReview.setReview(reviewDTO.getReviewDescription());
+        localBookReview.setTimestamp(new Date());
+        localBookReview.setUserId(this.getCurrentUser());
+        return localBookReviewRepository.save(localBookReview);
+    }
+
+    public Object getLocalBookReviews(Long bookId) {
+        return localBookReviewRepository.findByLocalBook(localBookRepository.findById(bookId).get());
+    }
+
+    public Object getLocalBook(Long bookId) {
+        return localBookRepository.findById(bookId);
+    }
+
+    public void deleteLocalBook(Long bookId) {
+        LocalBook localBook = localBookRepository.findById(bookId).get();
+        FeaturedBook featuredBooks = featuredBookRepository.findByLocalBook(localBook);
+        List<LocalBookReview> localBookReviews = localBookReviewRepository.findByLocalBook(localBook);
+        if(featuredBooks != null) {
+            featuredBookRepository.delete(featuredBooks);
+        }
+        if(localBookReviews.size() !=0){
+            localBookReviewRepository.deleteAll(localBookReviews);
+        }
+
+        localBookRepository.delete(localBook);
     }
 }

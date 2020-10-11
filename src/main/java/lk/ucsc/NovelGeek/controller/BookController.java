@@ -139,6 +139,11 @@ public class BookController {
         return bookService.getUserBookRatings();
     }
 
+    @GetMapping("/friendBookRatings/{email}")
+    public Object getFriendBookRatings(@PathVariable(value="email")String email){
+        return bookService.getFriendBookRatings(email);
+    }
+
     @PostMapping(path="/addNewBook")
     @ResponseBody
     public ResponseEntity<Auction> addNewBook(
@@ -153,18 +158,18 @@ public class BookController {
             @RequestParam("publisher") String publisher
     ){
         String fileUrl = null;
-//        if (pdf == null){
-//            fileUrl = null;
-//        } else {
-//            fileUrl = awss3Service.uploadFile(pdf);
-//        }
+        if (pdf == null){
+            fileUrl = null;
+        } else {
+            fileUrl = awss3Service.uploadFile(pdf);
+        }
 
         String imageUrl = null;
-//        if (img == null){
-//            imageUrl = null;
-//        } else {
-//            imageUrl = awss3Service.uploadFile(img);
-//        }
+        if (img == null){
+            imageUrl = null;
+        } else {
+            imageUrl = awss3Service.uploadFile(img);
+        }
 
 
         bookService.uploadNewBook(title, description, isbn, year,
@@ -177,22 +182,49 @@ public class BookController {
 
     @GetMapping("/allLocal")
     public Object getLocalBooks(){
-
         return bookService.getLocalBooks();
     }
 
+    @GetMapping("/featured")
+    public Object getFeaturedBooks(){
+        return bookService.getFeaturedBooks();
+    }
+
+//    @PostMapping("/boost-book")
+//    public Object boostLocalBook(@RequestParam Map<String,String> allRequestParams) {
+//        System.out.println(allRequestParams.get("merchant_id"));
+//        System.out.println("Came");
+//        return null;
+//    }
+
     @PostMapping("/boost-book")
-    public Object boostLocalBook(@RequestParam Map<String,String> allRequestParams) {
-        System.out.println(allRequestParams.get("merchant_id"));
-        System.out.println("Came");
+    public Object boostLocalBook(@RequestBody Map<String, Object>  boostBookParam) {
+        bookService.boostBook(boostBookParam);
         return null;
     }
 
-    @GetMapping("/boost-book")
-    public Object boostLocalBook1(@RequestParam Map<String,String> allRequestParams) {
-        System.out.println(allRequestParams.get("merchant_id"));
-        System.out.println("Came");
-        return null;
+    @PostMapping(path="/local/addreview",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Object addLocalReview(@RequestBody ReviewDTO reviewDTO){
+        return bookService.addLocalReview(reviewDTO);
+    }
+
+
+
+    @GetMapping("/local/review/{id}")
+    public Object getLocalReviews(@PathVariable("id") Long bookId){
+        return bookService.getLocalBookReviews(bookId);
+    }
+
+    @GetMapping("/local/{id}")
+    public Object getLocalBook(@PathVariable("id") Long bookId){
+        return bookService.getLocalBook(bookId);
+    }
+    @DeleteMapping("/local/{id}")
+    public Object deleteLocalBook(@PathVariable("id") Long bookId){
+
+         bookService.deleteLocalBook(bookId);
+         return null;
     }
 
 
