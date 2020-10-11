@@ -41,6 +41,10 @@ public class Posts {
     @OneToMany(targetEntity = PostsComments.class, mappedBy = "posts", cascade = CascadeType.ALL)
     Set<PostsComments> postscomments;
 
+    @JsonIgnoreProperties
+    @OneToMany(targetEntity = PostNotification.class, mappedBy = "post", cascade = CascadeType.ALL)
+    Set<PostNotification> postNotifications;
+
     @OneToMany(targetEntity = GroupPosts.class, mappedBy = "posts")
     Set<GroupPosts> groupPosts;
 
@@ -60,6 +64,7 @@ public class Posts {
     public String getSharedtype() { return sharedtype; }
     public Users getUsers() { return users; }
     public Set<PostsReports> getPostsreports() { return postsreports; }
+    public Set<PostNotification> getPostNotifications() { return postNotifications; }
 
     public Set<PostsLikes> getPostslikes() { return postslikes; }
     public void setPostid(long postid) { this.postid = postid; }
@@ -73,4 +78,5 @@ public class Posts {
     public Set<PostsComments> getPostscomments() { return postscomments; }
     public void setPostscomments(Set<PostsComments> postscomments) { this.postscomments = postscomments; }
     public void setPostsreports(Set<PostsReports> postsreports) { this.postsreports = postsreports; }
+    public void setPostNotifications(Set<PostNotification> postNotifications) { this.postNotifications = postNotifications; }
 }

@@ -51,6 +51,9 @@ public class PostService {
     @Autowired
     private GroupRepository groupRepository;
 
+    @Autowired
+    private PostNotificationRepository postNotificationRepository;
+
     //to get current user
     public Users getCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -349,6 +352,15 @@ public class PostService {
 
         PostsComments returncomment = postCommentRepository.save(newComment);
 
+        PostNotification commentNotification = new PostNotification();
+        commentNotification.setUser(postRepository.findById(id).getUsers());
+        commentNotification.setCommentor(this.getCurrentUser());
+        commentNotification.setPost(postRepository.findById(id));
+        //commentNotification.setPostTitle(postRepository.findById(id).getTitle());
+        commentNotification.setNotificationType("Comment");
+        commentNotification.setDate(new Date());
+        postNotificationRepository.save(commentNotification);
+
         CommentResponse response = new CommentResponse();
         response.setCommentid(returncomment.getCommentid());
         response.setComment(returncomment.getComment());
@@ -397,6 +409,15 @@ public class PostService {
         newReply.setUsers(this.getCurrentUser());
 
         CommentReply returnreply = commentReplyRepository.save(newReply);
+
+        PostNotification replyNotification = new PostNotification();
+        replyNotification.setUser(postCommentRepository.findById(id).getUsers());
+        replyNotification.setReplier(this.getCurrentUser());
+        replyNotification.setPost(postCommentRepository.findById(id).getPosts());
+        //replyNotification.setPostTitle(postCommentRepository.findById(id).getPosts().getTitle());
+        replyNotification.setNotificationType("Reply");
+        replyNotification.setDate(new Date());
+        postNotificationRepository.save(replyNotification);
 
         CommentReplyResponse response = new CommentReplyResponse();
         response.setReplyid(returnreply.getReplyid());
@@ -488,6 +509,15 @@ public class PostService {
 
     public long deleteReportedPost (long postid){
         Posts post = postRepository.findById(postid);
+
+        PostNotification deletePostNotification = new PostNotification();
+        deletePostNotification.setUser(post.getUsers());
+        deletePostNotification.setPostTitle(post.getTitle());
+        deletePostNotification.setNotificationType("Deleted");
+        deletePostNotification.setDate(new Date());
+
+        postNotificationRepository.save(deletePostNotification);
+
         postReportRepository.deleteByPosts(post);
         postRepository.deleteById(postid);
         return postid;
@@ -498,6 +528,42 @@ public class PostService {
         postReportRepository.deleteByPosts(post);
         //postReportRepository.deleteReports(postid);
         return postid;
+    }
+
+    public long deleteNotifications(long notificationid){
+        postNotificationRepository.deleteById(notificationid);
+        return notificationid;
+    }
+
+    public List<?> getReportNotifications(){
+        List<String> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Deleted").stream().map(noti->{
+            return noti.getPostTitle();
+        }).collect(Collectors.toList());
+
+        return response;
+    }
+
+    public List<CommentNotificationResponse> getCommentNotifications(){
+        List<CommentNotificationResponse> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Comment").stream().map(noti->{
+            CommentNotificationResponse temp = new CommentNotificationResponse();
+            temp.setCommentor(noti.getCommentor().getUsername());
+            temp.setPostTitle(noti.getPost().getTitle());
+            temp.setPostid(noti.getPost().getPostid());
+            return temp;
+        }).collect(Collectors.toList());
+        return response;
+    }
+
+    public List<ReplyNotificationResponse> getReplyNotifications(){
+        List<ReplyNotificationResponse> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Reply").stream().map(noti->{
+            ReplyNotificationResponse temp = new ReplyNotificationResponse();
+            temp.setReplier(noti.getReplier().getUsername());
+            temp.setPostid(noti.getPost().getPostid());
+            temp.setPostTitle(noti.getPost().getTitle());
+
+            return temp;
+        }).collect(Collectors.toList());
+        return response;
     }
 
     public Object createGroupPost(NewPost newpostrequest, Long groupId) {

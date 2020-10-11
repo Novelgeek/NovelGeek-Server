@@ -126,6 +126,19 @@ public class PostController {
         return ResponseEntity.ok(postService.deleteReply(replyid));
     }
 
+    @GetMapping("/reportnotifications")
+    public  ResponseEntity<?> getReportNotifications(){
+        return ResponseEntity.ok(postService.getReportNotifications());
+    }
 
+    @GetMapping("/commentnotifications")
+    public  ResponseEntity<?> getCommentNotifications(){
+        return ResponseEntity.ok(postService.getCommentNotifications());
+    }
+
+    @GetMapping("/replynotifications")
+    public  ResponseEntity<?> getReplyNotifications(){
+        return ResponseEntity.ok(postService.getReplyNotifications());
+    }
 
 }
