@@ -3,10 +3,8 @@ package practice;
 import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 interface demo{
     int x=5;
@@ -137,18 +135,23 @@ public class Questions {
         System.out.println("");
     }
     public static void main(String[] args) {
-       int x=15;
-        for (int i = 0; i < 3; i++) {
-            if(x%3==0){
-                System.out.println("divide by 3");
+//       int x=15;
+//        for (int i = 0; i < 3; i++) {
+//            if(x%3==0){
+//                System.out.println("divide by 3");
+//
+//            }else if(x%5==0){
+//                System.out.println("divide by 5");
+//            }else{
+//                System.out.println("nothing");
+//            }
+//            System.out.println("loop");
+//        }
+        Calendar cal=Calendar.getInstance();
+        Date today = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
 
-            }else if(x%5==0){
-                System.out.println("divide by 5");
-            }else{
-                System.out.println("nothing");
-            }
-            System.out.println("loop");
-        }
+        System.out.println(sdf.format(today));
 
 
     }

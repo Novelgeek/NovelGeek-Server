@@ -180,7 +180,7 @@ public class BookService {
             return check;
         }
 
-        if (users.getRecentlyViewed().size() == 6) {
+        if (users.getRecentlyViewed().size() == 20) {
             recentlyViewedRepository.delete(recentlyViewedRepository.findByUser(users, Sort.by(Sort.Direction.ASC, "date")).get(0));
         }
 
@@ -190,12 +190,17 @@ public class BookService {
         recentlyViewed.setTitle(ratingRequest.getTitle());
         recentlyViewed.setUser(this.getCurrentUser());
         recentlyViewed.setDate(new Date());
+        if(ratingRequest.getGenre()!=null){
+            recentlyViewed.setGenre(ratingRequest.getGenre());
+        }
+
 
         return recentlyViewedRepository.save(recentlyViewed);
     }
 
     public Object getRecentlyViewed() {
-        return recentlyViewedRepository.findByUser(this.getCurrentUser(), Sort.by(Sort.Direction.DESC, "date"));
+        List<RecentlyViewed> list= recentlyViewedRepository.findByUser(this.getCurrentUser(), Sort.by(Sort.Direction.DESC, "date"));
+        return new ArrayList<RecentlyViewed>(list.subList(list.size() -6, list.size()));
     }
 
     public Object getUserRating(String bookId) {

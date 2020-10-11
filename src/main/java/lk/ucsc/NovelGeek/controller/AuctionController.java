@@ -73,5 +73,9 @@ public class AuctionController {
         return auctionService.makeSale(saleDTO);
 
     }
-
+    @DeleteMapping(path="/endauction/{id}")
+    @ResponseBody
+    public ResponseEntity<Auction> endAuction(@PathVariable("id") long aid){
+        return auctionService.endAuction(aid);
+    }
 }

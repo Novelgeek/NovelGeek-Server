@@ -4,7 +4,16 @@ public class RatingRequest {
     private String bookId;
     public String title;
     public String img;
+    public String genre;
     public int myRating;
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 
     public String getBookId() {
         return bookId;

@@ -61,11 +61,12 @@ public class AuctionService {
         return list;
     }
     public Boolean calculateDateDifference(Date old){
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+
         Date firstDate = new Date();
         Date secondDate = old;
 
-        long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+        long diffInMillies = secondDate.getTime() - firstDate.getTime();
+        System.out.println("date difference "+diffInMillies);
         return diffInMillies>0;
     }
 
@@ -109,6 +110,18 @@ public class AuctionService {
 
             return new ResponseEntity<Auction>(auctionRepository.save(auction), HttpStatus.OK);
 
+        }else{
+            return new ResponseEntity<Auction>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    public ResponseEntity<Auction> endAuction(long aid) {
+        Optional<Auction> op1 = auctionRepository.findById(aid);
+        if(!op1.isEmpty()){
+            Auction auction=op1.get();
+            auction.setAuctionStatus(AuctionStatus.FINISHED);
+            return new ResponseEntity<Auction>(auctionRepository.save(auction),HttpStatus.OK);
         }else{
             return new ResponseEntity<Auction>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
