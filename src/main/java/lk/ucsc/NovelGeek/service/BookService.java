@@ -197,7 +197,13 @@ public class BookService {
 
     public Object getRecentlyViewed() {
         List<RecentlyViewed> list= recentlyViewedRepository.findByUser(this.getCurrentUser(), Sort.by(Sort.Direction.DESC, "date"));
-        return new ArrayList<RecentlyViewed>(list.subList(0, 6));
+        int limit;
+        if (list.size() > 6 ){
+            limit = 6;
+        } else {
+            limit = list.size();
+        }
+        return new ArrayList<RecentlyViewed>(list.subList(0, limit));
     }
 
     public Object getUserRating(String bookId) {

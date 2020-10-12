@@ -61,6 +61,7 @@ public class AdminController {
 
         return ResponseEntity.ok(statService.getBasicStat());
     }
+
     @GetMapping("genrestats")
     public ResponseEntity<GenreStats> getGenreStats(){
         return adminService.getGenreStats();
