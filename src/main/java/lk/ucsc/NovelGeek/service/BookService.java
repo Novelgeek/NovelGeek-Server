@@ -3,17 +3,14 @@ package lk.ucsc.NovelGeek.service;
 import lk.ucsc.NovelGeek.dto.CommentDTO;
 import lk.ucsc.NovelGeek.dto.ReviewDTO;
 
-import lk.ucsc.NovelGeek.model.Auction;
 import lk.ucsc.NovelGeek.model.Comment;
 import lk.ucsc.NovelGeek.model.Review;
 import lk.ucsc.NovelGeek.model.Users;
 
-import lk.ucsc.NovelGeek.model.*;
 import lk.ucsc.NovelGeek.model.book.*;
 import lk.ucsc.NovelGeek.model.request.RatingRequest;
 
 import lk.ucsc.NovelGeek.repository.AuthRepository;
-import lk.ucsc.NovelGeek.repository.ConfirmationTokenRepository;
 import lk.ucsc.NovelGeek.repository.book.*;
 import lk.ucsc.NovelGeek.repository.ReviewRepository;
 import lk.ucsc.NovelGeek.service.recommendation.*;
@@ -200,7 +197,7 @@ public class BookService {
 
     public Object getRecentlyViewed() {
         List<RecentlyViewed> list= recentlyViewedRepository.findByUser(this.getCurrentUser(), Sort.by(Sort.Direction.DESC, "date"));
-        return new ArrayList<RecentlyViewed>(list.subList(list.size() -6, list.size()));
+        return new ArrayList<RecentlyViewed>(list.subList(0, 6));
     }
 
     public Object getUserRating(String bookId) {
@@ -221,7 +218,7 @@ public class BookService {
     }
 
     public Object uploadNewBook(String title, String description, String isbn, int year, String author, String genres, String publisher, String fileUrl, String imageUrl) {
-        LocalBook localBook = new LocalBook(title, description, isbn, year, author, publisher, imageUrl, fileUrl, this.getCurrentUser(), null);
+        LocalBook localBook = new LocalBook(title, description, isbn, year, author, publisher, imageUrl, fileUrl, this.getCurrentUser(), genres);
         localBookRepository.save(localBook);
 
         return null;

@@ -18,19 +18,25 @@ public class LocalBook {
     int year;
     String author;
     String publisher;
+    @Column(length = 3000)
     String imgUrl;
+    @Column(length = 3000)
     String fileUrl;
+
+
+    @Column(length = 3000)
+    String genres;
 
     @ManyToOne
     Users users;
 
-    @ManyToOne
-    Genres genres;
+
+
 
     public LocalBook() {
     }
 
-    public LocalBook(String title, String description, String isbn, int year, String author, String publisher, String imgUrl, String fileUrl, Users users, Genres genres) {
+    public LocalBook(String title, String description, String isbn, int year, String author, String publisher, String imgUrl, String fileUrl, Users users, String genres) {
         this.title = title;
         this.description = description;
         this.isbn = isbn;
@@ -42,6 +48,16 @@ public class LocalBook {
         this.users = users;
         this.genres = genres;
     }
+
+
+    public String getGenres() {
+        return genres;
+    }
+
+    public void setGenres(String genres) {
+        this.genres = genres;
+    }
+
 
     public long getId() {
         return id;
@@ -123,11 +139,5 @@ public class LocalBook {
         this.users = users;
     }
 
-    public Genres getGenres() {
-        return genres;
-    }
 
-    public void setGenres(Genres genres) {
-        this.genres = genres;
-    }
 }

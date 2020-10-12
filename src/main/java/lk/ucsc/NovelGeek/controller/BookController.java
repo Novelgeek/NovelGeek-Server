@@ -1,9 +1,6 @@
 package lk.ucsc.NovelGeek.controller;
 
-import lk.ucsc.NovelGeek.dto.AuctionDTO;
-import lk.ucsc.NovelGeek.dto.BidDTO;
-import lk.ucsc.NovelGeek.dto.CommentDTO;
-import lk.ucsc.NovelGeek.dto.ReviewDTO;
+import lk.ucsc.NovelGeek.dto.*;
 import lk.ucsc.NovelGeek.model.Auction;
 import lk.ucsc.NovelGeek.model.Comment;
 import lk.ucsc.NovelGeek.model.Review;
