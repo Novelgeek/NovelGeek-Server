@@ -57,7 +57,7 @@ public class AdminController {
 
     }
     @GetMapping("userstats")
-    public List<Integer> getUserStats(){
+    public int[] getUserStats() throws Exception{
         return adminService.getUserStats();
     }
 
