@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -132,7 +133,7 @@ public class AdminService {
         return new ResponseEntity<GenreStats>(genreStats, HttpStatus.OK);
     }
 
-    public List<Integer> getUserStats() {
+    public int[] getUserStats() throws ParseException {
         List<Review> list= (List<Review>) reviewRepository.findAll();
         HashMap<String, Integer> stats = new HashMap<>();
         stats.put("January", 0);
@@ -148,11 +149,22 @@ public class AdminService {
         stats.put("November", 0);
         stats.put("December", 0);
 
+        int arr[]=new int[12];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i]=0;
+        }
         for (Review review : list) {
             Date date=review.getTimestamp();
             SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
 
+
+
             String month = sdf.format(date);
+            Date day = new SimpleDateFormat("MMMM").parse(month);
+            Calendar cal=Calendar.getInstance();
+            cal.setTime(day);
+
+            arr[cal.get(Calendar.MONTH)]=arr[cal.get(Calendar.MONTH)]+1;
             if(stats.containsKey(month)){
                 stats.put(month, stats.get(month) + 1);
             }else{
@@ -165,7 +177,7 @@ public class AdminService {
             realStat.add(stats.get(key));
             System.out.println( key + "\t"+ stats.get(key));
         }
-        return realStat;
+        return arr;
     }
 
 
