@@ -535,9 +535,12 @@ public class PostService {
         return notificationid;
     }
 
-    public List<?> getReportNotifications(){
-        List<String> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Deleted").stream().map(noti->{
-            return noti.getPostTitle();
+    public List<ReportNotificationResponse> getReportNotifications(){
+        List<ReportNotificationResponse> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Deleted").stream().map(noti->{
+            ReportNotificationResponse temp = new ReportNotificationResponse();
+            temp.setNotiid(noti.getNotificationid());
+            temp.setPostTitle(noti.getPostTitle());
+            return temp;
         }).collect(Collectors.toList());
 
         return response;
@@ -546,6 +549,7 @@ public class PostService {
     public List<CommentNotificationResponse> getCommentNotifications(){
         List<CommentNotificationResponse> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Comment").stream().map(noti->{
             CommentNotificationResponse temp = new CommentNotificationResponse();
+            temp.setNotiid(noti.getNotificationid());
             temp.setCommentor(noti.getCommentor().getUsername());
             temp.setPostTitle(noti.getPost().getTitle());
             temp.setPostid(noti.getPost().getPostid());
@@ -557,6 +561,7 @@ public class PostService {
     public List<ReplyNotificationResponse> getReplyNotifications(){
         List<ReplyNotificationResponse> response = postNotificationRepository.findByUserAndNotificationType(this.getCurrentUser(), "Reply").stream().map(noti->{
             ReplyNotificationResponse temp = new ReplyNotificationResponse();
+            temp.setNotiid(noti.getNotificationid());
             temp.setReplier(noti.getReplier().getUsername());
             temp.setPostid(noti.getPost().getPostid());
             temp.setPostTitle(noti.getPost().getTitle());
